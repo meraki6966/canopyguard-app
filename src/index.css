@@ -1,0 +1,9 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0A0A0A; }
+::selection { background: #E53935; color: #fff; }
+input::placeholder { color: #555; }
+button { font-family: inherit; }
+a { color: inherit; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0A0A0A; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }

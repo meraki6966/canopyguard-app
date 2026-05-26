@@ -24,7 +24,7 @@ const scoreBg = (v) => v >= 70 ? C.greenGlow : v >= 40 ? C.amberGlow : C.redGlow
 const pf = (v) => v ? "PASS" : "FAIL";
 
 // ═══════════════════════════════════════════════════════════════
-// FIX SNIPPETS — Copy-pasteable code for every failing check
+// FIX SNIPPETS
 // ═══════════════════════════════════════════════════════════════
 const FIX_SNIPPETS = {
   llms_txt: {
@@ -215,6 +215,7 @@ const HEADER_SNIPPET_MAP = {
 function FixSnippet({ snippet }) {
   const [activeTab, setActiveTab] = useState(0);
   const [copied, setCopied] = useState(false);
+  if (!snippet) return null;
   const code = snippet.tabs ? snippet.tabs[activeTab].code : snippet.code;
 
   const copy = () => {
@@ -247,24 +248,43 @@ function FixSnippet({ snippet }) {
   );
 }
 
+// ── Safe accessors for report data ──
+function safeReport(report) {
+  if (!report) return null;
+  try {
+    const s = report.summary_scores;
+    const sec = report.security_roots;
+    const vis = report.visibility_canopy;
+    if (!s || !sec || !vis || !vis.seo_branch || !vis.aeo_branch || !vis.geo_branch) return null;
+    return report;
+  } catch (e) {
+    return null;
+  }
+}
+
 // ── Get snippets for a report ──
 function getFixSnippets(report) {
   const fixes = [];
   const d = report;
-  const sec = d.security_roots;
-  const geo = d.visibility_canopy.geo_branch;
-  const aeo = d.visibility_canopy.aeo_branch;
-  const seo = d.visibility_canopy.seo_branch;
+  if (!d) return fixes;
+  try {
+    const sec = d.security_roots;
+    const geo = d.visibility_canopy.geo_branch;
+    const aeo = d.visibility_canopy.aeo_branch;
+    const seo = d.visibility_canopy.seo_branch;
 
-  if (geo.llms_txt_status !== "PRESENT_ROOT") fixes.push(FIX_SNIPPETS.llms_txt);
-  if (seo.html_structure.missing_meta_descriptions) fixes.push(FIX_SNIPPETS.meta_desc);
-  if (!seo.html_structure.canonical_match) fixes.push(FIX_SNIPPETS.canonical);
-  if (!aeo.schema_validation.has_faq_json_ld) fixes.push(FIX_SNIPPETS.faq_schema);
-  if (!aeo.schema_validation.has_organization_json_ld) fixes.push(FIX_SNIPPETS.org_schema);
-  if (sec.ai_crawl_risk.robots_policy === "PERMISSIVE" || sec.ai_crawl_risk.robots_policy === "NONE") fixes.push(FIX_SNIPPETS.robots_ai);
-  for (const h of (sec.application_security.missing_secure_headers || [])) {
-    const key = HEADER_SNIPPET_MAP[h];
-    if (key && FIX_SNIPPETS[key]) fixes.push(FIX_SNIPPETS[key]);
+    if (geo.llms_txt_status !== "PRESENT_ROOT") fixes.push(FIX_SNIPPETS.llms_txt);
+    if (seo.html_structure.missing_meta_descriptions) fixes.push(FIX_SNIPPETS.meta_desc);
+    if (!seo.html_structure.canonical_match) fixes.push(FIX_SNIPPETS.canonical);
+    if (!aeo.schema_validation.has_faq_json_ld) fixes.push(FIX_SNIPPETS.faq_schema);
+    if (!aeo.schema_validation.has_organization_json_ld) fixes.push(FIX_SNIPPETS.org_schema);
+    if (sec.ai_crawl_risk.robots_policy === "PERMISSIVE" || sec.ai_crawl_risk.robots_policy === "NONE") fixes.push(FIX_SNIPPETS.robots_ai);
+    for (const h of (sec.application_security.missing_secure_headers || [])) {
+      const key = HEADER_SNIPPET_MAP[h];
+      if (key && FIX_SNIPPETS[key]) fixes.push(FIX_SNIPPETS[key]);
+    }
+  } catch (e) {
+    console.error("[CG] getFixSnippets error:", e);
   }
   return fixes;
 }
@@ -272,36 +292,47 @@ function getFixSnippets(report) {
 // ── Top Actions with snippets ──
 function getTopActions(report) {
   const actions = [];
-  const d = report; const sec = d.security_roots; const geo = d.visibility_canopy.geo_branch;
-  const aeo = d.visibility_canopy.aeo_branch; const seo = d.visibility_canopy.seo_branch;
+  const d = report;
+  if (!d) return actions;
+  try {
+    const sec = d.security_roots; const geo = d.visibility_canopy.geo_branch;
+    const aeo = d.visibility_canopy.aeo_branch; const seo = d.visibility_canopy.seo_branch;
 
-  if (geo.llms_txt_status !== "PRESENT_ROOT")
-    actions.push({ priority: 1, action: "Add an llms.txt file to your domain root", impact: "AI engines will know how to cite your content instead of summarizing without attribution.", snippet: "llms_txt" });
-  if ((sec.application_security.missing_secure_headers || []).includes("Content-Security-Policy"))
-    actions.push({ priority: 2, action: "Add a Content-Security-Policy header", impact: "Prevents cross-site scripting and data injection attacks against your visitors.", snippet: "csp" });
-  if (!aeo.schema_validation.has_faq_json_ld)
-    actions.push({ priority: 3, action: "Add FAQ schema markup", impact: "Makes your content eligible for rich search results and AI answer engine citations.", snippet: "faq_schema" });
-  if (seo.html_structure.missing_meta_descriptions)
-    actions.push({ priority: 4, action: "Add a meta description to your homepage", impact: "Controls how your site appears in search results. Without it, engines guess.", snippet: "meta_desc" });
-  if (!seo.html_structure.canonical_match)
-    actions.push({ priority: 5, action: "Fix your canonical URL", impact: "Prevents duplicate content issues that dilute your search rankings.", snippet: "canonical" });
-  if ((sec.application_security.missing_secure_headers || []).includes("Strict-Transport-Security"))
-    actions.push({ priority: 6, action: "Enable HSTS header", impact: "Forces browsers to always use HTTPS, preventing downgrade attacks.", snippet: "hsts" });
-  if (sec.ai_crawl_risk.robots_policy === "PERMISSIVE" || sec.ai_crawl_risk.robots_policy === "NONE")
-    actions.push({ priority: 7, action: "Configure robots.txt for AI crawlers", impact: "Control which AI models can scrape your site and how they use your content.", snippet: "robots_ai" });
+    if (geo.llms_txt_status !== "PRESENT_ROOT")
+      actions.push({ priority: 1, action: "Add an llms.txt file to your domain root", impact: "AI engines will know how to cite your content instead of summarizing without attribution.", snippet: "llms_txt" });
+    if ((sec.application_security.missing_secure_headers || []).includes("Content-Security-Policy"))
+      actions.push({ priority: 2, action: "Add a Content-Security-Policy header", impact: "Prevents cross-site scripting and data injection attacks against your visitors.", snippet: "csp" });
+    if (!aeo.schema_validation.has_faq_json_ld)
+      actions.push({ priority: 3, action: "Add FAQ schema markup", impact: "Makes your content eligible for rich search results and AI answer engine citations.", snippet: "faq_schema" });
+    if (seo.html_structure.missing_meta_descriptions)
+      actions.push({ priority: 4, action: "Add a meta description to your homepage", impact: "Controls how your site appears in search results. Without it, engines guess.", snippet: "meta_desc" });
+    if (!seo.html_structure.canonical_match)
+      actions.push({ priority: 5, action: "Fix your canonical URL", impact: "Prevents duplicate content issues that dilute your search rankings.", snippet: "canonical" });
+    if ((sec.application_security.missing_secure_headers || []).includes("Strict-Transport-Security"))
+      actions.push({ priority: 6, action: "Enable HSTS header", impact: "Forces browsers to always use HTTPS, preventing downgrade attacks.", snippet: "hsts" });
+    if (sec.ai_crawl_risk.robots_policy === "PERMISSIVE" || sec.ai_crawl_risk.robots_policy === "NONE")
+      actions.push({ priority: 7, action: "Configure robots.txt for AI crawlers", impact: "Control which AI models can scrape your site and how they use your content.", snippet: "robots_ai" });
+  } catch (e) {
+    console.error("[CG] getTopActions error:", e);
+  }
   return actions.slice(0, 3);
 }
 
 function getComplianceChecks(report) {
-  const sec = report.security_roots;
-  return [
-    { label: "HTTPS Active", pass: sec.tls?.valid || false },
-    { label: "Privacy Policy Page", pass: false },
-    { label: "Security Headers", pass: (sec.application_security.missing_secure_headers || []).length <= 2 },
-    { label: "No Exposed Endpoints", pass: (sec.application_security.exposed_endpoints || []).length === 0 },
-    { label: "Structured Data Present", pass: report.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld },
-    { label: "AI Crawl Policy Set", pass: sec.ai_crawl_risk.robots_policy === "BALANCED" || sec.ai_crawl_risk.robots_policy === "RESTRICTIVE" },
-  ];
+  if (!report) return [];
+  try {
+    const sec = report.security_roots;
+    return [
+      { label: "HTTPS Active", pass: sec.tls?.valid || false },
+      { label: "Privacy Policy Page", pass: false },
+      { label: "Security Headers", pass: (sec.application_security.missing_secure_headers || []).length <= 2 },
+      { label: "No Exposed Endpoints", pass: (sec.application_security.exposed_endpoints || []).length === 0 },
+      { label: "Structured Data Present", pass: report.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld },
+      { label: "AI Crawl Policy Set", pass: sec.ai_crawl_risk.robots_policy === "BALANCED" || sec.ai_crawl_risk.robots_policy === "RESTRICTIVE" },
+    ];
+  } catch (e) {
+    return [];
+  }
 }
 
 // ── PDF ──
@@ -426,18 +457,23 @@ function ActionItem({ action, index }) {
       </div></div></div>;
 }
 function Insights({data}) {
-  const sec=data.security_roots;const geo=data.visibility_canopy.geo_branch;const ins=[];
-  if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy==="PERMISSIVE") ins.push({l:"CRITICAL",t:"AI Crawl Gap",b:"Robots.txt is permissive with no llms.txt file. AI scrapers can ingest your content without citation guidance."});
-  if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy!=="RESTRICTIVE") ins.push({l:"WARNING",t:"No LLMs.txt",b:"No llms.txt discovery file found. Your content may be summarized by AI engines but never cited as a source."});
-  if((sec.application_security.exposed_endpoints||[]).length>0) ins.push({l:"CRITICAL",t:"Exposed Endpoints",b:`${sec.application_security.exposed_endpoints.length} internal path(s) accessible: ${sec.application_security.exposed_endpoints.slice(0,4).join(", ")}${sec.application_security.exposed_endpoints.length>4?" ...":""}`});
-  if(sec.business_logic_gaps?.data_provenance_leak) ins.push({l:"WARNING",t:"Content Provenance Risk",b:"Your content structure allows AI training sets to ingest proprietary material without linking back to you."});
-  if(!ins.length) return null;
-  return <div style={{background:C.blackCard,border:`1px solid ${C.redBorder}`,padding:24,marginBottom:20}}>
-    <h3 style={{margin:"0 0 20px 0",fontSize:14,fontWeight:800,color:C.red,fontFamily:display,textTransform:"uppercase",letterSpacing:1}}>Cross-Reference Intelligence</h3>
-    <div style={{display:"flex",flexDirection:"column",gap:16}}>{ins.map((i,idx)=><div key={idx} style={{borderLeft:`3px solid ${i.l==="CRITICAL"?C.red:C.amber}`,paddingLeft:16}}>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}><span style={{fontSize:9,fontWeight:800,fontFamily:mono,letterSpacing:1.5,color:i.l==="CRITICAL"?C.red:C.amber}}>{i.l}</span>
-      <span style={{fontSize:14,fontWeight:700,color:C.white,fontFamily:body}}>{i.t}</span></div>
-      <p style={{margin:0,fontSize:13,color:C.gray,lineHeight:1.65,fontFamily:body}}>{i.b}</p></div>)}</div></div>;
+  if (!data) return null;
+  try {
+    const sec=data.security_roots;const geo=data.visibility_canopy.geo_branch;const ins=[];
+    if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy==="PERMISSIVE") ins.push({l:"CRITICAL",t:"AI Crawl Gap",b:"Robots.txt is permissive with no llms.txt file. AI scrapers can ingest your content without citation guidance."});
+    if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy!=="RESTRICTIVE") ins.push({l:"WARNING",t:"No LLMs.txt",b:"No llms.txt discovery file found. Your content may be summarized by AI engines but never cited as a source."});
+    if((sec.application_security.exposed_endpoints||[]).length>0) ins.push({l:"CRITICAL",t:"Exposed Endpoints",b:`${sec.application_security.exposed_endpoints.length} internal path(s) accessible: ${sec.application_security.exposed_endpoints.slice(0,4).join(", ")}${sec.application_security.exposed_endpoints.length>4?" ...":""}`});
+    if(sec.business_logic_gaps?.data_provenance_leak) ins.push({l:"WARNING",t:"Content Provenance Risk",b:"Your content structure allows AI training sets to ingest proprietary material without linking back to you."});
+    if(!ins.length) return null;
+    return <div style={{background:C.blackCard,border:`1px solid ${C.redBorder}`,padding:24,marginBottom:20}}>
+      <h3 style={{margin:"0 0 20px 0",fontSize:14,fontWeight:800,color:C.red,fontFamily:display,textTransform:"uppercase",letterSpacing:1}}>Cross-Reference Intelligence</h3>
+      <div style={{display:"flex",flexDirection:"column",gap:16}}>{ins.map((i,idx)=><div key={idx} style={{borderLeft:`3px solid ${i.l==="CRITICAL"?C.red:C.amber}`,paddingLeft:16}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}><span style={{fontSize:9,fontWeight:800,fontFamily:mono,letterSpacing:1.5,color:i.l==="CRITICAL"?C.red:C.amber}}>{i.l}</span>
+        <span style={{fontSize:14,fontWeight:700,color:C.white,fontFamily:body}}>{i.t}</span></div>
+        <p style={{margin:0,fontSize:13,color:C.gray,lineHeight:1.65,fontFamily:body}}>{i.b}</p></div>)}</div></div>;
+  } catch (e) {
+    return null;
+  }
 }
 function EmailGate({onSubmit,onClose}) {
   const [email,setEmail]=useState("");const [name,setName]=useState("");const [sending,setSending]=useState(false);const ref=useRef(null);
@@ -504,7 +540,7 @@ function MethodologyPage({ onBack }) {
 
       <S><H>Cross-Reference Intelligence</H>
         <P>Not scored numerically. These are qualitative findings surfaced by mapping visibility data against security data. A finding appears only when two conditions from different layers combine to create a gap neither layer would flag independently.</P>
-        <P>Example: llms.txt status MISSING combined with robots.txt policy PERMISSIVE triggers "AI Crawl Gap" because AI scrapers have full access with no citation guidance. An SEO tool would say the robots.txt is valid. A security tool would say there's no vulnerability. Only the cross-reference reveals the problem.</P></S>
+        <P>Example: llms.txt status MISSING combined with robots.txt policy PERMISSIVE triggers "AI Crawl Gap" because AI scrapers have full access with no citation guidance. An SEO tool would say the robots.txt is valid. A security tool would say there is no vulnerability. Only the cross-reference reveals the problem.</P></S>
 
       <S><H>12 Scan Modules</H>
         <P>All modules run in parallel via Promise.all. A full scan completes in 5 to 15 seconds depending on target site response times.</P>
@@ -521,246 +557,304 @@ function MethodologyPage({ onBack }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// MAIN APP
+// REPORT PAGE (extracted as its own component)
+// ═══════════════════════════════════════════════════════════════
+function ReportPage({ report, onReset, onShowMethodology }) {
+  const [showGate, setShowGate] = useState(false);
+  const [leadCaptured, setLeadCaptured] = useState(false);
+  const [capturedEmail, setCapturedEmail] = useState("");
+
+  const handleEmail = useCallback(async (email, name) => {
+    await storeLead(email, report, name);
+    setCapturedEmail(email);
+    setLeadCaptured(true);
+    setShowGate(false);
+    downloadPDF(report, email);
+  }, [report]);
+
+  // Guard: if report is null or malformed, show error state instead of crashing
+  const validReport = safeReport(report);
+  if (!validReport) {
+    return (
+      <div style={{ minHeight: "100vh", background: C.black, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40, fontFamily: body }}>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+        <div style={{ textAlign: "center", maxWidth: 480 }}>
+          <div style={{ fontSize: 48, marginBottom: 16, color: C.red }}>!</div>
+          <h2 style={{ color: C.white, fontSize: 22, fontWeight: 900, fontFamily: display, margin: "0 0 12px 0" }}>Scan completed, but the response was incomplete</h2>
+          <p style={{ color: C.gray, fontSize: 14, lineHeight: 1.6, margin: "0 0 32px 0" }}>
+            The API returned data that was missing required fields. This can happen when the target site blocks requests or times out during certain checks.
+          </p>
+          <button onClick={onReset} style={{ background: C.red, border: "none", color: C.white, fontWeight: 900, fontSize: 14, padding: "16px 36px", cursor: "pointer", letterSpacing: 2, fontFamily: display }}>
+            TRY AGAIN
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const d = validReport;
+  const s = d.summary_scores;
+  const sec = d.security_roots;
+  const overall = +((s.seo_score + s.aeo_score + s.geo_score + s.security_posture_score) / 4).toFixed(2);
+  const overallPct = Math.round(overall * 100);
+  const actions = getTopActions(d);
+  const compliance = getComplianceChecks(d);
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.black, fontFamily: body, color: C.white }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+      {showGate && <EmailGate onSubmit={handleEmail} onClose={() => setShowGate(false)} />}
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 24px", borderBottom: `1px solid ${C.blackBorder}` }}>
+        <span style={{ fontSize: 14, fontWeight: 900, fontFamily: display, cursor: "pointer" }} onClick={onReset}>CANOPY<span style={{ color: C.red }}>GUARD</span></span>
+        <div style={{ display: "flex", gap: 8 }}>
+          {!leadCaptured ? <button onClick={() => setShowGate(true)} style={{ background: C.red, border: "none", color: C.white, padding: "6px 14px", fontSize: 11, fontWeight: 800, cursor: "pointer", letterSpacing: 1.5 }}>GET REPORT</button>
+            : <button onClick={() => downloadPDF(report, capturedEmail)} style={{ background: "transparent", border: `1px solid ${C.green}`, color: C.green, padding: "6px 14px", fontSize: 11, fontWeight: 800, cursor: "pointer", fontFamily: mono }}>↓ PDF</button>}
+          <button onClick={onShowMethodology} style={{ background: "transparent", border: `1px solid ${C.blackBorder}`, color: C.grayDark, padding: "6px 14px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: mono, letterSpacing: 1 }}>DOCS</button>
+          <button onClick={onReset} style={{ background: "transparent", border: `1px solid ${C.blackBorder}`, color: C.gray, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>New Scan</button></div></div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px" }}>
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ color: C.grayDark, fontSize: 10, fontFamily: mono, letterSpacing: 2, margin: "0 0 8px 0" }}>AUDIT REPORT</p>
+          <h1 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 900, margin: "0 0 4px 0", fontFamily: display, letterSpacing: -1 }}>{d.target_domain}</h1>
+          <p style={{ color: C.grayDark, fontSize: 11, fontFamily: mono, margin: 0 }}>{new Date(d.timestamp).toLocaleString()} · {d.audit_id.slice(0, 8)} · {d.scan_duration_ms}ms</p>
+        </div>
+
+        {actions.length > 0 && <div style={{ marginBottom: 24, padding: 24, background: C.blackCard, border: `1px solid ${C.redBorder}` }}>
+          <h3 style={{ fontSize: 14, fontWeight: 800, color: C.red, fontFamily: display, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 16px 0" }}>Top Actions</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {actions.map((a, i) => <ActionItem key={i} action={a} index={i} />)}</div></div>}
+
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", flexWrap: "wrap", gap: 40, padding: "40px 24px", marginBottom: 24, border: `1px solid ${C.blackBorder}`, background: C.blackCard }}>
+          <div style={{ textAlign: "center" }}><div style={{ fontSize: 72, fontWeight: 900, fontFamily: mono, color: scoreColor(overallPct), lineHeight: 1 }}>{overallPct}</div>
+            <div style={{ fontSize: 9, fontWeight: 800, color: C.gray, letterSpacing: 2, marginTop: 8 }}>OVERALL</div></div>
+          <div style={{ width: 1, height: 60, background: C.blackBorder }} />
+          <ScoreBlock score={s.seo_score} label="SEO" delay={200} /><ScoreBlock score={s.aeo_score} label="AEO" delay={400} />
+          <ScoreBlock score={s.geo_score} label="GEO" delay={600} /><ScoreBlock score={s.security_posture_score} label="SECURITY" delay={800} />
+        </div>
+
+        <Insights data={d} />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16, marginBottom: 20 }}>
+          <Section title="SEO" tag="CANOPY" desc="How search engines crawl, index, and rank your site.">
+            <Row label="Crawlable" good={d.visibility_canopy.seo_branch.crawlability} />
+            <Row label="H1 Tags" value={d.visibility_canopy.seo_branch.html_structure.h1_count} />
+            <Row label="Meta Descriptions" good={!d.visibility_canopy.seo_branch.html_structure.missing_meta_descriptions} snippet="meta_desc" />
+            <Row label="Canonical Match" good={d.visibility_canopy.seo_branch.html_structure.canonical_match} snippet="canonical" />
+            <Row label="Link Depth" value={`${d.visibility_canopy.seo_branch.internal_linking_depth} clicks`} />
+            {d.visibility_canopy.seo_branch.html_structure.title && <Row label="Page Title" value={d.visibility_canopy.seo_branch.html_structure.title.slice(0, 40)} />}
+          </Section>
+          <Section title="AEO" tag="CANOPY" desc="How well AI answer engines can extract and cite your content.">
+            <Row label="FAQ Schema" good={d.visibility_canopy.aeo_branch.schema_validation.has_faq_json_ld} snippet="faq_schema" />
+            <Row label="Org Schema" good={d.visibility_canopy.aeo_branch.schema_validation.has_organization_json_ld} snippet="org_schema" />
+            <Row label="Any JSON-LD" good={d.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld} />
+            <Row label="Validation Errors" value={d.visibility_canopy.aeo_branch.schema_validation.validation_errors.length || "None"} />
+            <Row label="Q&A Density" value={`${(d.visibility_canopy.aeo_branch.qa_density_score * 100).toFixed(0)}%`} />
+          </Section>
+          <Section title="GEO" tag="CANOPY" desc="How generative AI models chunk, cite, and surface your pages.">
+            <Row label="Chunking Efficiency" value={`${(d.visibility_canopy.geo_branch.chunking_efficiency * 100).toFixed(0)}%`} />
+            <Row label="Citation Precision" value={`${(d.visibility_canopy.geo_branch.citation_metrics.precision_rate * 100).toFixed(0)}%`} />
+            <Row label="Market Share Gap" value={`${(d.visibility_canopy.geo_branch.citation_metrics.market_share_gap * 100).toFixed(0)}%`} />
+            <Row label="llms.txt" good={d.visibility_canopy.geo_branch.llms_txt_status === "PRESENT_ROOT"} snippet="llms_txt" />
+          </Section>
+          <Section title="Security" tag="ROOTS" desc="The headers, certificates, and configurations protecting your infrastructure.">
+            <Row label="TLS Valid" good={sec.tls?.valid} />
+            <Row label="HSTS" good={sec.tls?.hsts} snippet="hsts" />
+            <Row label="HTTPS Redirect" good={sec.tls?.redirectsToHttps} />
+            <Row label="Robots Policy" value={sec.ai_crawl_risk.robots_policy} />
+            <Row label="Agent Spoofing" good={!sec.ai_crawl_risk.spoofed_agent_vulnerability} />
+            <Row label="Rate Limiting" good={sec.ai_crawl_risk.rate_limiting_active} />
+            <Row label="Exposed Endpoints" value={(sec.application_security.exposed_endpoints || []).length || "None"} />
+            <Row label="Missing Headers" value={(sec.application_security.missing_secure_headers || []).length || "None"} />
+            <Row label="Known CVEs" value={(sec.application_security.vulnerabilities || []).length || "None"} />
+          </Section>
+        </div>
+
+        <div style={{ padding: 24, background: C.blackCard, border: `1px solid ${C.blackBorder}`, marginBottom: 20 }}>
+          <h4 style={{ fontSize: 12, fontWeight: 800, color: C.white, fontFamily: display, textTransform: "uppercase", letterSpacing: 1, margin: "0 0 16px 0" }}>Compliance Quick Check</h4>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 8 }}>
+            {compliance.map(c => <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: c.pass ? C.greenGlow : C.redGlow, border: `1px solid ${c.pass ? C.green : C.red}22` }}>
+              <span style={{ fontFamily: mono, fontSize: 11, fontWeight: 800, color: c.pass ? C.green : C.red }}>{c.pass ? "✓" : "✗"}</span>
+              <span style={{ fontSize: 12, color: C.muted }}>{c.label}</span></div>)}</div></div>
+
+        {(sec.application_security.missing_secure_headers || []).length > 0 && <div style={{ padding: 20, background: C.blackCard, border: `1px solid ${C.blackBorder}`, marginBottom: 20 }}>
+          <h4 style={{ margin: "0 0 12px 0", fontSize: 12, fontWeight: 800, color: C.red, letterSpacing: 1, textTransform: "uppercase" }}>Missing Headers</h4>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+            {sec.application_security.missing_secure_headers.map(h => <code key={h} style={{ padding: "4px 10px", fontSize: 11, fontFamily: mono, fontWeight: 600, background: C.redGlow, color: C.red, border: `1px solid ${C.red}33` }}>{h}</code>)}</div>
+          {sec.application_security.missing_secure_headers.map(h => {
+            const key = HEADER_SNIPPET_MAP[h];
+            return key && FIX_SNIPPETS[key] ? <FixSnippet key={h} snippet={FIX_SNIPPETS[key]} /> : null;
+          })}
+        </div>}
+
+        <div style={{ textAlign: "center", padding: 48, background: C.blackCard, border: `1px solid ${C.blackBorder}`, marginBottom: 32 }}>
+          {!leadCaptured ? <>
+            <h2 style={{ fontSize: 28, fontWeight: 900, margin: "0 0 8px 0", fontFamily: display }}>Get your full <span style={{ color: C.red }}>report</span></h2>
+            <p style={{ color: C.gray, fontSize: 14, margin: "0 0 28px 0", maxWidth: 440, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
+              Download a PDF with your complete audit, top actions, and compliance check. We will prepare your results for a free walkthrough.</p>
+            <button onClick={() => setShowGate(true)} style={{ background: C.red, color: C.white, border: "none", fontWeight: 900, fontSize: 14, padding: "18px 44px", letterSpacing: 2, cursor: "pointer", fontFamily: display }}
+              onMouseEnter={e => e.target.style.background = C.redDark} onMouseLeave={e => e.target.style.background = C.red}>GET YOUR REPORT</button>
+          </> : <>
+            <div style={{ fontSize: 36, marginBottom: 12, color: C.green }}>✓</div>
+            <h2 style={{ fontSize: 28, fontWeight: 900, margin: "0 0 8px 0", fontFamily: display }}>Report delivered to <span style={{ color: C.red }}>{capturedEmail}</span></h2>
+            <p style={{ color: C.gray, fontSize: 14, margin: "0 0 28px 0", maxWidth: 460, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
+              We have your results. Every finding is something we resolve for clients every week. Book a free 30-minute walkthrough.</p>
+            <a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-block", background: C.red, color: C.white, fontWeight: 900, fontSize: 14, padding: "18px 44px", textDecoration: "none", letterSpacing: 2, fontFamily: display }}
+              onMouseEnter={e => e.target.style.background = C.redDark} onMouseLeave={e => e.target.style.background = C.red}>BOOK A FREE WALKTHROUGH</a>
+            <div style={{ marginTop: 16 }}><button onClick={() => downloadPDF(report, capturedEmail)} style={{ background: "transparent", border: "none", color: C.gray, fontSize: 12, cursor: "pointer", fontFamily: mono, textDecoration: "underline" }}>Download PDF again</button></div>
+          </>}
+          <p style={{ color: C.grayDark, fontSize: 11, marginTop: 24, fontFamily: mono }}>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</p>
+        </div>
+
+        <div style={{ textAlign: "center", padding: "20px 0", borderTop: `1px solid ${C.blackBorder}` }}>
+          <p style={{ fontSize: 11, color: C.grayDark, margin: 0 }}>Canopy Guard · Built by Soulful Tech™ · merakislove.com</p></div>
+      </div></div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN APP (thin router, no report destructuring at top level)
 // ═══════════════════════════════════════════════════════════════
 export default function CanopyGuard() {
-  const [domain,setDomain]=useState("");const [phase,setPhase]=useState("landing");const [scanIndex,setScanIndex]=useState(0);
-  const [report,setReport]=useState(null);const [scanError,setScanError]=useState("");
-  const [showGate,setShowGate]=useState(false);const [leadCaptured,setLeadCaptured]=useState(false);const [capturedEmail,setCapturedEmail]=useState("");
-  const [showMethodology,setShowMethodology]=useState(false);
-  const ref=useRef(null);
+  const [domain, setDomain] = useState("");
+  const [phase, setPhase] = useState("landing");
+  const [scanIndex, setScanIndex] = useState(0);
+  const [report, setReport] = useState(null);
+  const [scanError, setScanError] = useState("");
+  const [showMethodology, setShowMethodology] = useState(false);
+  const ref = useRef(null);
 
   if (showMethodology) return <MethodologyPage onBack={() => setShowMethodology(false)} />;
 
-  const startScan=async(scanDomain)=>{
-    const cleaned=(scanDomain||domain).replace(/^https?:\/\//,"").replace(/\/+$/,"").trim();if(!cleaned)return;
-    setDomain(cleaned);setPhase("scanning");setScanIndex(0);setScanError("");
-    let idx=0;const ticker=setInterval(()=>{if(idx<PHASES.length-1){idx++;setScanIndex(idx);}},600);
-    try{const res=await fetch(`${API}/api/scan`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:cleaned})});
-      clearInterval(ticker);if(!res.ok){const err=await res.json();throw new Error(err.error||"Scan failed");}
-      const data=await res.json();setScanIndex(PHASES.length-1);setTimeout(()=>{setReport(data);setPhase("report");},500);
-    }catch(err){clearInterval(ticker);setScanError(err.message||"Scan failed.");setTimeout(()=>setPhase("landing"),3000);}};
+  const startScan = async (scanDomain) => {
+    const cleaned = (scanDomain || domain).replace(/^https?:\/\//, "").replace(/\/+$/, "").trim();
+    if (!cleaned) return;
+    setDomain(cleaned); setPhase("scanning"); setScanIndex(0); setScanError(""); setReport(null);
+    let idx = 0;
+    const ticker = setInterval(() => { if (idx < PHASES.length - 1) { idx++; setScanIndex(idx); } }, 600);
+    try {
+      const res = await fetch(`${API}/api/scan`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ domain: cleaned }) });
+      clearInterval(ticker);
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || "Scan failed"); }
+      const data = await res.json();
+      // Validate response has required structure before setting phase
+      if (!safeReport(data)) {
+        throw new Error("Incomplete scan response. The target site may have blocked the scan or timed out.");
+      }
+      setScanIndex(PHASES.length - 1);
+      // Set report FIRST, then phase on next tick so React never renders report phase with null report
+      setReport(data);
+      setTimeout(() => { setPhase("report"); }, 100);
+    } catch (err) {
+      clearInterval(ticker);
+      setScanError(err.message || "Scan failed.");
+      setTimeout(() => setPhase("landing"), 3000);
+    }
+  };
 
-  const reset=()=>{setPhase("landing");setDomain("");setReport(null);setLeadCaptured(false);setCapturedEmail("");setShowGate(false);setScanError("");};
-  const handleEmail=useCallback(async(email,name)=>{await storeLead(email,report,name);setCapturedEmail(email);setLeadCaptured(true);setShowGate(false);downloadPDF(report,email);},[report]);
+  const reset = () => { setPhase("landing"); setDomain(""); setReport(null); setScanError(""); setShowMethodology(false); };
 
   // ═══ LANDING ═══
-  if(phase==="landing") {
-    return <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
-      <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 32px",maxWidth:1200,margin:"0 auto"}}>
-        <span style={{fontSize:18,fontWeight:900,fontFamily:display,letterSpacing:-0.5}}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
-        <div style={{display:"flex",gap:20,alignItems:"center"}}>
-          <button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:"none",color:C.grayDark,fontSize:12,fontFamily:mono,cursor:"pointer",letterSpacing:1}}>METHODOLOGY</button>
-          <span style={{fontSize:12,color:C.dim}}>|</span>
-          <span style={{fontSize:12,color:C.grayDark,fontFamily:mono,letterSpacing:1}}>BY SOULFUL TECH</span>
+  if (phase === "landing") {
+    return <div style={{ minHeight: "100vh", background: C.black, fontFamily: body, color: C.white }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 32px", maxWidth: 1200, margin: "0 auto" }}>
+        <span style={{ fontSize: 18, fontWeight: 900, fontFamily: display, letterSpacing: -0.5 }}>CANOPY<span style={{ color: C.red }}>GUARD</span></span>
+        <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          <button onClick={() => setShowMethodology(true)} style={{ background: "transparent", border: "none", color: C.grayDark, fontSize: 12, fontFamily: mono, cursor: "pointer", letterSpacing: 1 }}>METHODOLOGY</button>
+          <span style={{ fontSize: 12, color: C.dim }}>|</span>
+          <span style={{ fontSize: 12, color: C.grayDark, fontFamily: mono, letterSpacing: 1 }}>BY SOULFUL TECH</span>
         </div>
       </nav>
 
-      <section style={{textAlign:"center",padding:"100px 24px 80px",maxWidth:800,margin:"0 auto"}}>
-        <div style={{display:"inline-block",padding:"6px 16px",marginBottom:24,border:`1px solid ${C.redBorder}`,background:C.redGlow}}>
-          <span style={{fontSize:11,fontWeight:700,color:C.red,fontFamily:mono,letterSpacing:1.5}}>FREE AUDIT TOOL</span>
+      <section style={{ textAlign: "center", padding: "100px 24px 80px", maxWidth: 800, margin: "0 auto" }}>
+        <div style={{ display: "inline-block", padding: "6px 16px", marginBottom: 24, border: `1px solid ${C.redBorder}`, background: C.redGlow }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: C.red, fontFamily: mono, letterSpacing: 1.5 }}>FREE AUDIT TOOL</span>
         </div>
-        <h1 style={{fontSize:"clamp(40px,7vw,72px)",fontWeight:900,fontFamily:display,lineHeight:1.05,letterSpacing:-3,margin:"0 0 24px 0"}}>
-          Your site is either<br/><span style={{color:C.red}}>discoverable and defended</span>,<br/>or it's not.
+        <h1 style={{ fontSize: "clamp(40px,7vw,72px)", fontWeight: 900, fontFamily: display, lineHeight: 1.05, letterSpacing: -3, margin: "0 0 24px 0" }}>
+          Your site is either<br /><span style={{ color: C.red }}>discoverable and defended</span>,<br />or it's not.
         </h1>
-        <p style={{fontSize:18,color:C.muted,lineHeight:1.7,maxWidth:560,margin:"0 auto 48px auto",fontFamily:body}}>
+        <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.7, maxWidth: 560, margin: "0 auto 48px auto", fontFamily: body }}>
           Canopy Guard scans visibility across SEO, AEO, and GEO layers while auditing your security posture. One scan. One report. No guesswork.
         </p>
-        <div style={{display:"flex",maxWidth:560,margin:"0 auto",border:`2px solid ${C.blackBorder}`,background:C.blackLight}}>
-          <input ref={ref} type="text" value={domain} onChange={e=>setDomain(e.target.value)} onKeyDown={e=>e.key==="Enter"&&startScan()}
-            placeholder="yourdomain.com" style={{flex:1,background:"transparent",border:"none",outline:"none",color:C.white,fontSize:16,padding:"20px 24px",fontFamily:mono}}/>
-          <button onClick={()=>startScan()} style={{background:C.red,border:"none",color:C.white,fontWeight:900,fontSize:14,padding:"20px 36px",cursor:"pointer",letterSpacing:2,fontFamily:display}}
-            onMouseEnter={e=>e.target.style.background=C.redDark} onMouseLeave={e=>e.target.style.background=C.red}>SCAN</button>
+        <div style={{ display: "flex", maxWidth: 560, margin: "0 auto", border: `2px solid ${C.blackBorder}`, background: C.blackLight }}>
+          <input ref={ref} type="text" value={domain} onChange={e => setDomain(e.target.value)} onKeyDown={e => e.key === "Enter" && startScan()}
+            placeholder="yourdomain.com" style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: C.white, fontSize: 16, padding: "20px 24px", fontFamily: mono }} />
+          <button onClick={() => startScan()} style={{ background: C.red, border: "none", color: C.white, fontWeight: 900, fontSize: 14, padding: "20px 36px", cursor: "pointer", letterSpacing: 2, fontFamily: display }}
+            onMouseEnter={e => e.target.style.background = C.redDark} onMouseLeave={e => e.target.style.background = C.red}>SCAN</button>
         </div>
-        <p style={{color:C.grayDark,fontSize:12,marginTop:16,fontFamily:mono}}>Free. No signup. Results in under 15 seconds.</p>
-        {/* SAMPLE AUDIT LINK */}
-        <p style={{marginTop:8}}><button onClick={()=>startScan("merakislove.com")} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,fontFamily:mono,cursor:"pointer",textDecoration:"underline"}}>
+        <p style={{ color: C.grayDark, fontSize: 12, marginTop: 16, fontFamily: mono }}>Free. No signup. Results in under 15 seconds.</p>
+        <p style={{ marginTop: 8 }}><button onClick={() => startScan("merakislove.com")} style={{ background: "transparent", border: "none", color: C.gray, fontSize: 12, fontFamily: mono, cursor: "pointer", textDecoration: "underline" }}>
           Don't have a domain handy? View a sample report for merakislove.com</button></p>
-        {scanError&&<p style={{color:C.red,fontSize:13,marginTop:12,fontFamily:mono}}>{scanError}</p>}
+        {scanError && <p style={{ color: C.red, fontSize: 13, marginTop: 12, fontFamily: mono }}>{scanError}</p>}
       </section>
 
-      <section style={{padding:"80px 24px",maxWidth:1100,margin:"0 auto"}}>
-        <div style={{textAlign:"center",marginBottom:56}}>
-          <h2 style={{fontSize:32,fontWeight:900,fontFamily:display,letterSpacing:-1,margin:"0 0 12px 0"}}>What Canopy Guard <span style={{color:C.red}}>checks</span></h2>
-          <p style={{fontSize:15,color:C.gray,maxWidth:520,margin:"0 auto",lineHeight:1.6}}>Most tools audit one layer. We scan three and cross-reference the gaps between them.</p>
+      <section style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <h2 style={{ fontSize: 32, fontWeight: 900, fontFamily: display, letterSpacing: -1, margin: "0 0 12px 0" }}>What Canopy Guard <span style={{ color: C.red }}>checks</span></h2>
+          <p style={{ fontSize: 15, color: C.gray, maxWidth: 520, margin: "0 auto", lineHeight: 1.6 }}>Most tools audit one layer. We scan three and cross-reference the gaps between them.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:20}}>
-          <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:32}}>
-            <div style={{fontSize:10,fontWeight:800,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:16,padding:"4px 10px",border:`1px solid ${C.redBorder}`,display:"inline-block"}}>CANOPY</div>
-            <h3 style={{fontSize:20,fontWeight:900,fontFamily:display,margin:"0 0 12px 0"}}>Visibility</h3>
-            <p style={{fontSize:13,color:C.gray,lineHeight:1.7,margin:"0 0 20px 0"}}>How search engines, answer engines, and generative AI discover and present your content.</p>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {["SEO: crawlability, H1s, meta, canonicals","AEO: schema markup, FAQ JSON-LD, Q&A density","GEO: chunking efficiency, citation precision, llms.txt"].map(t=>
-                <div key={t} style={{fontSize:12,color:C.muted,fontFamily:mono,paddingLeft:12,borderLeft:`2px solid ${C.blackBorder}`}}>{t}</div>)}</div></div>
-          <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:32}}>
-            <div style={{fontSize:10,fontWeight:800,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:16,padding:"4px 10px",border:`1px solid ${C.redBorder}`,display:"inline-block"}}>ROOTS</div>
-            <h3 style={{fontSize:20,fontWeight:900,fontFamily:display,margin:"0 0 12px 0"}}>Security</h3>
-            <p style={{fontSize:13,color:C.gray,lineHeight:1.7,margin:"0 0 20px 0"}}>The infrastructure, headers, and configurations that protect your site and your visitors.</p>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {["TLS certificates, HSTS, HTTPS redirect","Security headers: CSP, X-Frame, Referrer-Policy","Exposed endpoints, AI crawl policy, rate limiting"].map(t=>
-                <div key={t} style={{fontSize:12,color:C.muted,fontFamily:mono,paddingLeft:12,borderLeft:`2px solid ${C.blackBorder}`}}>{t}</div>)}</div></div>
-          <div style={{background:C.blackCard,border:`1px solid ${C.redBorder}`,padding:32}}>
-            <div style={{fontSize:10,fontWeight:800,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:16,padding:"4px 10px",border:`1px solid ${C.redBorder}`,display:"inline-block"}}>INTELLIGENCE</div>
-            <h3 style={{fontSize:20,fontWeight:900,fontFamily:display,margin:"0 0 12px 0"}}>Cross-Reference</h3>
-            <p style={{fontSize:13,color:C.gray,lineHeight:1.7,margin:"0 0 20px 0"}}>The gaps that only appear when you map visibility data against security data in the same scan.</p>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {["AI scraping without citation guidance","Exposed API routes indexed by RAG parsers","Content provenance leaks to training sets"].map(t=>
-                <div key={t} style={{fontSize:12,color:C.muted,fontFamily:mono,paddingLeft:12,borderLeft:`2px solid ${C.red}44`}}>{t}</div>)}</div></div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20 }}>
+          <div style={{ background: C.blackCard, border: `1px solid ${C.blackBorder}`, padding: 32 }}>
+            <div style={{ fontSize: 10, fontWeight: 800, fontFamily: mono, color: C.red, letterSpacing: 2, marginBottom: 16, padding: "4px 10px", border: `1px solid ${C.redBorder}`, display: "inline-block" }}>CANOPY</div>
+            <h3 style={{ fontSize: 20, fontWeight: 900, fontFamily: display, margin: "0 0 12px 0" }}>Visibility</h3>
+            <p style={{ fontSize: 13, color: C.gray, lineHeight: 1.7, margin: "0 0 20px 0" }}>How search engines, answer engines, and generative AI discover and present your content.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {["SEO: crawlability, H1s, meta, canonicals", "AEO: schema markup, FAQ JSON-LD, Q&A density", "GEO: chunking efficiency, citation precision, llms.txt"].map(t =>
+                <div key={t} style={{ fontSize: 12, color: C.muted, fontFamily: mono, paddingLeft: 12, borderLeft: `2px solid ${C.blackBorder}` }}>{t}</div>)}</div></div>
+          <div style={{ background: C.blackCard, border: `1px solid ${C.blackBorder}`, padding: 32 }}>
+            <div style={{ fontSize: 10, fontWeight: 800, fontFamily: mono, color: C.red, letterSpacing: 2, marginBottom: 16, padding: "4px 10px", border: `1px solid ${C.redBorder}`, display: "inline-block" }}>ROOTS</div>
+            <h3 style={{ fontSize: 20, fontWeight: 900, fontFamily: display, margin: "0 0 12px 0" }}>Security</h3>
+            <p style={{ fontSize: 13, color: C.gray, lineHeight: 1.7, margin: "0 0 20px 0" }}>The infrastructure, headers, and configurations that protect your site and your visitors.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {["TLS certificates, HSTS, HTTPS redirect", "Security headers: CSP, X-Frame, Referrer-Policy", "Exposed endpoints, AI crawl policy, rate limiting"].map(t =>
+                <div key={t} style={{ fontSize: 12, color: C.muted, fontFamily: mono, paddingLeft: 12, borderLeft: `2px solid ${C.blackBorder}` }}>{t}</div>)}</div></div>
+          <div style={{ background: C.blackCard, border: `1px solid ${C.redBorder}`, padding: 32 }}>
+            <div style={{ fontSize: 10, fontWeight: 800, fontFamily: mono, color: C.red, letterSpacing: 2, marginBottom: 16, padding: "4px 10px", border: `1px solid ${C.redBorder}`, display: "inline-block" }}>INTELLIGENCE</div>
+            <h3 style={{ fontSize: 20, fontWeight: 900, fontFamily: display, margin: "0 0 12px 0" }}>Cross-Reference</h3>
+            <p style={{ fontSize: 13, color: C.gray, lineHeight: 1.7, margin: "0 0 20px 0" }}>The gaps that only appear when you map visibility data against security data in the same scan.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {["AI scraping without citation guidance", "Exposed API routes indexed by RAG parsers", "Content provenance leaks to training sets"].map(t =>
+                <div key={t} style={{ fontSize: 12, color: C.muted, fontFamily: mono, paddingLeft: 12, borderLeft: `2px solid ${C.red}44` }}>{t}</div>)}</div></div>
         </div>
       </section>
 
-      <section style={{padding:"60px 24px 80px",maxWidth:800,margin:"0 auto",textAlign:"center"}}>
-        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:32,marginBottom:40}}>
-          {[{n:"CISSP",d:"Certified Information Systems Security Professional"},{n:"12+",d:"Production apps audited and deployed"},{n:"5",d:"Active SaaS products in production"}].map(b=>
-            <div key={b.n} style={{textAlign:"center"}}>
-              <div style={{fontSize:28,fontWeight:900,fontFamily:mono,color:C.red}}>{b.n}</div>
-              <div style={{fontSize:11,color:C.grayDark,maxWidth:180,marginTop:4}}>{b.d}</div></div>)}</div>
-        <p style={{fontSize:14,color:C.gray,lineHeight:1.7,maxWidth:520,margin:"0 auto"}}>
+      <section style={{ padding: "60px 24px 80px", maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 32, marginBottom: 40 }}>
+          {[{ n: "CISSP", d: "Certified Information Systems Security Professional" }, { n: "12+", d: "Production apps audited and deployed" }, { n: "5", d: "Active SaaS products in production" }].map(b =>
+            <div key={b.n} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 28, fontWeight: 900, fontFamily: mono, color: C.red }}>{b.n}</div>
+              <div style={{ fontSize: 11, color: C.grayDark, maxWidth: 180, marginTop: 4 }}>{b.d}</div></div>)}</div>
+        <p style={{ fontSize: 14, color: C.gray, lineHeight: 1.7, maxWidth: 520, margin: "0 auto" }}>
           Built by Adam McClarin, a CISSP-certified engineer who builds, deploys, and secures production applications every day. Not a theoretical tool. A practical one, built from real audit work across real client sites.</p>
       </section>
 
-      <footer style={{borderTop:`1px solid ${C.blackBorder}`,padding:"24px 32px",textAlign:"center"}}>
-        <p style={{fontSize:11,color:C.grayDark,margin:0}}>Canopy Guard · Built by <span style={{color:C.white,fontWeight:700}}>Soulful Tech™</span> · Meraki is Love, LLC · merakislove.com</p>
+      <footer style={{ borderTop: `1px solid ${C.blackBorder}`, padding: "24px 32px", textAlign: "center" }}>
+        <p style={{ fontSize: 11, color: C.grayDark, margin: 0 }}>Canopy Guard · Built by <span style={{ color: C.white, fontWeight: 700 }}>Soulful Tech™</span> · Meraki is Love, LLC · merakislove.com</p>
       </footer>
     </div>;
   }
 
   // ═══ SCANNING ═══
-  if(phase==="scanning") {
-    return <div style={{minHeight:"100vh",background:C.black,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,fontFamily:body}}>
-      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
-      <div style={{maxWidth:440,width:"100%",textAlign:"left"}}>
-        <h2 style={{color:C.white,fontSize:18,fontWeight:900,margin:"0 0 4px 0",fontFamily:display}}>Scanning <span style={{color:C.red}}>{domain}</span></h2>
-        <p style={{color:C.gray,fontSize:13,fontFamily:mono,margin:"0 0 32px 0"}}>{PHASES[scanIndex]}...</p>
-        <div style={{width:"100%",height:2,background:C.blackBorder,marginBottom:32}}><div style={{height:"100%",width:`${((scanIndex+1)/PHASES.length)*100}%`,background:C.red,transition:"width 0.3s ease"}}/></div>
-        <div style={{display:"flex",flexDirection:"column",gap:2}}>
-          {PHASES.map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"7px 0",opacity:i<=scanIndex?1:0.25,transition:"opacity 0.3s"}}>
-            <span style={{fontFamily:mono,fontSize:11,color:i<scanIndex?C.green:i===scanIndex?C.red:C.grayDark,width:16}}>{i<scanIndex?"✓":i===scanIndex?"▸":"·"}</span>
-            <span style={{fontSize:13,color:i<=scanIndex?C.muted:C.grayDark}}>{p}</span></div>)}</div></div></div>;
+  if (phase === "scanning") {
+    return <div style={{ minHeight: "100vh", background: C.black, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 40, fontFamily: body }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+      <div style={{ maxWidth: 440, width: "100%", textAlign: "left" }}>
+        <h2 style={{ color: C.white, fontSize: 18, fontWeight: 900, margin: "0 0 4px 0", fontFamily: display }}>Scanning <span style={{ color: C.red }}>{domain}</span></h2>
+        <p style={{ color: C.gray, fontSize: 13, fontFamily: mono, margin: "0 0 32px 0" }}>{PHASES[scanIndex]}...</p>
+        <div style={{ width: "100%", height: 2, background: C.blackBorder, marginBottom: 32 }}><div style={{ height: "100%", width: `${((scanIndex + 1) / PHASES.length) * 100}%`, background: C.red, transition: "width 0.3s ease" }} /></div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {PHASES.map((p, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "7px 0", opacity: i <= scanIndex ? 1 : 0.25, transition: "opacity 0.3s" }}>
+            <span style={{ fontFamily: mono, fontSize: 11, color: i < scanIndex ? C.green : i === scanIndex ? C.red : C.grayDark, width: 16 }}>{i < scanIndex ? "✓" : i === scanIndex ? "▸" : "·"}</span>
+            <span style={{ fontSize: 13, color: i <= scanIndex ? C.muted : C.grayDark }}>{p}</span></div>)}</div></div></div>;
   }
 
   // ═══ REPORT ═══
-  const d=report;const s=d.summary_scores;const sec=d.security_roots;
-  const overall=+((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4).toFixed(2);
-  const overallPct=Math.round(overall*100);
-  const actions=getTopActions(d);
-  const compliance=getComplianceChecks(d);
-  const fixes=getFixSnippets(d);
+  if (phase === "report") {
+    return <ReportPage report={report} onReset={reset} onShowMethodology={() => setShowMethodology(true)} />;
+  }
 
-  return <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
-    {showGate&&<EmailGate onSubmit={handleEmail} onClose={()=>setShowGate(false)}/>}
-
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}>
-      <span style={{fontSize:14,fontWeight:900,fontFamily:display,cursor:"pointer"}} onClick={reset}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
-      <div style={{display:"flex",gap:8}}>
-        {!leadCaptured?<button onClick={()=>setShowGate(true)} style={{background:C.red,border:"none",color:C.white,padding:"6px 14px",fontSize:11,fontWeight:800,cursor:"pointer",letterSpacing:1.5}}>GET REPORT</button>
-          :<button onClick={()=>downloadPDF(report,capturedEmail)} style={{background:"transparent",border:`1px solid ${C.green}`,color:C.green,padding:"6px 14px",fontSize:11,fontWeight:800,cursor:"pointer",fontFamily:mono}}>↓ PDF</button>}
-        <button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.grayDark,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,letterSpacing:1}}>DOCS</button>
-        <button onClick={reset} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,padding:"6px 14px",fontSize:12,fontWeight:700,cursor:"pointer"}}>New Scan</button></div></div>
-
-    <div style={{maxWidth:900,margin:"0 auto",padding:"32px 20px"}}>
-      <div style={{marginBottom:32}}>
-        <p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px 0"}}>AUDIT REPORT</p>
-        <h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:900,margin:"0 0 4px 0",fontFamily:display,letterSpacing:-1}}>{d.target_domain}</h1>
-        <p style={{color:C.grayDark,fontSize:11,fontFamily:mono,margin:0}}>{new Date(d.timestamp).toLocaleString()} · {d.audit_id.slice(0,8)} · {d.scan_duration_ms}ms</p>
-      </div>
-
-      {/* Top Actions with expandable snippets */}
-      {actions.length>0&&<div style={{marginBottom:24,padding:24,background:C.blackCard,border:`1px solid ${C.redBorder}`}}>
-        <h3 style={{fontSize:14,fontWeight:800,color:C.red,fontFamily:display,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px 0"}}>Top Actions</h3>
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          {actions.map((a,i)=><ActionItem key={i} action={a} index={i}/>)}</div></div>}
-
-      {/* Scores */}
-      <div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",flexWrap:"wrap",gap:40,padding:"40px 24px",marginBottom:24,border:`1px solid ${C.blackBorder}`,background:C.blackCard}}>
-        <div style={{textAlign:"center"}}><div style={{fontSize:72,fontWeight:900,fontFamily:mono,color:scoreColor(overallPct),lineHeight:1}}>{overallPct}</div>
-          <div style={{fontSize:9,fontWeight:800,color:C.gray,letterSpacing:2,marginTop:8}}>OVERALL</div></div>
-        <div style={{width:1,height:60,background:C.blackBorder}}/>
-        <ScoreBlock score={s.seo_score} label="SEO" delay={200}/><ScoreBlock score={s.aeo_score} label="AEO" delay={400}/>
-        <ScoreBlock score={s.geo_score} label="GEO" delay={600}/><ScoreBlock score={s.security_posture_score} label="SECURITY" delay={800}/>
-      </div>
-
-      <Insights data={d}/>
-
-      {/* Detail Grid with FIX buttons */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16,marginBottom:20}}>
-        <Section title="SEO" tag="CANOPY" desc="How search engines crawl, index, and rank your site.">
-          <Row label="Crawlable" good={d.visibility_canopy.seo_branch.crawlability}/>
-          <Row label="H1 Tags" value={d.visibility_canopy.seo_branch.html_structure.h1_count}/>
-          <Row label="Meta Descriptions" good={!d.visibility_canopy.seo_branch.html_structure.missing_meta_descriptions} snippet="meta_desc"/>
-          <Row label="Canonical Match" good={d.visibility_canopy.seo_branch.html_structure.canonical_match} snippet="canonical"/>
-          <Row label="Link Depth" value={`${d.visibility_canopy.seo_branch.internal_linking_depth} clicks`}/>
-          {d.visibility_canopy.seo_branch.html_structure.title&&<Row label="Page Title" value={d.visibility_canopy.seo_branch.html_structure.title.slice(0,40)}/>}
-        </Section>
-        <Section title="AEO" tag="CANOPY" desc="How well AI answer engines can extract and cite your content.">
-          <Row label="FAQ Schema" good={d.visibility_canopy.aeo_branch.schema_validation.has_faq_json_ld} snippet="faq_schema"/>
-          <Row label="Org Schema" good={d.visibility_canopy.aeo_branch.schema_validation.has_organization_json_ld} snippet="org_schema"/>
-          <Row label="Any JSON-LD" good={d.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld}/>
-          <Row label="Validation Errors" value={d.visibility_canopy.aeo_branch.schema_validation.validation_errors.length||"None"}/>
-          <Row label="Q&A Density" value={`${(d.visibility_canopy.aeo_branch.qa_density_score*100).toFixed(0)}%`}/>
-        </Section>
-        <Section title="GEO" tag="CANOPY" desc="How generative AI models chunk, cite, and surface your pages.">
-          <Row label="Chunking Efficiency" value={`${(d.visibility_canopy.geo_branch.chunking_efficiency*100).toFixed(0)}%`}/>
-          <Row label="Citation Precision" value={`${(d.visibility_canopy.geo_branch.citation_metrics.precision_rate*100).toFixed(0)}%`}/>
-          <Row label="Market Share Gap" value={`${(d.visibility_canopy.geo_branch.citation_metrics.market_share_gap*100).toFixed(0)}%`}/>
-          <Row label="llms.txt" good={d.visibility_canopy.geo_branch.llms_txt_status==="PRESENT_ROOT"} snippet="llms_txt"/>
-        </Section>
-        <Section title="Security" tag="ROOTS" desc="The headers, certificates, and configurations protecting your infrastructure.">
-          <Row label="TLS Valid" good={sec.tls?.valid}/>
-          <Row label="HSTS" good={sec.tls?.hsts} snippet="hsts"/>
-          <Row label="HTTPS Redirect" good={sec.tls?.redirectsToHttps}/>
-          <Row label="Robots Policy" value={sec.ai_crawl_risk.robots_policy}/>
-          <Row label="Agent Spoofing" good={!sec.ai_crawl_risk.spoofed_agent_vulnerability}/>
-          <Row label="Rate Limiting" good={sec.ai_crawl_risk.rate_limiting_active}/>
-          <Row label="Exposed Endpoints" value={(sec.application_security.exposed_endpoints||[]).length||"None"}/>
-          <Row label="Missing Headers" value={(sec.application_security.missing_secure_headers||[]).length||"None"}/>
-          <Row label="Known CVEs" value={(sec.application_security.vulnerabilities||[]).length||"None"}/>
-        </Section>
-      </div>
-
-      {/* Compliance */}
-      <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20}}>
-        <h4 style={{fontSize:12,fontWeight:800,color:C.white,fontFamily:display,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px 0"}}>Compliance Quick Check</h4>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>
-          {compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`}}>
-            <span style={{fontFamily:mono,fontSize:11,fontWeight:800,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span>
-            <span style={{fontSize:12,color:C.muted}}>{c.label}</span></div>)}</div></div>
-
-      {/* Missing Headers with fix snippets */}
-      {(sec.application_security.missing_secure_headers||[]).length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20}}>
-        <h4 style={{margin:"0 0 12px 0",fontSize:12,fontWeight:800,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>Missing Headers</h4>
-        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:12}}>
-          {sec.application_security.missing_secure_headers.map(h=><code key={h} style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`}}>{h}</code>)}</div>
-        {sec.application_security.missing_secure_headers.map(h => {
-          const key = HEADER_SNIPPET_MAP[h];
-          return key && FIX_SNIPPETS[key] ? <FixSnippet key={h} snippet={FIX_SNIPPETS[key]} /> : null;
-        })}
-      </div>}
-
-      {/* CTA */}
-      <div style={{textAlign:"center",padding:48,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:32}}>
-        {!leadCaptured?<>
-          <h2 style={{fontSize:28,fontWeight:900,margin:"0 0 8px 0",fontFamily:display}}>Get your full <span style={{color:C.red}}>report</span></h2>
-          <p style={{color:C.gray,fontSize:14,margin:"0 0 28px 0",maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.6}}>
-            Download a PDF with your complete audit, top actions, and compliance check. We will prepare your results for a free walkthrough.</p>
-          <button onClick={()=>setShowGate(true)} style={{background:C.red,color:C.white,border:"none",fontWeight:900,fontSize:14,padding:"18px 44px",letterSpacing:2,cursor:"pointer",fontFamily:display}}
-            onMouseEnter={e=>e.target.style.background=C.redDark} onMouseLeave={e=>e.target.style.background=C.red}>GET YOUR REPORT</button>
-        </>:<>
-          <div style={{fontSize:36,marginBottom:12,color:C.green}}>✓</div>
-          <h2 style={{fontSize:28,fontWeight:900,margin:"0 0 8px 0",fontFamily:display}}>Report delivered to <span style={{color:C.red}}>{capturedEmail}</span></h2>
-          <p style={{color:C.gray,fontSize:14,margin:"0 0 28px 0",maxWidth:460,marginLeft:"auto",marginRight:"auto",lineHeight:1.6}}>
-            We have your results. Every finding is something we resolve for clients every week. Book a free 30-minute walkthrough.</p>
-          <a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer"
-            style={{display:"inline-block",background:C.red,color:C.white,fontWeight:900,fontSize:14,padding:"18px 44px",textDecoration:"none",letterSpacing:2,fontFamily:display}}
-            onMouseEnter={e=>e.target.style.background=C.redDark} onMouseLeave={e=>e.target.style.background=C.red}>BOOK A FREE WALKTHROUGH</a>
-          <div style={{marginTop:16}}><button onClick={()=>downloadPDF(report,capturedEmail)} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,cursor:"pointer",fontFamily:mono,textDecoration:"underline"}}>Download PDF again</button></div>
-        </>}
-        <p style={{color:C.grayDark,fontSize:11,marginTop:24,fontFamily:mono}}>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</p>
-      </div>
-
-      <div style={{textAlign:"center",padding:"20px 0",borderTop:`1px solid ${C.blackBorder}`}}>
-        <p style={{fontSize:11,color:C.grayDark,margin:0}}>Canopy Guard · Built by Soulful Tech™ · merakislove.com</p></div>
-    </div></div>;
+  // Fallback (should never reach here)
+  return null;
 }

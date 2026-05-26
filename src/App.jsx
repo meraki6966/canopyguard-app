@@ -410,6 +410,21 @@ function Section({title,tag,desc,children}) {
     {desc&&<p style={{fontSize:11,color:C.grayDark,marginBottom:12,lineHeight:1.5,fontFamily:body}}>{desc}</p>}
     {children}</div>;
 }
+function ActionItem({ action, index }) {
+  const [showSnip, setShowSnip] = useState(false);
+  const a = action;
+  return <div>
+    <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
+      <div style={{fontSize:20,fontWeight:900,fontFamily:mono,color:C.red,lineHeight:1,minWidth:24}}>{index+1}</div>
+      <div style={{flex:1}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+          <div style={{fontSize:14,fontWeight:700,color:C.white}}>{a.action}</div>
+          {a.snippet&&FIX_SNIPPETS[a.snippet]&&<button onClick={()=>setShowSnip(!showSnip)} style={{background:showSnip?C.redGlow:"transparent",border:`1px solid ${showSnip?C.red:C.blackBorder}`,color:showSnip?C.red:C.grayDark,fontSize:9,fontFamily:mono,fontWeight:700,padding:"2px 8px",cursor:"pointer",letterSpacing:1}}>{showSnip?"HIDE CODE":"SHOW FIX"}</button>}
+        </div>
+        <div style={{fontSize:12,color:C.gray,lineHeight:1.5,marginTop:2}}>{a.impact}</div>
+        {showSnip&&a.snippet&&FIX_SNIPPETS[a.snippet]&&<FixSnippet snippet={FIX_SNIPPETS[a.snippet]}/>}
+      </div></div></div>;
+}
 function Insights({data}) {
   const sec=data.security_roots;const geo=data.visibility_canopy.geo_branch;const ins=[];
   if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy==="PERMISSIVE") ins.push({l:"CRITICAL",t:"AI Crawl Gap",b:"Robots.txt is permissive with no llms.txt file. AI scrapers can ingest your content without citation guidance."});
@@ -656,19 +671,7 @@ export default function CanopyGuard() {
       {actions.length>0&&<div style={{marginBottom:24,padding:24,background:C.blackCard,border:`1px solid ${C.redBorder}`}}>
         <h3 style={{fontSize:14,fontWeight:800,color:C.red,fontFamily:display,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px 0"}}>Top Actions</h3>
         <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          {actions.map((a,i)=>{
-            const [showSnip,setShowSnip]=useState(false);
-            return <div key={i}>
-              <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-                <div style={{fontSize:20,fontWeight:900,fontFamily:mono,color:C.red,lineHeight:1,minWidth:24}}>{i+1}</div>
-                <div style={{flex:1}}>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <div style={{fontSize:14,fontWeight:700,color:C.white}}>{a.action}</div>
-                    {a.snippet&&FIX_SNIPPETS[a.snippet]&&<button onClick={()=>setShowSnip(!showSnip)} style={{background:showSnip?C.redGlow:"transparent",border:`1px solid ${showSnip?C.red:C.blackBorder}`,color:showSnip?C.red:C.grayDark,fontSize:9,fontFamily:mono,fontWeight:700,padding:"2px 8px",cursor:"pointer",letterSpacing:1}}>{showSnip?"HIDE CODE":"SHOW FIX"}</button>}
-                  </div>
-                  <div style={{fontSize:12,color:C.gray,lineHeight:1.5,marginTop:2}}>{a.impact}</div>
-                  {showSnip&&a.snippet&&FIX_SNIPPETS[a.snippet]&&<FixSnippet snippet={FIX_SNIPPETS[a.snippet]}/>}
-                </div></div></div>})}</div></div>}
+          {actions.map((a,i)=><ActionItem key={i} action={a} index={i}/>)}</div></div>}
 
       {/* Scores */}
       <div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",flexWrap:"wrap",gap:40,padding:"40px 24px",marginBottom:24,border:`1px solid ${C.blackBorder}`,background:C.blackCard}}>

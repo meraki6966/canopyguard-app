@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#141414", blackBorder: "#1E1E1E",
@@ -799,5 +800,6 @@ export default function CanopyGuard() {
 
       <div style={{textAlign:"center",padding:"20px 0",borderTop:`1px solid ${C.blackBorder}`}}>
         <p style={{fontSize:11,color:C.grayDark,margin:0}}>Canopy Guard · Built by Soulful Tech™ · merakislove.com</p></div>
+      <Analytics />
     </div></div>;
 }

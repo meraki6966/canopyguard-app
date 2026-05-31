@@ -81,11 +81,11 @@ export default function CanopyGuard(){
   const[showGate,setShowGate]=useState(false);const[leadCaptured,setLeadCaptured]=useState(false);const[capturedEmail,setCapturedEmail]=useState("");
   const[showMethodology,setShowMethodology]=useState(false);const ref=useRef(null);
 
-  if(showMethodology)return<MethodologyPage onBack={()=>setShowMethodology(false)}/>;
-
   const startScan=async(sd)=>{const cleaned=(sd||domain).replace(/^https?:\/\//,"").replace(/\/+$/,"").trim();if(!cleaned)return;setDomain(cleaned);setPhase("scanning");setScanIndex(0);setScanError("");let idx=0;const ticker=setInterval(()=>{if(idx<PHASES.length-1){idx++;setScanIndex(idx)}},600);try{const res=await fetch(`${API}/api/scan`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:cleaned})});clearInterval(ticker);if(!res.ok){const err=await res.json();throw new Error(err.error||"Scan failed")}const data=await res.json();setScanIndex(PHASES.length-1);setTimeout(()=>{setReport(data);setPhase("report")},500)}catch(err){clearInterval(ticker);setScanError(err.message||"Scan failed.");setTimeout(()=>setPhase("landing"),3000)}};
   const reset=()=>{setPhase("landing");setDomain("");setReport(null);setLeadCaptured(false);setCapturedEmail("");setShowGate(false);setScanError("")};
   const handleEmail=useCallback(async(email,name)=>{await storeLead(email,report,name);setCapturedEmail(email);setLeadCaptured(true);setShowGate(false);downloadPDF(report,email)},[report]);
+
+  if(showMethodology)return<MethodologyPage onBack={()=>setShowMethodology(false)}/>;
 
   // ═══ LANDING — Planar-inspired redesign ═══
   if(phase==="landing"){

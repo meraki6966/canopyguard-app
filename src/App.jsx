@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#141414", blackBorder: "#1E1E1E",
@@ -466,7 +467,9 @@ function MethodologyPage({ onBack }) {
     <span style={{color:C.muted,fontSize:14,fontFamily:body}}>{label}</span>
     <span style={{color:C.white,fontSize:14,fontFamily:mono,fontWeight:700}}>{val}</span></div>;
 
-  return <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
+  return <>
+    <Analytics />
+    <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}>
       <span style={{fontSize:14,fontWeight:900,fontFamily:display,cursor:"pointer"}} onClick={onBack}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
@@ -554,7 +557,8 @@ function MethodologyPage({ onBack }) {
       <S style={{borderColor:C.redBorder}}><H>Open Methodology</H>
         <P>This scoring system is published publicly so anyone can verify how their score was calculated. If you believe a weight is wrong or a signal is missing, reach out. The methodology improves based on real-world feedback from developers, SEO professionals, and security engineers.</P>
         <P>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</P></S>
-    </div></div>;
+    </div></div>
+  </>;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -583,7 +587,9 @@ export default function CanopyGuard() {
 
   // ═══ LANDING ═══
   if(phase==="landing") {
-    return <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
+    return <>
+      <Analytics />
+      <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
       <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 32px",maxWidth:1200,margin:"0 auto"}}>
         <span style={{fontSize:18,fontWeight:900,fontFamily:display,letterSpacing:-0.5}}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
@@ -660,12 +666,15 @@ export default function CanopyGuard() {
       <footer style={{borderTop:`1px solid ${C.blackBorder}`,padding:"24px 32px",textAlign:"center"}}>
         <p style={{fontSize:11,color:C.grayDark,margin:0}}>Canopy Guard · Built by <span style={{color:C.white,fontWeight:700}}>Soulful Tech™</span> · Meraki is Love, LLC · merakislove.com</p>
       </footer>
-    </div>;
+      </div>
+    </>;
   }
 
   // ═══ SCANNING ═══
   if(phase==="scanning") {
-    return <div style={{minHeight:"100vh",background:C.black,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,fontFamily:body}}>
+    return <>
+      <Analytics />
+      <div style={{minHeight:"100vh",background:C.black,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,fontFamily:body}}>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
       <div style={{maxWidth:440,width:"100%",textAlign:"left"}}>
         <h2 style={{color:C.white,fontSize:18,fontWeight:900,margin:"0 0 4px 0",fontFamily:display}}>Scanning <span style={{color:C.red}}>{domain}</span></h2>
@@ -674,7 +683,8 @@ export default function CanopyGuard() {
         <div style={{display:"flex",flexDirection:"column",gap:2}}>
           {PHASES.map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"7px 0",opacity:i<=scanIndex?1:0.25,transition:"opacity 0.3s"}}>
             <span style={{fontFamily:mono,fontSize:11,color:i<scanIndex?C.green:i===scanIndex?C.red:C.grayDark,width:16}}>{i<scanIndex?"✓":i===scanIndex?"▸":"·"}</span>
-            <span style={{fontSize:13,color:i<=scanIndex?C.muted:C.grayDark}}>{p}</span></div>)}</div></div></div>;
+            <span style={{fontSize:13,color:i<=scanIndex?C.muted:C.grayDark}}>{p}</span></div>)}</div></div></div>
+    </>;
   }
 
   // ═══ REPORT ═══
@@ -685,7 +695,9 @@ export default function CanopyGuard() {
   const compliance=getComplianceChecks(d);
   const fixes=getFixSnippets(d);
 
-  return <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
+  return <>
+    <Analytics />
+    <div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet"/>
     {showGate&&<EmailGate onSubmit={handleEmail} onClose={()=>setShowGate(false)}/>}
 
@@ -799,5 +811,6 @@ export default function CanopyGuard() {
 
       <div style={{textAlign:"center",padding:"20px 0",borderTop:`1px solid ${C.blackBorder}`}}>
         <p style={{fontSize:11,color:C.grayDark,margin:0}}>Canopy Guard · Built by Soulful Tech™ · merakislove.com</p></div>
-    </div></div>;
+    </div></div>
+  </>;
 }

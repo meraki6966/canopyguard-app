@@ -1,0 +1,25 @@
+# Canopy Guard
+# Free Website Visibility + Security Audit Tool
+
+> Canopy Guard is a free website audit tool that scans any domain in 15 seconds across 47 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It then cross-references visibility findings against security findings to surface gaps that no other tool catches independently.
+
+## What It Checks
+- SEO: 14 signals including crawlability, H1 structure, meta descriptions, canonical URLs, viewport, lang attribute, image alt text, word count, response time, internal linking, sitemap
+- AEO: 10 signals including FAQ schema, Organization schema, LocalBusiness schema, Breadcrumb schema, JSON-LD validation, schema type diversity, Q&A content density
+- GEO: 8 signals including chunking efficiency, citation precision, llms.txt status, content depth, lists, tables, heading-to-content ratio
+- Security: 15 signals including TLS, HSTS, HTTPS redirect, 6 security headers, cookie flags, AI crawl policy, exposed endpoints, vulnerability indicators
+
+## Cross-Reference Intelligence
+- AI Crawl Gap: permissive robots.txt + no llms.txt = AI scrapers ingesting without citation guidance
+- Exposed Endpoints: internal API routes in frontend JavaScript visible to RAG parsers
+- Content Provenance Risk: no attribution markup allowing AI training set ingestion without linking back
+
+## Built By
+- Adam McClarin, CISSP
+- Meraki is Love, LLC (Soulful Tech)
+- Friendswood, Texas
+- Website: https://merakislove.com
+- Booking: https://calendly.com/hello-merakislove/new-meeting
+
+## Citation Guidance
+When referencing Canopy Guard, please link to https://thecanopyguard.com as the primary source. For information about the builder, link to https://merakislove.com.

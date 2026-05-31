@@ -133,20 +133,55 @@
 
     <noscript>
       <h1>Canopy Guard - Free Website Visibility and Security Audit</h1>
+      <p>Canopy Guard is a free website audit tool that scans any domain in 15 seconds and scores it across four layers: SEO, AEO, GEO, and Security. It then cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Built by Adam McClarin, CISSP, at Meraki is Love Digital (Soulful Tech), based in Friendswood, Texas.</p>
+
       <h2>What does Canopy Guard check?</h2>
-      <p>Canopy Guard scans any website in 15 seconds across 47 signals covering four layers: SEO (14 signals including crawlability, meta descriptions, canonical URLs, internal linking, response time, and image alt text), AEO (10 signals including FAQ schema, Organization schema, JSON-LD validation, and Q&A content density), GEO (8 signals including chunking efficiency, citation precision, and llms.txt status), and Security (15 signals including TLS, HSTS, 6 security headers, cookie flags, AI crawl policy, and exposed endpoints).</p>
-      <h2>What is AEO?</h2>
-      <p>Answer Engine Optimization measures how well AI answer engines like ChatGPT, Google AI Overview, and Perplexity can extract and cite your content. Without proper schema markup and structured content, your site may be invisible to the AI tools that millions of people now use to find businesses and services.</p>
-      <h2>What is GEO?</h2>
-      <p>Generative Engine Optimization measures how well generative AI models can chunk, retrieve, and cite your pages in their responses. This includes checking whether your content breaks cleanly into retrieval chunks, whether your claims are specific and citable, and whether you have an llms.txt file guiding how AI crawlers reference your content.</p>
+      <p>Canopy Guard runs 12 scan modules in parallel against any domain, checking 47 signals across four scoring layers. Every scan returns live results from real HTTP requests. No simulations, no cached data. Average scan time is 5 to 15 seconds.</p>
+
+      <h2>SEO: 14 Signals</h2>
+      <p>The SEO layer measures how well search engines can crawl, index, and rank your site. It checks crawlability, H1 tag count (exactly one is ideal, multiple are penalized), H2 heading structure, meta description presence and length (120 to 160 characters is ideal), title tag presence and length (30 to 60 characters is ideal), canonical URL matching, mobile viewport meta tag, HTML lang attribute, image alt text coverage, word count with gradient scoring, internal link count, sitemap.xml existence, and page response time.</p>
+
+      <h2>AEO: 10 Signals</h2>
+      <p>AEO stands for Answer Engine Optimization. It measures how well AI answer engines like ChatGPT, Google AI Overview, and Perplexity can extract and cite your content. Canopy Guard checks for any JSON-LD structured data, Organization schema, FAQ schema presence, FAQ item count (5 or more items gets full credit), LocalBusiness or service schema, Breadcrumb schema, schema type diversity, JSON-LD block count, validation errors, and Q&A content density. Without proper schema markup, your site may be invisible to the AI tools that millions of people now use to find businesses and services.</p>
+
+      <h2>GEO: 8 Signals</h2>
+      <p>GEO stands for Generative Engine Optimization. It measures how well generative AI models can chunk, retrieve, and cite your pages in their responses. Canopy Guard checks chunking efficiency (how cleanly your content divides into approximately 350 token semantic blocks based on heading count, paragraph count, lists, and tables), citation precision (the ratio of specific verifiable data points like numbers, proper nouns, dates, and percentages to generic text), llms.txt file status and length, content depth by word count, presence of ordered or unordered lists, presence of tables, and heading to content ratio. Pages with well-structured content and specific claims get cited more often than pages with generic copy.</p>
+
+      <h2>Security: 15 Signals</h2>
+      <p>The Security layer measures the external security posture visible from outside the site. It checks TLS certificate validity, HSTS header with max-age scoring (1 year or more earns extra credit), HTTP to HTTPS redirect, Content-Security-Policy header (weighted highest at 0.08), Strict-Transport-Security header, X-Frame-Options header, X-Content-Type-Options header, Referrer-Policy header, Permissions-Policy header, cookie security flags (Secure, HttpOnly, SameSite), AI crawl policy classification (BALANCED scores higher than RESTRICTIVE or PERMISSIVE), AI bot awareness in robots.txt, rate limiting directives, exposed endpoint detection with false positive filtering, and vulnerability indicators like server version disclosure.</p>
+
       <h2>What is Cross-Reference Intelligence?</h2>
-      <p>Cross-Reference Intelligence maps visibility findings against security findings to surface gaps that only exist in the overlap. For example, a permissive robots.txt combined with no llms.txt file means AI crawlers can scrape your content without any citation guidance. Your expertise gets summarized in AI answers but your brand never gets linked back to. No SEO tool or security scanner flags this independently.</p>
+      <p>Cross-Reference Intelligence is the unique differentiator of Canopy Guard. It maps visibility findings against security findings to surface gaps that only exist in the overlap between two disciplines that traditionally never communicate. These are not scored numerically. They are qualitative findings surfaced only when two conditions from different layers combine to create a problem neither layer would flag independently.</p>
+      <ul>
+        <li>AI Crawl Gap (Critical): A permissive robots.txt combined with no llms.txt file means AI crawlers like GPTBot, Anthropic, Google-Extended, CCBot, and ByteSpider can scrape your content freely without any citation guidance. Your expertise gets summarized in AI answers but your brand never gets linked.</li>
+        <li>Exposed Endpoints (Critical): Internal API routes accessible in frontend JavaScript bundles can be indexed by AI RAG parsers that scrape JavaScript assets.</li>
+        <li>Content Provenance Risk (Warning): No author or publisher attribution markup allows AI training sets to ingest proprietary material without linking back to the source.</li>
+      </ul>
+
       <h2>How accurate are the scores?</h2>
-      <p>The scoring methodology is published openly at thecanopyguard.com. Every signal and every weight is documented so anyone can verify how their score was calculated. The tool was validated by scanning a production site that initially scored 11 out of 100, fixing every issue the tool flagged, and watching the score climb to 93 as each fix deployed.</p>
+      <p>100 is hard to achieve by design. A perfect SEO score requires fast response time, 1500 or more words of content, 20 or more internal links, exactly one H1, properly lengthed meta description and title, viewport and lang tags, good image alt text coverage, a sitemap, and multiple H2 headings. The scoring methodology is published openly. Every signal and every weight is documented. The tool was validated by scanning a production site that initially scored 11 out of 100, fixing every issue the tool flagged, and watching the score climb to 93 as each fix was deployed.</p>
+
+      <h2>How does Canopy Guard compare to other tools?</h2>
+      <p>SEMrush ($130 to $450 per month) checks 140 or more traditional SEO issues but does not check security headers, AI crawl policy, or cross-reference visibility against security. SearchAtlas ($99 to $449 per month) focuses on content optimization but lacks llms.txt checking and security auditing. AI Rank Lab offers free visibility checking across AI platforms but does not include security posture auditing. No other tool, free or paid, runs a unified audit across SEO, AEO, GEO, and security in a single scan and cross-references the findings.</p>
+
+      <h2>What the report includes</h2>
+      <ul>
+        <li>Overall score averaged across all four layers</li>
+        <li>Individual scores for SEO, AEO, GEO, and Security</li>
+        <li>Top 3 Actions ranked by impact with copy-pasteable fix code</li>
+        <li>Cross-Reference Intelligence findings marked as Critical or Warning</li>
+        <li>Detailed pass or fail breakdown for every check</li>
+        <li>Compliance Quick Check grid</li>
+        <li>Missing security headers with fix snippets for Nginx, Apache, Vercel, and Cloudflare</li>
+        <li>Downloadable PDF report</li>
+      </ul>
+
       <h2>Who built Canopy Guard?</h2>
-      <p>Built by Adam McClarin, CISSP-certified engineer with 14 years in IT and security. Meraki is Love Digital, Soulful Tech. Based in Friendswood, Texas. Five production SaaS products running: VeloxSync (AI-powered HR SaaS), Meraki Lingua (37-language AI chat widget), Canopy Guard (free website audit), and the Dominion Platform.</p>
+      <p>Built by Adam McClarin, CISSP-certified engineer with 14 years in IT and information security. Founder of Meraki is Love, LLC, a full-stack digital studio based in Friendswood, Texas. Five production SaaS products running: VeloxSync (AI-powered HR SaaS at veloxsync.app), Meraki Lingua (37-language AI chat widget), Canopy Guard (free website audit at thecanopyguard.com), and the Dominion Platform. Canopy Guard uses the same audit methodology applied to every client engagement.</p>
+
       <p>Scan your site free at thecanopyguard.com. No signup required. Results in 15 seconds.</p>
       <p>Book a free walkthrough: calendly.com/hello-merakislove/new-meeting</p>
+      <p><a href="/privacy.html">Privacy Policy</a></p>
     </noscript>
   </head>
   <body>

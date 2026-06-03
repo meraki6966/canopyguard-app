@@ -1,0 +1,25 @@
+{
+  "risks": {
+    "traffic_leak_title": "La Fuga de Tráfico de IA",
+    "traffic_leak_desc": "Robots.txt es permisivo y no se encuentra llms.txt. Los scrapers de IA pueden elegir su contenido sin ninguna guía de atribución.",
+    "blind_assistants_title": "Ciego a los Asistentes de IA",
+    "blind_assistants_desc": "No se encontró llms.txt. Su contenido puede ser resumido por motores de IA pero nunca citado.",
+    "exposed_endpoints_title": "Endpoints Expuestos",
+    "exposed_endpoints_desc_suffix": "ruta(s) accesible(s):",
+    "provenance_risk_title": "Riesgo de Procedencia",
+    "provenance_risk_desc": "Su contenido permite que los conjuntos de entrenamiento de IA lo ingieran sin enlazar de vuelta."
+  },
+  "ui": {
+    "title": "Canopy Guard",
+    "tagline": "Auditoría gratuita de visibilidad y seguridad web",
+    "scan_button": "INICIAR AUDITORÍA",
+    "scanning": "Escaneando",
+    "back": "Atrás",
+    "score": "Puntuación",
+    "security": "Seguridad",
+    "seo": "SEO",
+    "aeo": "AEO",
+    "geo": "GEO",
+    "cross_ref_intel": "Inteligencia de Referencia Cruzada"
+  }
+}

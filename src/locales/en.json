@@ -1,0 +1,25 @@
+{
+  "risks": {
+    "traffic_leak_title": "The AI Traffic Leak",
+    "traffic_leak_desc": "Robots.txt is permissive with no llms.txt. AI scrapers can ingest your content without citation guidance.",
+    "blind_assistants_title": "Blind to AI Assistants",
+    "blind_assistants_desc": "No llms.txt found. Your content may be summarized by AI engines but never cited.",
+    "exposed_endpoints_title": "Exposed Endpoints",
+    "exposed_endpoints_desc_suffix": "path(s) accessible:",
+    "provenance_risk_title": "Provenance Risk",
+    "provenance_risk_desc": "Your content allows AI training sets to ingest without linking back."
+  },
+  "ui": {
+    "title": "Canopy Guard",
+    "tagline": "Free website visibility and security audit",
+    "scan_button": "RUN AUDIT",
+    "scanning": "Scanning",
+    "back": "Back",
+    "score": "Score",
+    "security": "Security",
+    "seo": "SEO",
+    "aeo": "AEO",
+    "geo": "GEO",
+    "cross_ref_intel": "Cross-Reference Intelligence"
+  }
+}

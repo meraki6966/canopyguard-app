@@ -11,7 +11,7 @@ const C = {
 const mono = "'JetBrains Mono','SF Mono','Fira Code',monospace";
 const heading = "'Space Grotesk','Outfit','Inter',sans-serif";
 const body = "'DM Sans','Inter','Helvetica Neue',sans-serif";
-const API = "https://canopyguard-engine-production.up.railway.app";
+const API = import.meta.env.VITE_API_URL || "https://canopyguard-engine-production.up.railway.app";
 const PHASES = ["Resolving DNS","Checking TLS certificates","Scanning HTTP headers","Analyzing HTML structure","Validating schema markup","Evaluating AEO readiness","Measuring GEO chunking","Checking robots & llms.txt","Detecting exposed endpoints","Scoring security posture","Compiling report"];
 const scoreColor = v => v >= 70 ? C.green : v >= 40 ? C.amber : C.red;
 const scoreBg = v => v >= 70 ? C.greenGlow : v >= 40 ? C.amberGlow : C.redGlow;

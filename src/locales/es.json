@@ -131,5 +131,34 @@
       "btn_processing": "PROCESANDO...",
       "spam_notice": "Sin spam. El correo se usa solo para este reporte."
     }
+  },
+  "pdf": {
+    "title": "REPORTE DE RIESGO EJECUTIVO",
+    "overall_score": "Puntuación General",
+    "seo_score": "Visibilidad SEO",
+    "aeo_score": "Preparación AEO",
+    "geo_score": "Citabilidad GEO",
+    "security_score": "Postura de Seguridad",
+    "top_actions": "Acciones Clave a Resolver",
+    "risks_summary_title": "Resumen Ejecutivo: Riesgos de Negocio",
+    "risks": {
+      "traffic_leak_title": "La Fuga de Tráfico de IA",
+      "traffic_leak_desc": "Su sitio permite que los rastreadores de IA extraigan y sinteticen su contenido sin un archivo llms.txt o un robots.txt equilibrado. Esto permite que los modelos de IA entrenen o respondan preguntas con sus datos sin citarlo ni enlazarlo de vuelta, provocando una fuga directa de tráfico.",
+      "blind_assistants_title": "Ciego a los Asistentes de IA",
+      "blind_assistants_desc": "La falta de esquema FAQ estructurado o marcado JSON-LD semántico impide que ChatGPT y otros agentes de búsqueda analicen y sirvan sus páginas en respuestas enriquecidas. Es invisible para los usuarios que confían en motores de IA de voz y chat.",
+      "exposed_endpoints_title": "Puerta Abierta para Scrapers y Botnets",
+      "exposed_endpoints_desc": "Puertos críticos, endpoints de bases de datos o rutas de servidor están expuestos a la web pública con límites de tasa débiles. Esto invita a bots de extracción y botnets a explotar brechas lógicas, robar datos y degradar el rendimiento.",
+      "foundation_crack_title": "La Grieta en la Base",
+      "foundation_crack_desc": "Faltan las configuraciones de seguridad básicas—especialmente cabeceras de respuesta HTTP críticas (como CSP, HSTS, X-Frame-Options) y la verificación TLS básica. Esto deja su sitio expuesto a secuestros de iframe, XSS y advertencias dañinas para el SEO."
+    },
+    "status": {
+      "critical": "Riesgo Crítico",
+      "warning": "Advertencia",
+      "secured": "Asegurado"
+    },
+    "cta_title": "¿Necesita solucionar esto?",
+    "cta_desc": "Cada riesgo identificado en este reporte es algo que resolvemos para nuestros clientes todas las semanas. Reserve una consulta gratuita de 30 minutos para proteger y optimizar su sitio.",
+    "cta_btn": "RESERVAR UNA REVISIÓN GRATUITA",
+    "footer": "Canopy Guard · Creado por Soulful Tech™ · merakislove.com · Auditoría Certificada CISSP"
   }
 }

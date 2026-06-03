@@ -131,5 +131,34 @@
       "btn_processing": "PROCESSING...",
       "spam_notice": "No spam. Email used only for this report."
     }
+  },
+  "pdf": {
+    "title": "EXECUTIVE RISK REPORT",
+    "overall_score": "Overall Score",
+    "seo_score": "SEO Visibility",
+    "aeo_score": "AEO Readiness",
+    "geo_score": "GEO Citability",
+    "security_score": "Security Posture",
+    "top_actions": "Top Actions to Resolve",
+    "risks_summary_title": "Executive Summary: Business Risks",
+    "risks": {
+      "traffic_leak_title": "The AI Traffic Leak",
+      "traffic_leak_desc": "Your site allows AI crawlers to scrape and synthesize your content without an llms.txt file or balanced robots.txt. This lets AI models train on or answer questions using your data without ever citing or linking back to you, leading to direct traffic theft.",
+      "blind_assistants_title": "Blind to AI Assistants",
+      "blind_assistants_desc": "A complete lack of structured FAQ schema or semantic JSON-LD markup prevents ChatGPT and other search agents from parsing and serving your pages in rich responses. You are invisible to users relying on voice and chat AI engines.",
+      "exposed_endpoints_title": "Open Door for Scrapers & Botnets",
+      "exposed_endpoints_desc": "Critical ports, database endpoints, or server paths are exposed to the public web with weak rate limits. This invites aggressive scraper bots and botnets to exploit logic gaps, scrape proprietary data, and degrade server performance.",
+      "foundation_crack_title": "The Foundation Crack",
+      "foundation_crack_desc": "Basic security configurations are missing—specifically critical HTTP response headers (like CSP, HSTS, X-Frame-Options) and basic TLS verification. This leaves your site vulnerable to iframe hijacking, XSS, and SEO-damaging warnings."
+    },
+    "status": {
+      "critical": "Critical Risk",
+      "warning": "Warning",
+      "secured": "Secured"
+    },
+    "cta_title": "Need these resolved?",
+    "cta_desc": "Every risk identified in this report is something we fix for clients every week. Book a free 30-minute consultation to secure and optimize your site.",
+    "cta_btn": "BOOK A FREE WALKTHROUGH",
+    "footer": "Canopy Guard · Built by Soulful Tech™ · merakislove.com · CISSP Certified Audit"
   }
 }

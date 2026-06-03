@@ -47,39 +47,33 @@ return a.slice(0,3)}
 function getComplianceChecks(r){const s=r.security_roots;return[{key:"https_active",label:"HTTPS Active",pass:s.tls?.valid||false},{key:"privacy_policy",label:"Privacy Policy",pass:false},{key:"security_headers",label:"Security Headers",pass:(s.application_security.missing_secure_headers||[]).length<=2},{key:"no_exposed",label:"No Exposed Endpoints",pass:(s.application_security.exposed_endpoints||[]).length===0},{key:"structured_data",label:"Structured Data",pass:r.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld},{key:"ai_crawl",label:"AI Crawl Policy",pass:s.ai_crawl_risk.robots_policy==="BALANCED"||s.ai_crawl_risk.robots_policy==="RESTRICTIVE"}]}
 
 // ── PDF (compact) ──
-function generatePDF(r, email) {
+// ── PDF (compact) ──
+function generatePDF(r, email, t) {
   const s = r.summary_scores;
   const overall = Math.round(((s.seo_score + s.aeo_score + s.geo_score + s.security_posture_score) / 4) * 100);
   const sc = v => { const p = Math.round(v * 100); return p >= 70 ? "#43A047" : p >= 40 ? "#F9A825" : "#E53935" };
-  const pv = v => v ? '<span class="pass">PASS</span>' : '<span class="fail">FAIL</span>';
   const sec = r.security_roots;
-  const seo = r.visibility_canopy.seo_branch;
   const aeo = r.visibility_canopy.aeo_branch;
   const geo = r.visibility_canopy.geo_branch;
   const actions = getTopActions(r);
   const compliance = getComplianceChecks(r);
 
-  // Cross-reference intelligence
+  // Business risk conditions
+  const isTrafficLeak = geo.llms_txt_status !== "PRESENT_ROOT" || sec.ai_crawl_risk.robots_policy === "PERMISSIVE";
+  const isBlindAssistants = !aeo.schema_validation.has_any_json_ld || !aeo.schema_validation.has_faq_json_ld;
+  const isOpenDoor = (sec.application_security.exposed_endpoints || []).length > 0 || !sec.ai_crawl_risk.rate_limiting_active;
+  const isFoundationCrack = !sec.tls?.valid || (sec.application_security.missing_secure_headers || []).length > 2;
+
+  // Cross-reference intelligence for page 1
   const insights = [];
   if (geo.llms_txt_status === "MISSING" && sec.ai_crawl_risk.robots_policy === "PERMISSIVE")
-    insights.push({ l: "CRITICAL", t: "AI Crawl Gap", b: "Robots.txt is permissive with no llms.txt. AI scrapers can ingest your content without citation guidance." });
+    insights.push({ l: "CRITICAL", t: t("risks.traffic_leak_title"), b: t("risks.traffic_leak_desc") });
   if (geo.llms_txt_status === "MISSING" && sec.ai_crawl_risk.robots_policy !== "RESTRICTIVE")
-    insights.push({ l: "WARNING", t: "No LLMs.txt", b: "No llms.txt found. Your content may be summarized by AI engines but never cited." });
+    insights.push({ l: "WARNING", t: t("risks.blind_assistants_title"), b: t("risks.blind_assistants_desc") });
   if ((sec.application_security.exposed_endpoints || []).length > 0)
-    insights.push({ l: "CRITICAL", t: "Exposed Endpoints", b: `${sec.application_security.exposed_endpoints.length} path(s) accessible: ${sec.application_security.exposed_endpoints.slice(0, 4).join(", ")}` });
+    insights.push({ l: "CRITICAL", t: t("risks.exposed_endpoints_title"), b: `${sec.application_security.exposed_endpoints.length} ${t("risks.exposed_endpoints_desc_suffix", "path(s) accessible:")} ${sec.application_security.exposed_endpoints.slice(0, 4).join(", ")}` });
   if (sec.business_logic_gaps?.data_provenance_leak)
-    insights.push({ l: "WARNING", t: "Provenance Risk", b: "Your content allows AI training sets to ingest without linking back." });
-
-  // Fix references
-  const fixRefs = [];
-  if (geo.llms_txt_status !== "PRESENT_ROOT") fixRefs.push("Create an llms.txt file at your domain root with your business info, services, and citation guidance.");
-  if (seo.html_structure.missing_meta_descriptions) fixRefs.push("Add a meta description tag (120-160 characters) to your page head.");
-  if (!seo.html_structure.canonical_match) fixRefs.push("Add or fix your canonical URL tag: <link rel=\"canonical\" href=\"https://yourdomain.com/\">");
-  if (!aeo.schema_validation.has_faq_json_ld) fixRefs.push("Add FAQ schema markup (JSON-LD) with at least 5 question-answer pairs.");
-  if (!aeo.schema_validation.has_organization_json_ld) fixRefs.push("Add Organization schema markup (JSON-LD) with your business name, URL, and address.");
-  for (const h of (sec.application_security.missing_secure_headers || [])) {
-    fixRefs.push(`Add missing security header: ${h}`);
-  }
+    insights.push({ l: "WARNING", t: t("risks.provenance_risk_title"), b: t("risks.provenance_risk_desc") });
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>
@@ -93,20 +87,12 @@ body { font-family: Helvetica, Arial, sans-serif; background: #fff; color: #222;
 .meta { text-align: right; color: #888; font-size: 9px; line-height: 1.6 }
 .domain { font-size: 18px; font-weight: 900; margin: 4px 0 0 }
 h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin: 22px 0 10px; border-bottom: 1px solid #ddd; padding-bottom: 6px; color: #111 }
-h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px; color: #555 }
 .scores { display: flex; gap: 16px; margin: 16px 0; padding: 18px; background: #f8f8f8; border: 1px solid #eee }
 .score-block { text-align: center; flex: 1 }
 .score-val { font-size: 30px; font-weight: 900; font-family: 'Courier New', monospace }
 .score-label { font-size: 8px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px }
 .score-divider { width: 1px; background: #ddd }
 .score-desc { font-size: 9px; color: #999; margin-top: 2px }
-table { width: 100%; border-collapse: collapse; margin: 6px 0 14px }
-th { text-align: left; font-size: 9px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; padding: 6px 8px; border-bottom: 2px solid #ddd }
-td { padding: 6px 8px; border-bottom: 1px solid #eee; font-size: 11px }
-td:last-child { text-align: right; font-family: 'Courier New', monospace; font-weight: 700 }
-.pass { color: #43A047; font-weight: 700 }
-.fail { color: #E53935; font-weight: 700 }
-.warn { color: #F9A825; font-weight: 700 }
 .action-box { background: #fef2f2; border-left: 3px solid #E53935; padding: 10px 14px; margin: 5px 0 }
 .action-num { font-size: 16px; font-weight: 900; color: #E53935; font-family: 'Courier New', monospace; margin-right: 8px }
 .insight { border-left: 3px solid #E53935; padding: 8px 14px; margin: 5px 0; background: #fef2f2 }
@@ -118,16 +104,28 @@ td:last-child { text-align: right; font-family: 'Courier New', monospace; font-w
 .compliance-item { font-size: 10px; padding: 4px 10px; border: 1px solid #ddd; display: flex; align-items: center; gap: 4px }
 .compliance-item.pass-bg { background: #f0faf0; border-color: #43A04733 }
 .compliance-item.fail-bg { background: #fef2f2; border-color: #E5393533 }
-.fix-list { margin: 8px 0; padding-left: 16px }
-.fix-list li { margin-bottom: 6px; font-size: 10px; color: #444; line-height: 1.5 }
-.header-tag { display: inline-block; font-family: 'Courier New', monospace; font-size: 10px; font-weight: 700; background: #fef2f2; color: #E53935; padding: 2px 8px; margin: 2px 4px 2px 0; border: 1px solid #E5393533 }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.pass { color: #43A047; font-weight: 700 }
+.fail { color: #E53935; font-weight: 700 }
+.warn { color: #F9A825; font-weight: 700 }
+
+/* Executive Risk boxes */
+.risk-box { border: 1px solid #ddd; border-radius: 6px; padding: 16px; margin-bottom: 14px; background: #fdfdfd }
+.risk-box.active-critical { border-left: 5px solid #E53935; background: #fef2f2 }
+.risk-box.active-warning { border-left: 5px solid #F9A825; background: #fff8e1 }
+.risk-box.secured { border-left: 5px solid #43A047; background: #f0faf0 }
+.risk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px }
+.risk-title { font-size: 13px; font-weight: 800; color: #111; letter-spacing: 0.5px }
+.risk-badge { font-size: 9px; font-weight: 800; font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 3px; text-transform: uppercase }
+.risk-badge.critical { background: #E53935; color: #fff }
+.risk-badge.warning { background: #F9A825; color: #fff }
+.risk-badge.passed { background: #43A047; color: #fff }
+.risk-desc { font-size: 10.5px; color: #444; line-height: 1.6 }
+
 .cta { text-align: center; margin: 28px 0 14px; padding: 22px; border: 2px solid #E53935 }
 .cta h3 { font-size: 15px; font-weight: 900; margin-bottom: 5px; text-transform: none; color: #111; letter-spacing: 0 }
 .cta p { color: #888; font-size: 11px; margin-bottom: 10px }
 .cta a { display: inline-block; background: #E53935; color: #fff; font-weight: 900; font-size: 11px; padding: 10px 28px; text-decoration: none; letter-spacing: 2px }
 .footer { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; color: #aaa; font-size: 9px }
-.note { font-size: 9px; color: #999; margin-top: 4px; font-style: italic }
 </style></head><body>
 
 <!-- PAGE 1: Summary -->
@@ -144,142 +142,84 @@ td:last-child { text-align: right; font-family: 'Courier New', monospace; font-w
   </div>
 </div>
 
-${actions.length ? `<h2>Top 3 Actions</h2>
-${actions.map((a, i) => `<div class="action-box"><span class="action-num">${i + 1}</span><strong>${a.a}</strong><br><span style="color:#555;font-size:10px">${a.i}</span></div>`).join("")}` : ""}
+${actions.length ? `<h2>${t("pdf.top_actions")}</h2>
+${actions.map((a, i) => `<div class="action-box"><span class="action-num">${i + 1}</span><strong>${t(`dashboard.actions.${a.key}_title`, a.a)}</strong><br><span style="color:#555;font-size:10px">${t(`dashboard.actions.${a.key}_desc`, a.i)}</span></div>`).join("")}` : ""}
 
 <div class="scores">
-  <div class="score-block"><div class="score-val" style="color:${sc(overall / 100)}">${overall}</div><div class="score-label">Overall</div></div>
+  <div class="score-block"><div class="score-val" style="color:${sc(overall / 100)}">${overall}</div><div class="score-label">${t("pdf.overall_score")}</div></div>
   <div class="score-divider"></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.seo_score)}">${Math.round(s.seo_score * 100)}</div><div class="score-label">SEO</div><div class="score-desc">Search engine visibility</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.aeo_score)}">${Math.round(s.aeo_score * 100)}</div><div class="score-label">AEO</div><div class="score-desc">Answer engine readiness</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.geo_score)}">${Math.round(s.geo_score * 100)}</div><div class="score-label">GEO</div><div class="score-desc">Generative AI citability</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.security_posture_score)}">${Math.round(s.security_posture_score * 100)}</div><div class="score-label">Security</div><div class="score-desc">External posture</div></div>
+  <div class="score-block"><div class="score-val" style="color:${sc(s.seo_score)}">${Math.round(s.seo_score * 100)}</div><div class="score-label">${t("pdf.seo_score")}</div></div>
+  <div class="score-block"><div class="score-val" style="color:${sc(s.aeo_score)}">${Math.round(s.aeo_score * 100)}</div><div class="score-label">${t("pdf.aeo_score")}</div></div>
+  <div class="score-block"><div class="score-val" style="color:${sc(s.geo_score)}">${Math.round(s.geo_score * 100)}</div><div class="score-label">${t("pdf.geo_score")}</div></div>
+  <div class="score-block"><div class="score-val" style="color:${sc(s.security_posture_score)}">${Math.round(s.security_posture_score * 100)}</div><div class="score-label">${t("pdf.security_score")}</div></div>
 </div>
 
-${insights.length ? `<h2>Cross-Reference Intelligence</h2>
+${insights.length ? `<h2>${t("ui.cross_ref_intel")}</h2>
 ${insights.map(i => `<div class="insight ${i.l === 'WARNING' ? 'warning' : ''}"><span class="insight-level ${i.l === 'CRITICAL' ? 'fail' : 'warn'}">${i.l}</span><span class="insight-title">${i.t}</span><div class="insight-body">${i.b}</div></div>`).join("")}` : ""}
 
-<h2>Compliance Quick Check</h2>
+<h2>${t("dashboard.compliance_check")}</h2>
 <div class="compliance-grid">
-${compliance.map(c => `<div class="compliance-item ${c.pass ? 'pass-bg' : 'fail-bg'}"><span class="${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✗'}</span> ${c.label}</div>`).join("")}
+${compliance.map(c => `<div class="compliance-item ${c.pass ? 'pass-bg' : 'fail-bg'}"><span class="${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✗'}</span> ${t(`dashboard.compliance.${c.key}`)}</div>`).join("")}
 </div>
 
-<!-- PAGE 2: Full Details -->
+<!-- PAGE 2: Executive Risks Summary -->
 <div class="page-break"></div>
 <div class="header">
-  <div><div class="logo">CANOPY<span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · Detailed Findings</div></div>
+  <div><div class="logo">CANOPY<span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
   <div class="meta">Page 2 · ${r.audit_id.slice(0, 8)}</div>
 </div>
 
-<div class="grid">
-<div>
-<h2>SEO · ${Math.round(s.seo_score * 100)}/100</h2>
-<h3>How search engines crawl, index, and rank your site</h3>
-<table>
-<tr><td>Crawlable</td><td>${pv(seo.crawlability)}</td></tr>
-<tr><td>H1 Tags</td><td>${seo.html_structure.h1_count}${seo.html_structure.h1_count !== 1 ? ' <span class="fail">(ideal: 1)</span>' : ''}</td></tr>
-<tr><td>H2 Structure</td><td>${seo.html_structure.h2_count || 0} headings</td></tr>
-<tr><td>Meta Description</td><td>${pv(!seo.html_structure.missing_meta_descriptions)}${!seo.html_structure.missing_meta_descriptions ? ` (${seo.html_structure.meta_description_length} chars)` : ''}</td></tr>
-<tr><td>Title Tag</td><td>${seo.html_structure.title ? `${seo.html_structure.title.slice(0, 45)}${seo.html_structure.title.length > 45 ? '...' : ''} (${seo.html_structure.title_length} chars)` : '<span class="fail">MISSING</span>'}</td></tr>
-<tr><td>Canonical Match</td><td>${pv(seo.html_structure.canonical_match)}</td></tr>
-<tr><td>Viewport Tag</td><td>${pv(seo.html_structure.has_viewport)}</td></tr>
-<tr><td>Lang Attribute</td><td>${pv(seo.html_structure.has_lang)}</td></tr>
-<tr><td>Word Count</td><td>${seo.html_structure.word_count || 0}${(seo.html_structure.word_count || 0) < 1500 ? ' <span class="warn">(aim for 1500+)</span>' : ''}</td></tr>
-<tr><td>Internal Links</td><td>${seo.internal_link_count || 0}</td></tr>
-<tr><td>Link Depth</td><td>${seo.internal_linking_depth || 0} clicks</td></tr>
-<tr><td>Response Time</td><td>${seo.html_structure.response_time_ms || 0}ms</td></tr>
-<tr><td>Images</td><td>${seo.html_structure.image_count || 0} total, ${seo.html_structure.images_missing_alt || 0} missing alt</td></tr>
-</table>
+<h2>${t("pdf.risks_summary_title")}</h2>
+
+<!-- Box 1: The AI Traffic Leak -->
+<div class="risk-box ${isTrafficLeak ? 'active-critical' : 'secured'}">
+  <div class="risk-header">
+    <span class="risk-title">${t("pdf.risks.traffic_leak_title")}</span>
+    <span class="risk-badge ${isTrafficLeak ? 'critical' : 'passed'}">${isTrafficLeak ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
+  </div>
+  <p class="risk-desc">${t("pdf.risks.traffic_leak_desc")}</p>
 </div>
 
-<div>
-<h2>AEO · ${Math.round(s.aeo_score * 100)}/100</h2>
-<h3>How AI answer engines extract and cite your content</h3>
-<table>
-<tr><td>Any JSON-LD</td><td>${pv(aeo.schema_validation.has_any_json_ld)}</td></tr>
-<tr><td>Organization Schema</td><td>${pv(aeo.schema_validation.has_organization_json_ld)}</td></tr>
-<tr><td>FAQ Schema</td><td>${pv(aeo.schema_validation.has_faq_json_ld)}${aeo.schema_validation.has_faq_json_ld ? ` (${aeo.schema_validation.faq_item_count || 0} items)` : ''}</td></tr>
-<tr><td>LocalBusiness Schema</td><td>${pv(aeo.schema_validation.has_local_business)}</td></tr>
-<tr><td>Breadcrumb Schema</td><td>${pv(aeo.schema_validation.has_breadcrumb)}</td></tr>
-<tr><td>Schema Types Found</td><td>${(aeo.schema_validation.types_found || []).join(', ') || 'None'}</td></tr>
-<tr><td>JSON-LD Blocks</td><td>${aeo.schema_validation.json_ld_count || 0}</td></tr>
-<tr><td>Validation Errors</td><td>${aeo.schema_validation.validation_errors.length || 'None'}</td></tr>
-<tr><td>Q&A Density</td><td>${(aeo.qa_density_score * 100).toFixed(0)}%</td></tr>
-</table>
-</div>
+<!-- Box 2: Blind to AI Assistants -->
+<div class="risk-box ${isBlindAssistants ? 'active-warning' : 'secured'}">
+  <div class="risk-header">
+    <span class="risk-title">${t("pdf.risks.blind_assistants_title")}</span>
+    <span class="risk-badge ${isBlindAssistants ? 'warning' : 'passed'}">${isBlindAssistants ? t("pdf.status.warning") : t("pdf.status.secured")}</span>
+  </div>
+  <p class="risk-desc">${t("pdf.risks.blind_assistants_desc")}</p>
 </div>
 
-<div class="grid">
-<div>
-<h2>GEO · ${Math.round(s.geo_score * 100)}/100</h2>
-<h3>How generative AI chunks, retrieves, and cites your pages</h3>
-<table>
-<tr><td>Chunking Efficiency</td><td>${(geo.chunking_efficiency * 100).toFixed(0)}%</td></tr>
-<tr><td>Citation Precision</td><td>${(geo.citation_metrics.precision_rate * 100).toFixed(0)}%</td></tr>
-<tr><td>llms.txt</td><td>${geo.llms_txt_status === 'PRESENT_ROOT' ? '<span class="pass">PRESENT</span>' : '<span class="fail">MISSING</span>'}${geo.llms_txt_length ? ` (${geo.llms_txt_length} chars)` : ''}</td></tr>
-<tr><td>Content Words</td><td>${geo.content_stats?.word_count || 0}</td></tr>
-<tr><td>Headings</td><td>${geo.content_stats?.heading_count || 0}</td></tr>
-<tr><td>Paragraphs</td><td>${geo.content_stats?.paragraph_count || 0}</td></tr>
-<tr><td>Lists Present</td><td>${pv(geo.content_stats?.has_lists)}</td></tr>
-<tr><td>Tables Present</td><td>${pv(geo.content_stats?.has_tables)}</td></tr>
-<tr><td>Heading:Content Ratio</td><td>${geo.content_stats?.heading_to_content_ratio || 0}</td></tr>
-</table>
+<!-- Box 3: Open Door for Scrapers & Botnets -->
+<div class="risk-box ${isOpenDoor ? 'active-critical' : 'secured'}">
+  <div class="risk-header">
+    <span class="risk-title">${t("pdf.risks.exposed_endpoints_title")}</span>
+    <span class="risk-badge ${isOpenDoor ? 'critical' : 'passed'}">${isOpenDoor ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
+  </div>
+  <p class="risk-desc">${t("pdf.risks.exposed_endpoints_desc")}</p>
 </div>
 
-<div>
-<h2>Security · ${Math.round(s.security_posture_score * 100)}/100</h2>
-<h3>External security posture and AI crawl controls</h3>
-<table>
-<tr><td>TLS Valid</td><td>${pv(sec.tls?.valid)}</td></tr>
-<tr><td>HSTS</td><td>${pv(sec.tls?.hsts)}${sec.tls?.hstsMaxAge ? ` (max-age: ${sec.tls.hstsMaxAge})` : ''}</td></tr>
-<tr><td>HTTPS Redirect</td><td>${pv(sec.tls?.redirectsToHttps)}</td></tr>
-<tr><td>Robots Policy</td><td>${sec.ai_crawl_risk.robots_policy}</td></tr>
-<tr><td>AI Bot Awareness</td><td>${pv(!sec.ai_crawl_risk.spoofed_agent_vulnerability)}</td></tr>
-<tr><td>Rate Limiting</td><td>${pv(sec.ai_crawl_risk.rate_limiting_active)}</td></tr>
-<tr><td>Exposed Endpoints</td><td>${(sec.application_security.exposed_endpoints || []).length || 'None'}</td></tr>
-<tr><td>Missing Headers</td><td>${(sec.application_security.missing_secure_headers || []).length || 'None'}</td></tr>
-<tr><td>Vulnerabilities</td><td>${(sec.application_security.vulnerabilities || []).length || 'None'}</td></tr>
-<tr><td>Data Provenance</td><td>${pv(!sec.business_logic_gaps?.data_provenance_leak)}</td></tr>
-<tr><td>Sitemap</td><td>${pv(sec.business_logic_gaps?.has_sitemap)}</td></tr>
-</table>
+<!-- Box 4: The Foundation Crack -->
+<div class="risk-box ${isFoundationCrack ? 'active-critical' : 'secured'}">
+  <div class="risk-header">
+    <span class="risk-title">${t("pdf.risks.foundation_crack_title")}</span>
+    <span class="risk-badge ${isFoundationCrack ? 'critical' : 'passed'}">${isFoundationCrack ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
+  </div>
+  <p class="risk-desc">${t("pdf.risks.foundation_crack_desc")}</p>
 </div>
-</div>
-
-${(sec.application_security.missing_secure_headers || []).length ? `
-<h2>Missing Security Headers</h2>
-<div style="margin:6px 0">${sec.application_security.missing_secure_headers.map(h => `<span class="header-tag">${h}</span>`).join('')}</div>
-<p class="note">Each header protects your visitors from a specific class of browser-based attack. Add them to your server configuration (Nginx, Apache, Vercel, or Cloudflare). Copy-pasteable fix code is available in the interactive report at thecanopyguard.com.</p>
-` : ''}
-
-${(sec.application_security.vulnerabilities || []).length ? `
-<h2>Vulnerability Indicators</h2>
-<table>
-${sec.application_security.vulnerabilities.map(v => `<tr><td>${v.cve_id}</td><td class="${v.severity === 'MEDIUM' ? 'warn' : ''}">${v.severity}</td><td>${v.description}</td></tr>`).join('')}
-</table>
-` : ''}
-
-${fixRefs.length ? `
-<h2>Recommended Fixes</h2>
-<ol class="fix-list">
-${fixRefs.map(f => `<li>${f}</li>`).join('')}
-</ol>
-<p class="note">Copy-pasteable fix code for Nginx, Apache, Vercel, and Cloudflare is available in the interactive report at thecanopyguard.com. Scan your domain and click the FIX button next to any failing check.</p>
-` : ''}
 
 <div class="cta">
-  <h3>Need these fixed?</h3>
-  <p>Every finding in this report is something we resolve for clients every week. Book a free 30-minute walkthrough and we will prioritize your fixes together.</p>
-  <a href="https://calendly.com/hello-merakislove/new-meeting">BOOK A FREE WALKTHROUGH</a>
+  <h3>${t("pdf.cta_title")}</h3>
+  <p>${t("pdf.cta_desc")}</p>
+  <a href="https://calendly.com/hello-merakislove/new-meeting">${t("pdf.cta_btn")}</a>
 </div>
 
 <div class="footer">
-  Canopy Guard · Built by Soulful Tech™ · Adam McClarin, CISSP · Meraki is Love, LLC · merakislove.com<br>
-  Scoring methodology published at thecanopyguard.com · 47 signals across SEO, AEO, GEO, and Security
+  ${t("pdf.footer")}
 </div>
 
 </body></html>`
 }
-function downloadPDF(r,e){const w=window.open("","_blank");if(w){w.document.write(generatePDF(r,e));w.document.close();setTimeout(()=>w.print(),400)}}
+function downloadPDF(r,e,t){const w=window.open("","_blank");if(w){w.document.write(generatePDF(r,e,t));w.document.close();setTimeout(()=>w.print(),400)}}
 async function storeLead(email,r,name=""){const s=r.summary_scores;const overall=Math.round(((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4)*100);try{await fetch(`${API}/api/canopyguard/leads`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,domain:r.target_domain,audit_id:r.audit_id.slice(0,8),scores:{seo:Math.round(s.seo_score*100),aeo:Math.round(s.aeo_score*100),geo:Math.round(s.geo_score*100),security:Math.round(s.security_posture_score*100)},overall,report_json:JSON.stringify(r),timestamp:r.timestamp})})}catch(e){console.error("[CG] Lead store:",e)}}
 async function sendReportEmail(email,report,name=""){try{await fetch(`${API}/api/canopyguard/email-report`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,name,report})})}catch(e){console.error("[CG] Email send:",e)}}
 
@@ -332,7 +272,7 @@ export default function CanopyGuard(){
 
   const startScan=async(sd)=>{const cleaned=(sd||domain).replace(/^https?:\/\//,"").replace(/\/+$/,"").trim();if(!cleaned)return;setDomain(cleaned);setPhase("scanning");setScanIndex(0);setScanError("");let idx=0;const ticker=setInterval(()=>{if(idx<PHASES.length-1){idx++;setScanIndex(idx)}},600);try{const res=await fetch(`${API}/api/scan`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:cleaned})});clearInterval(ticker);if(!res.ok){const err=await res.json();throw new Error(err.error||"Scan failed")}const data=await res.json();setScanIndex(PHASES.length-1);setTimeout(()=>{setReport(data);setPhase("report")},500)}catch(err){clearInterval(ticker);setScanError(err.message||"Scan failed.");setTimeout(()=>setPhase("landing"),3000)}};
   const reset=()=>{setPhase("landing");setDomain("");setReport(null);setLeadCaptured(false);setCapturedEmail("");setShowGate(false);setScanError("")};
-  const handleEmail=useCallback(async(email,name)=>{await storeLead(email,report,name);sendReportEmail(email,report,name);setCapturedEmail(email);setLeadCaptured(true);setShowGate(false);downloadPDF(report,email)},[report]);
+  const handleEmail=useCallback(async(email,name)=>{await storeLead(email,report,name);sendReportEmail(email,report,name);setCapturedEmail(email);setLeadCaptured(true);setShowGate(false);downloadPDF(report,email,t)},[report,t]);
 
   if(showMethodology)return<MethodologyPage onBack={()=>setShowMethodology(false)}/>;
 
@@ -512,7 +452,7 @@ export default function CanopyGuard(){
   const d=report;const s=d.summary_scores;const sec=d.security_roots;const overall=+((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4).toFixed(2);const overallPct=Math.round(overall*100);const actions=getTopActions(d);const compliance=getComplianceChecks(d);
   return<div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}><link href={FONTS_URL} rel="stylesheet"/>{showGate&&<EmailGate onSubmit={handleEmail} onClose={()=>setShowGate(false)}/>}
   {/* Nav */}
-  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{fontSize:14,fontWeight:700,fontFamily:heading,cursor:"pointer"}} onClick={reset}>CANOPY<span style={{color:C.red}}>GUARD</span></span><div style={{display:"flex",gap:8,alignItems:"center"}}>{!leadCaptured?<button onClick={()=>setShowGate(true)} style={{background:C.red,border:"none",color:C.white,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:1,borderRadius:3}}>{t("dashboard.get_report")}</button>:<button onClick={()=>downloadPDF(report,capturedEmail)} style={{background:"transparent",border:`1px solid ${C.green}`,color:C.green,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,borderRadius:3}}>↓ PDF</button>}<button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.grayDark,padding:"6px 14px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:mono,letterSpacing:1,borderRadius:3}}>{t("dashboard.docs")}</button><button onClick={reset} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer",borderRadius:3}}>{t("dashboard.new_scan")}</button><span style={{color:C.dim,margin:"0 4px"}}>|</span><LanguageToggle /></div></div>
+  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{fontSize:14,fontWeight:700,fontFamily:heading,cursor:"pointer"}} onClick={reset}>CANOPY<span style={{color:C.red}}>GUARD</span></span><div style={{display:"flex",gap:8,alignItems:"center"}}>{!leadCaptured?<button onClick={()=>setShowGate(true)} style={{background:C.red,border:"none",color:C.white,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:1,borderRadius:3}}>{t("dashboard.get_report")}</button>:<button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:`1px solid ${C.green}`,color:C.green,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,borderRadius:3}}>↓ PDF</button>}<button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.grayDark,padding:"6px 14px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:mono,letterSpacing:1,borderRadius:3}}>{t("dashboard.docs")}</button><button onClick={reset} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer",borderRadius:3}}>{t("dashboard.new_scan")}</button><span style={{color:C.dim,margin:"0 4px"}}>|</span><LanguageToggle /></div></div>
   <div style={{maxWidth:900,margin:"0 auto",padding:"32px 20px"}}>
   <div style={{marginBottom:32}}><p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px"}}>{t("dashboard.audit_report")}</p><h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,margin:"0 0 4px",fontFamily:heading,letterSpacing:-1}}>{d.target_domain}</h1><p style={{color:C.grayDark,fontSize:11,fontFamily:mono}}>{new Date(d.timestamp).toLocaleString()} · {d.audit_id.slice(0,8)} · {d.scan_duration_ms}ms</p></div>
   {/* Top Actions */}
@@ -537,7 +477,7 @@ export default function CanopyGuard(){
   {(sec.application_security.missing_secure_headers||[]).length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{margin:"0 0 12px",fontSize:12,fontWeight:700,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>{t("dashboard.missing_headers")}</h4><div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:12}}>{sec.application_security.missing_secure_headers.map(h=><code key={h} style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`,borderRadius:2}}>{h}</code>)}</div>{sec.application_security.missing_secure_headers.map(h=>{const k=HEADER_SNIPPET_MAP[h];return k&&FIX_SNIPPETS[k]?<FixSnippet key={h} snippet={FIX_SNIPPETS[k]}/>:null})}</div>}
   {/* CTA */}
   <div style={{textAlign:"center",padding:48,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:32,borderRadius:6}}>
-    {!leadCaptured?<><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.get_full_title")} <span style={{color:C.red}}>{t("dashboard.cta.get_full_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.download_desc")}</p><button onClick={()=>setShowGate(true)} style={{background:C.red,color:C.white,border:"none",fontWeight:700,fontSize:14,padding:"18px 44px",letterSpacing:1,cursor:"pointer",fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_get_report")}</button></>:<><div style={{fontSize:36,marginBottom:12,color:C.green}}>✓</div><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.delivered_to")} <span style={{color:C.red}}>{capturedEmail}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:460,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.resolve_desc")}</p><a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:C.red,color:C.white,fontWeight:700,fontSize:14,padding:"18px 44px",textDecoration:"none",letterSpacing:1,fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_walkthrough")}</a><div style={{marginTop:16}}><button onClick={()=>downloadPDF(report,capturedEmail)} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,cursor:"pointer",fontFamily:mono,textDecoration:"underline"}}>{t("dashboard.cta.download_again")}</button></div></>}
+    {!leadCaptured?<><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.get_full_title")} <span style={{color:C.red}}>{t("dashboard.cta.get_full_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.download_desc")}</p><button onClick={()=>setShowGate(true)} style={{background:C.red,color:C.white,border:"none",fontWeight:700,fontSize:14,padding:"18px 44px",letterSpacing:1,cursor:"pointer",fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_get_report")}</button></>:<><div style={{fontSize:36,marginBottom:12,color:C.green}}>✓</div><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.delivered_to")} <span style={{color:C.red}}>{capturedEmail}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:460,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.resolve_desc")}</p><a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:C.red,color:C.white,fontWeight:700,fontSize:14,padding:"18px 44px",textDecoration:"none",letterSpacing:1,fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_walkthrough")}</a><div style={{marginTop:16}}><button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,cursor:"pointer",fontFamily:mono,textDecoration:"underline"}}>{t("dashboard.cta.download_again")}</button></div></>}
     <p style={{color:C.grayDark,fontSize:11,marginTop:24,fontFamily:mono}}>{t("dashboard.cta.author")}</p>
   </div>
   <div style={{textAlign:"center",padding:"20px 0",borderTop:`1px solid ${C.blackBorder}`}}><p style={{fontSize:11,color:C.grayDark,margin:"0 0 4px"}}>{t("dashboard.footer.built_by")}</p><a href="/privacy.html" style={{fontSize:11,color:C.grayDark,textDecoration:"underline"}}>{t("dashboard.footer.privacy_policy")}</a></div>

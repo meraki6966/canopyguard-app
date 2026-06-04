@@ -460,6 +460,70 @@ export default function CanopyGuard(){
     <div style={{width:1,height:60,background:C.blackBorder}}/>
     <ScoreBlock score={s.seo_score} label={t("dashboard.seo")} delay={200}/><ScoreBlock score={s.aeo_score} label={t("dashboard.aeo")} delay={400}/><ScoreBlock score={s.geo_score} label={t("dashboard.geo")} delay={600}/><ScoreBlock score={s.security_posture_score} label={t("dashboard.security")} delay={800}/>
   </motion.div>
+
+  {/* Benchmarking & Revenue Leakage */}
+  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16,marginBottom:24}}>
+    {/* Sector Benchmark Card */}
+    <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
+      <div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:10,fontWeight:700,fontFamily:mono,color:C.gray,letterSpacing:1.5}}>SECTOR BENCHMARK</span>
+          <span style={{fontSize:11,fontWeight:700,fontFamily:mono,color:(overallPct - 68) >= 0 ? C.green : C.red}}>
+            {(overallPct - 68) >= 0 ? "+" + (overallPct - 68) + "% above average" : (68 - overallPct) + "% below average"}
+          </span>
+        </div>
+        <div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>
+          Your website's overall readiness ranks <strong style={{color:C.white}}>{overallPct}%</strong> against the typical software & services industry benchmark of <strong style={{color:C.white}}>68%</strong>.
+        </div>
+      </div>
+      
+      <div style={{position:"relative",marginTop:24}}>
+        {/* Industry Average Indicator */}
+        <div style={{position:"absolute",left:`68%`,bottom:14,transform:"translateX(-50%)",zIndex:3,display:"flex",flexDirection:"column",alignItems:"center"}}>
+          <span style={{fontSize:8,fontFamily:mono,fontWeight:700,color:C.white,background:C.blackCard,padding:"2px 6px",border:`1px solid ${C.blackBorder}`,borderRadius:3,whiteSpace:"nowrap"}}>
+            AVG (68%)
+          </span>
+          <div style={{width:1,height:4,background:C.white}}/>
+        </div>
+        
+        {/* Bar */}
+        <div style={{width:"100%",height:8,background:C.black,border:`1px solid ${C.blackBorder}`,borderRadius:4,overflow:"hidden"}}>
+          <div style={{width:`${overallPct}%`,height:"100%",background:scoreColor(overallPct),borderRadius:4}}/>
+        </div>
+        
+        <div style={{display:"flex",justifyContent:"space-between",marginTop:4,fontSize:9,fontFamily:mono,color:C.grayDark}}>
+          <span>0%</span>
+          <span>100%</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Revenue Leakage Card */}
+    <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
+      <div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:10,fontWeight:700,fontFamily:mono,color:C.gray,letterSpacing:1.5}}>REVENUE LEAKAGE CALCULATOR</span>
+          <span style={{fontSize:9,fontWeight:800,fontFamily:mono,color:(100 - overallPct) > 0 ? C.red : C.green,background:(100 - overallPct) > 0 ? C.redGlow : C.greenGlow,padding:"2px 6px",border:`1px solid ${(100 - overallPct) > 0 ? C.red : C.green}22`,borderRadius:2}}>
+            {(100 - overallPct) > 0 ? "REVENUE AT RISK" : "OPTIMIZED"}
+          </span>
+        </div>
+        <div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>
+          Security flaws and visibility gaps directly impact conversion. Based on industry standards, each unmet optimization signal costs an estimated $25 in lost customer acquisitions.
+        </div>
+      </div>
+      
+      <div style={{marginTop:20}}>
+        <div style={{fontSize:38,fontWeight:700,fontFamily:mono,color:(100 - overallPct) > 0 ? C.red : C.green,lineHeight:1}}>
+          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Math.max(0, (100 - overallPct) * 25))}
+          <span style={{fontSize:14,color:C.gray,fontWeight:500}}> / mo</span>
+        </div>
+        <div style={{fontSize:10,fontWeight:700,color:C.gray,letterSpacing:1,marginTop:6,textTransform:"uppercase"}}>
+          Monthly Revenue Leakage
+        </div>
+      </div>
+    </div>
+  </div>
+
   <Insights data={d}/>
   {/* Detail Grid */}
   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16,marginBottom:20}}>

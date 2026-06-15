@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { SecurityEnhanced } from "./components/SecurityEnhanced";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#131316", blackBorder: "#1C1C20",
@@ -257,7 +259,7 @@ function MethodologyPage({onBack}){
   <S><H>SEO Score (0 to 100) · 14 Signals</H><P>Measures how well search engines can crawl, index, and rank your site. Scoring 100 requires fast response, 1500+ words, 20+ internal links, perfect meta tags, and a sitemap.</P><W label="Crawlable" val="0.10"/><W label="Exactly 1 H1 (multiple penalized)" val="0.10"/><W label="Meta description + ideal length (120-160)" val="0.10"/><W label="Title tag + ideal length (30-60)" val="0.10"/><W label="Canonical URL match" val="0.08"/><W label="Viewport meta tag" val="0.05"/><W label="HTML lang attribute" val="0.03"/><W label="Image alt text coverage" val="0.08"/><W label="Word count (gradient: 200/500/1500+)" val="0.10"/><W label="Internal links (gradient: 5/10/20+)" val="0.10"/><W label="Sitemap.xml exists" val="0.06"/><W label="Response time (under 1s/3s/3s+)" val="0.05"/><W label="H2 heading structure" val="0.05"/></S>
   <S><H>AEO Score (0 to 100) · 10 Signals</H><P>Measures how well AI answer engines can extract and cite your content. Requires multiple schema types, 5+ FAQ items, and strong Q&A density for full marks.</P><W label="Any JSON-LD present" val="0.10"/><W label="Organization schema" val="0.12"/><W label="FAQ schema" val="0.10"/><W label="FAQ item count (1/3/5+)" val="0.12"/><W label="LocalBusiness schema" val="0.08"/><W label="Breadcrumb schema" val="0.06"/><W label="Schema type diversity (1/2/4+)" val="0.10"/><W label="Zero validation errors" val="0.10"/><W label="Q&A density" val="0.12"/><W label="JSON-LD block count (1/2/3+)" val="0.10"/></S>
   <S><H>GEO Score (0 to 100) · 8 Signals</H><P>Measures how generative AI models chunk, retrieve, and cite your pages. Based on how RAG systems process content.</P><W label="Chunking efficiency" val="0.25"/><W label="Citation precision" val="0.20"/><W label="llms.txt present + length bonus" val="0.23"/><W label="Content depth by word count" val="0.10"/><W label="Lists present" val="0.05"/><W label="Tables present" val="0.04"/><W label="Heading-to-content ratio" val="0.08"/><W label="Baseline reachability" val="0.05"/></S>
-  <S><H>Security Score (0 to 100) · 15 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
+  <S><H>Security Score (0 to 100) · 51 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.0 blends in additional checks across five enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, and path/exposure probing — for 51 security signals in total.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
   <S style={{borderColor:C.redBorder}}><H>Open Methodology</H><P>This scoring system is published so anyone can verify how their score was calculated. If you believe a weight is wrong or a signal is missing, reach out. The methodology improves from real-world feedback.</P><P>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</P></S>
   </div></div>}
 
@@ -284,6 +286,8 @@ export default function CanopyGuard(){
       <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 32px",maxWidth:1200,margin:"0 auto"}}>
         <span style={{fontSize:16,fontWeight:700,fontFamily:heading,letterSpacing:-0.5}}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
         <div style={{display:"flex",gap:20,alignItems:"center"}}>
+          <Link to="/compare" style={{background:"transparent",border:"none",color:C.grayDark,fontSize:11,fontFamily:mono,cursor:"pointer",letterSpacing:1,textDecoration:"none"}}>How We Compare</Link>
+          <span style={{color:C.dim}}>|</span>
           <button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:"none",color:C.grayDark,fontSize:11,fontFamily:mono,cursor:"pointer",letterSpacing:1}}>METHODOLOGY</button>
           <span style={{color:C.dim}}>|</span>
           <span style={{fontSize:11,color:C.grayDark,fontFamily:mono,letterSpacing:1}}>BY SOULFUL TECH</span>
@@ -294,7 +298,7 @@ export default function CanopyGuard(){
       <section style={{textAlign:"center",padding:"120px 24px 100px",maxWidth:800,margin:"0 auto"}}>
         <Reveal>
           <div style={{display:"inline-block",padding:"6px 18px",marginBottom:28,border:`1px solid ${C.redBorder}`,background:C.redGlow,borderRadius:20}}>
-            <span style={{fontSize:11,fontWeight:700,color:C.red,fontFamily:mono,letterSpacing:1.5}}>FREE · 47 SIGNALS · 15 SECONDS</span>
+            <span style={{fontSize:11,fontWeight:700,color:C.red,fontFamily:mono,letterSpacing:1.5}}>FREE · 83 SIGNALS · 15 SECONDS</span>
           </div>
         </Reveal>
         <Reveal delay={0.1}>
@@ -404,7 +408,7 @@ export default function CanopyGuard(){
           </div>
         </Reveal>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:16,maxWidth:700,margin:"0 auto"}}>
-          {[{n:"01",t:"Enter your domain",d:"Type any URL. No signup."},{n:"02",t:"Get scored in 15 seconds",d:"47 signals across 4 layers, all in parallel."},{n:"03",t:"Fix with code",d:"Every failing check includes copy-pasteable fix snippets."}].map((s,i)=>
+          {[{n:"01",t:"Enter your domain",d:"Type any URL. No signup."},{n:"02",t:"Get scored in 15 seconds",d:"83 signals across 4 layers, all in parallel."},{n:"03",t:"Fix with code",d:"Every failing check includes copy-pasteable fix snippets."}].map((s,i)=>
             <Reveal key={s.n} delay={i*0.1}><div style={{textAlign:"center",padding:24}}>
               <div style={{fontSize:32,fontWeight:700,fontFamily:mono,color:C.red,marginBottom:12}}>{s.n}</div>
               <h3 style={{fontSize:16,fontWeight:700,fontFamily:heading,marginBottom:8,color:C.white}}>{s.t}</h3>
@@ -532,6 +536,8 @@ export default function CanopyGuard(){
     <Section title={t("dashboard.sections.geo_title")} tag={t("dashboard.sections.geo_tag")} desc={t("dashboard.sections.geo_desc")}><Row label={t("dashboard.rows.chunking_eff")} value={`${(d.visibility_canopy.geo_branch.chunking_efficiency*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.citation_prec")} value={`${(d.visibility_canopy.geo_branch.citation_metrics.precision_rate*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.market_share")} value={`${(d.visibility_canopy.geo_branch.market_share_gap*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.llms_txt")} good={d.visibility_canopy.geo_branch.llms_txt_status==="PRESENT_ROOT"} snippet="llms_txt"/></Section>
     <Section title={t("dashboard.sections.security_title")} tag={t("dashboard.sections.security_tag")} desc={t("dashboard.sections.security_desc")}><Row label={t("dashboard.rows.tls_valid")} good={sec.tls?.valid}/><Row label={t("dashboard.rows.hsts")} good={sec.tls?.hsts} snippet="hsts"/><Row label={t("dashboard.rows.https_redirect")} good={sec.tls?.redirectsToHttps}/><Row label={t("dashboard.rows.robots_policy")} value={sec.ai_crawl_risk.robots_policy}/><Row label={t("dashboard.rows.agent_spoofing")} good={!sec.ai_crawl_risk.spoofed_agent_vulnerability}/><Row label={t("dashboard.rows.rate_limiting")} good={sec.ai_crawl_risk.rate_limiting_active}/><Row label={t("dashboard.rows.exposed_endpoints")} value={(sec.application_security.exposed_endpoints||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.missing_headers")} value={(sec.application_security.missing_secure_headers||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.known_cves")} value={(sec.application_security.vulnerabilities||[]).length||t("dashboard.none")}/></Section>
   </div>
+  {/* Enhanced 5-layer security posture (v3.0) */}
+  {d.security_enhanced && <SecurityEnhanced data={d.security_enhanced}/>}
   {/* Compliance */}
   <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`,borderRadius:3}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span></div>)}</div></div>
   {/* Missing Headers */}

@@ -76,6 +76,96 @@ function generatePDF(r, email, t) {
   if (sec.business_logic_gaps?.data_provenance_leak)
     insights.push({ l: "WARNING", t: t("risks.provenance_risk_title"), b: t("risks.provenance_risk_desc") });
 
+  // Security Posture — 5 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
+  const se = r.security_enhanced;
+  const esc = v => String(v ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const seRow = (label, value) => (value === undefined || value === null || value === "")
+    ? ""
+    : `<div class="se-row"><span class="se-row-label">${esc(label)}</span><span class="se-row-val">${esc(value)}</span></div>`;
+  const seCard = (title, score, rows, notes = []) => {
+    const body = rows.filter(Boolean).join("");
+    const bar = (score === undefined || score === null)
+      ? ""
+      : `<div class="se-score"><span>layer score</span><span style="color:${sc(score / 100)};font-weight:700">${score}</span></div>
+         <div class="se-bar"><div class="se-bar-fill" style="width:${Math.min(100, Math.max(0, score))}%;background:${sc(score / 100)}"></div></div>`;
+    const noteHtml = (notes || []).filter(Boolean).map(n => `<div class="se-note">${esc(n)}</div>`).join("");
+    return `<div class="se-card"><div class="se-card-title">${esc(title)}</div>${body}${bar}${noteHtml ? `<div class="se-notes">${noteHtml}</div>` : ""}</div>`;
+  };
+
+  const seLayers = [];
+  if (se) {
+    const { tls, dns, http, html, paths } = se;
+    if (tls) seLayers.push(seCard("TLS / Certificate", tls.score_contribution, [
+      seRow("TLS version", tls.tls_version),
+      seRow("Cipher suite", tls.cipher_suite),
+      seRow("Cert expiry", tls.cert_expiry_days >= 0 ? `${tls.cert_expiry_days} days (${tls.cert_expiry_status})` : "expired"),
+      seRow("Issuer", tls.cert_issuer),
+      tls.cert_self_signed ? seRow("Self-signed", "yes") : "",
+      tls.cert_san_mismatch ? seRow("SAN mismatch", "yes") : "",
+    ], tls.rationale));
+    if (dns) seLayers.push(seCard("DNS Security", dns.score_contribution, [
+      seRow("SPF policy", dns.spf_policy || "unknown"),
+      seRow("DMARC policy", dns.dmarc_policy || "unknown"),
+      seRow("CAA records", dns.caa_present ? "Present" : "Absent"),
+      seRow("DKIM selectors", dns.dkim_selectors_found?.length > 0 ? dns.dkim_selectors_found.join(", ") : "None found"),
+      dns.subdomain_takeover_risk?.length > 0 ? seRow("Takeover risk", dns.subdomain_takeover_risk.join(", ")) : "",
+    ], dns.rationale));
+    if (http) seLayers.push(seCard("HTTP Headers", http.score_contribution, [
+      seRow("CSP quality", http.csp_quality || "unknown"),
+      http.server_disclosure ? seRow("Server header", http.server_header_value) : "",
+      http.powered_by_disclosure ? seRow("X-Powered-By", "disclosed") : "",
+      http.cors_wildcard ? seRow("CORS wildcard", http.cors_credentialed_wildcard ? "with credentials — critical" : "detected") : "",
+      http.dangerous_methods?.length > 0 ? seRow("Dangerous methods", http.dangerous_methods.join(", ")) : "",
+      seRow("security.txt", http.security_txt_present ? "Present" : "Absent"),
+    ], http.rationale));
+    if (html) seLayers.push(seCard("HTML Analysis", html.score_contribution, [
+      html.vulnerable_libraries?.length > 0 ? seRow("Vulnerable libs", html.vulnerable_libraries.map(l => `${l.lib} ${l.version} (${l.cve})`).join("; ")) : "",
+      seRow("Forms missing CSRF", html.forms_without_csrf > 0 ? html.forms_without_csrf : "None"),
+      seRow("Mixed content", html.mixed_content_urls?.length > 0 ? `${html.mixed_content_urls.length} found` : "Clean"),
+      seRow("Inline scripts", html.inline_script_count),
+      html.generator_disclosure ? seRow("Generator tag", html.generator_disclosure) : "",
+      html.debug_content_detected ? seRow("Debug output", "detected") : "",
+    ], html.rationale));
+    if (paths) {
+      const exposed = [
+        ...(paths.developer_files_exposed || []),
+        ...(paths.backup_files_exposed || []),
+        ...(paths.source_maps_exposed || []),
+        ...(paths.cms_panels_exposed || []),
+        ...(paths.db_panels_exposed || []),
+      ];
+      seLayers.push(seCard("Path Exposure", paths.score_contribution, [
+        paths.developer_files_exposed?.length > 0 ? seRow("Developer files", paths.developer_files_exposed.join(", ")) : "",
+        paths.backup_files_exposed?.length > 0 ? seRow("Backup files", paths.backup_files_exposed.join(", ")) : "",
+        paths.source_maps_exposed?.length > 0 ? seRow("Source maps", paths.source_maps_exposed.join(", ")) : "",
+        paths.cms_panels_exposed?.length > 0 ? seRow("CMS panels", paths.cms_panels_exposed.join(", ")) : "",
+        paths.db_panels_exposed?.length > 0 ? seRow("DB panels", paths.db_panels_exposed.join(", ")) : "",
+        seRow("Directory listing", paths.directory_listing_confirmed ? "Enabled" : "Disabled"),
+        seRow("Error disclosure", paths.error_page_discloses_stack ? "Detected" : "Clean"),
+        paths.api_paths_exposed?.length > 0 ? seRow("Open API paths", paths.api_paths_exposed.join(", ")) : "",
+        (exposed.length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack) ? seRow("Status", "No sensitive paths exposed") : "",
+      ], paths.rationale));
+    }
+  }
+
+  const seCrossRefs = se?.cross_reference || [];
+  const seXrefHtml = seCrossRefs.map(f => {
+    const sev = ["critical", "high", "medium"].includes(f.severity) ? f.severity : "medium";
+    return `<div class="se-xref ${sev}"><span class="se-xref-sev">Cross-Reference Finding — ${esc(f.severity)}</span><div class="se-xref-msg">${esc(f.message)}</div></div>`;
+  }).join("");
+
+  const seSection = se ? `
+<!-- PAGE 3: Security Posture — 5 Layer Analysis -->
+<div class="page-break"></div>
+<div class="header">
+  <div><div class="logo">CANOPY<span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
+  <div class="meta">${t("ui.security_posture", "Security Posture")} · ${r.audit_id.slice(0, 8)}</div>
+</div>
+<h2>${t("ui.security_posture_5layer", "Security Posture — 5 Layer Analysis")}</h2>
+${seXrefHtml}
+<div class="se-grid">${seLayers.join("")}</div>
+` : "";
+
   return `<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>
 @page { size: A4; margin: 36px }
@@ -127,6 +217,25 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 .cta p { color: #888; font-size: 11px; margin-bottom: 10px }
 .cta a { display: inline-block; background: #E53935; color: #fff; font-weight: 900; font-size: 11px; padding: 10px 28px; text-decoration: none; letter-spacing: 2px }
 .footer { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; color: #aaa; font-size: 9px }
+
+/* Security posture — 5 layer analysis */
+.se-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 }
+.se-card { flex: 1 1 calc(50% - 10px); min-width: 240px; border: 1px solid #ddd; border-radius: 6px; padding: 12px 14px; background: #fdfdfd; page-break-inside: avoid }
+.se-card-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #E53935; margin-bottom: 8px }
+.se-row { display: flex; justify-content: space-between; gap: 8px; font-size: 10px; padding: 3px 0; border-bottom: 1px solid #f0f0f0 }
+.se-row-label { color: #888 }
+.se-row-val { color: #222; font-weight: 600; text-align: right; word-break: break-all; max-width: 60% }
+.se-score { display: flex; justify-content: space-between; font-size: 9px; color: #888; margin: 8px 0 3px }
+.se-bar { background: #eee; border-radius: 2px; height: 4px }
+.se-bar-fill { height: 100% }
+.se-notes { margin-top: 8px; border-top: 1px solid #eee; padding-top: 6px }
+.se-note { font-size: 9px; color: #777; line-height: 1.5; margin-bottom: 2px }
+.se-xref { border: 1px solid #ddd; border-left: 4px solid #999; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px; page-break-inside: avoid; background: #fafafa }
+.se-xref.critical { border-left-color: #E53935; background: #fef2f2 }
+.se-xref.high { border-left-color: #F9A825; background: #fff8e1 }
+.se-xref.medium { border-left-color: #AAAA22; background: #fcfce8 }
+.se-xref-sev { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #555 }
+.se-xref-msg { font-size: 10.5px; color: #444; margin-top: 3px; line-height: 1.5 }
 </style></head><body>
 
 <!-- PAGE 1: Summary -->
@@ -207,6 +316,8 @@ ${compliance.map(c => `<div class="compliance-item ${c.pass ? 'pass-bg' : 'fail-
   </div>
   <p class="risk-desc">${t("pdf.risks.foundation_crack_desc")}</p>
 </div>
+
+${seSection}
 
 <div class="cta">
   <h3>${t("pdf.cta_title")}</h3>

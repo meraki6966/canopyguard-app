@@ -1,5 +1,7 @@
 // src/pages/Compare.jsx
 
+import React from 'react';
+
 const COLORS = {
   purple:     '#2D005E',
   purpleMid:  '#3D007A',
@@ -147,8 +149,8 @@ export default function Compare() {
           </thead>
           <tbody>
             {FEATURE_GROUPS.map(group => (
-              <>
-                <tr key={`g-${group.label}`}>
+              <React.Fragment key={group.label}>
+                <tr>
                   <td colSpan={TOOLS.length + 1} style={{ padding:'14px 14px 6px', fontSize:'10px', fontWeight:'800', letterSpacing:'0.12em', textTransform:'uppercase', color:COLORS.gold, background:'rgba(45,0,94,0.9)', borderTop:`1px solid rgba(200,169,110,0.15)` }}>
                     {group.label}
                   </td>
@@ -164,7 +166,7 @@ export default function Compare() {
                     {TOOLS.map(t => <Cell key={t.id} val={f.values[t.id]} highlight={t.highlight} />)}
                   </tr>
                 ))}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

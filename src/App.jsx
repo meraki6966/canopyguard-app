@@ -3,6 +3,7 @@ import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { SecurityEnhanced } from "./components/SecurityEnhanced";
+import { DribbbleBadge } from "./components/DribbbleBadge";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#131316", blackBorder: "#1C1C20",
@@ -554,6 +555,9 @@ export default function CanopyGuard(){
       <footer style={{borderTop:`1px solid ${C.blackBorder}`,padding:"24px 32px",textAlign:"center"}}>
         <p style={{fontSize:11,color:C.grayDark,margin:"0 0 6px"}}>Canopy Guard · Built by <span style={{color:C.white,fontWeight:700}}>Soulful Tech™</span> · Meraki is Love, LLC</p>
         <a href="/privacy.html" style={{fontSize:11,color:C.grayDark,textDecoration:"underline"}}>Privacy Policy</a>
+        <div style={{marginTop:16,display:"flex",justifyContent:"center"}}>
+          <DribbbleBadge />
+        </div>
       </footer>
     </div>}
 

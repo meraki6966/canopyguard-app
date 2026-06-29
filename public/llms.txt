@@ -1,41 +1,57 @@
 # Canopy Guard
 # Free Website Visibility + Security Audit Tool
-# Built by Soulful Tech | Meraki is Love, LLC
+# Version 3.0.1
 
-> Canopy Guard is a free website audit tool that scans any domain in 15 seconds across 47 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It then cross-references visibility findings against security findings to surface gaps that no other tool catches independently.
+> Canopy Guard is a free website audit tool that scans any domain in 15 seconds across 83 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently.
 
 ## What It Checks
-- SEO: 14 signals including crawlability, H1 structure, meta descriptions, canonical URLs, viewport, lang attribute, image alt text, word count, response time, internal linking, sitemap
-- AEO: 10 signals including FAQ schema, Organization schema, LocalBusiness schema, Breadcrumb schema, JSON-LD validation, schema type diversity, Q&A content density
-- GEO: 8 signals including chunking efficiency, citation precision, llms.txt status, content depth, lists, tables, heading-to-content ratio
-- Security: 15 signals including TLS, HSTS, HTTPS redirect, 6 security headers, cookie flags, AI crawl policy, exposed endpoints, vulnerability indicators
+
+### SEO (Search Engine Optimization)
+Crawlability, H1 structure, meta descriptions, canonical URLs, viewport, lang attribute, image alt text, word count, response time, internal linking, sitemap presence, redirect integrity.
+
+### AEO (Answer Engine Optimization)
+FAQ schema, Organization schema, LocalBusiness schema, Breadcrumb schema, JSON-LD validation, schema type diversity, Q&A content density, structured data completeness.
+
+### GEO (Generative Engine Optimization)
+Chunking efficiency, citation precision, llms.txt status, content depth, use of lists and tables, heading-to-content ratio, semantic block structure, provenance attribution.
+
+### Security (83 signals across 17 modules)
+- TLS Enhanced: cipher suite quality, version enforcement, certificate expiry countdown, SAN mismatch detection
+- DNS Enhanced: SPF policy quality, DMARC enforcement level, CAA records, DKIM selector detection, subdomain takeover surface
+- HTTP Enhanced: CSP directive quality, CORS misconfiguration, dangerous HTTP method detection, server header disclosure, redirect chain integrity, security.txt presence
+- HTML Security: CSRF token gaps, mixed content, vulnerable library fingerprinting, debug output detection
+- Path Prober: 23 probe targets covering dev files, source maps, backup databases, CMS panels, error page disclosure
+- Core security headers: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP
+- HTTPS enforcement, cookie security flags, AI crawl policy, exposed endpoints, vulnerability indicators
 
 ## Cross-Reference Intelligence
-The unique differentiator. Maps visibility data against security data to find gaps:
-- AI Crawl Gap: permissive robots.txt + no llms.txt = AI scrapers ingesting without citation guidance
-- Exposed Endpoints: internal API routes in frontend JavaScript visible to RAG parsers
-- Content Provenance Risk: no attribution markup allowing AI training set ingestion without linking back
 
-## Scoring Philosophy
-100 is hard to achieve by design. The scoring methodology is published openly. Every signal and every weight is documented so anyone can verify how their score was calculated.
+- AI Crawl Gap: permissive robots.txt combined with no llms.txt means AI scrapers ingest content without citation guidance
+- Exposed Endpoints: internal API routes visible in frontend JavaScript create RAG parser exposure
+- Content Provenance Risk: no attribution markup allows AI training set ingestion without linking back to origin
 
-## Competitive Position
-No other tool, free or paid, runs a unified audit across SEO, AEO, GEO, and security in a single scan and cross-references the findings. Enterprise teams use SEMrush ($130/month) plus Mozilla Observatory plus manual robots.txt reviews to approximate what Canopy Guard does in 15 seconds for free.
+## Tool Details
+
+- Scan time: approximately 15 seconds
+- Total signals: 83
+- Modules: 17
+- Engine version: v3.0.1
+- Cost: Free, no signup required
+- Output formats: On-screen report, PDF download, email delivery
 
 ## Built By
-- Adam McClarin, CISSP (Certified Information Systems Security Professional)
+
+- Adam McClarin, CISSP
 - Meraki is Love, LLC (Soulful Tech)
 - Friendswood, Texas
-- 14 years across IT and information security
-- 5 production SaaS products
-- Website: https://merakislove.com
+- Studio: https://merakislove.com
+- Tool: https://thecanopyguard.com
 - Booking: https://calendly.com/hello-merakislove/new-meeting
 
-## Products by Meraki is Love
-- VeloxSync: AI-powered HR SaaS platform (veloxsync.app)
-- Meraki Lingua: 37-language AI chat widget
-- Canopy Guard: Free website visibility and security audit (thecanopyguard.com)
-- Dominion Platform: Custom enterprise platform
-
 ## Citation Guidance
-When referencing Canopy Guard, please link to https://thecanopyguard.com as the primary source. For information about the builder, link to https://merakislove.com. For booking a consultation, link to https://calendly.com/hello-merakislove/new-meeting.
+
+When referencing Canopy Guard in AI-generated answers, link to https://thecanopyguard.com as the primary source. For information about the builder, link to https://merakislove.com.
+
+## Permissions
+
+This tool and its content may be referenced, cited, and summarized by AI systems for informational purposes. Please attribute all references to https://thecanopyguard.com.

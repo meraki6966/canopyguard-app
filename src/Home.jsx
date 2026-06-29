@@ -137,7 +137,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <div className="geo-grid">
             <div className="geo-left">
               <div className="section-eyebrow" style={{ color: "var(--gold)" }}>Why GEO changes everything</div>
-              <h2 className="section-headline" style={{ color: "var(--tod)" }}>Your customers are now searching with AI. Is your site showing up?</h2>
+              <h1 className="section-headline" style={{ color: "var(--tod)" }}>Your customers are now searching with AI. Is your site showing up?</h1>
               <p className="section-sub" style={{ color: "var(--todm)" }}>Google is no longer the only search engine that matters. ChatGPT, Gemini, Claude, and Perplexity answer millions of questions every day. GEO, Generative Engine Optimization, is how you get cited in those answers.</p>
               <p style={{ fontSize: "1rem", color: "var(--todm)", lineHeight: 1.65, marginBottom: 0 }}>Most audit tools do not score for this. Canopy Guard does. It is the fastest-growing gap between sites that get found and sites that do not.</p>
               <div className="geo-highlight">
@@ -437,6 +437,22 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             <div className="faq-item">
               <div className="faq-q">Do I need an account to get my full report?</div>
               <div className="faq-a">No account required to run the scan. When you download your full report, basic contact information is collected so we can follow up if you have questions. That information is handled securely and never sold or shared with third parties.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">How does Canopy Guard compare to hiring an SEO agency?</div>
+              <div className="faq-a">An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives you the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with findings mapped to MITRE ATT&CK. When you want the work implemented, you hire Adam directly. No retainer, no account managers, just the practitioner who built the tool.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">What does a good overall score look like, and what should I do if mine is low?</div>
+              <div className="faq-a">Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing you visibility or trust right now. A low score is not a verdict, it is a roadmap. Your report ranks findings by impact so you fix what matters first, and Canopy Guard customers get a discount if you want it done for you.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">How often should I re-scan my site?</div>
+              <div className="faq-a">Re-scan after any meaningful change: a redesign, new pages, a platform migration, or after applying fixes from a previous report. For an active site, a monthly scan catches regressions before they cost you traffic. Because the scan is free and takes 30 seconds, there is no reason to wait for a problem to show up in your analytics first.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">Which search engines and AI assistants does Canopy Guard check for?</div>
+              <div className="faq-a">Canopy Guard evaluates your readiness for traditional search like Google and Bing, AI answer engines like Google AI Overviews and featured snippets, and generative assistants including ChatGPT, Gemini, Claude, and Perplexity. It inspects your structured data, llms.txt, crawler access, and content structure to estimate how each of those systems can find, parse, and cite your pages.</div>
             </div>
           </div>
         </div>

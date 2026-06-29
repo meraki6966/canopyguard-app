@@ -25,7 +25,7 @@ export default function Privacy() {
       <section className="privacy-section">
         <div className="section-inner">
           <div className="section-eyebrow">Legal</div>
-          <h2 className="section-headline" style={{ fontSize: "2rem", marginBottom: 28 }}>Privacy Policy</h2>
+          <h1 className="section-headline" style={{ fontSize: "2.4rem", marginBottom: 28, color: "var(--forest)" }}>Privacy Policy</h1>
           <div className="privacy-block">
             <p>Canopy Guard is operated by Adam McClarin, founder of Meraki is Love, LLC (Soulful Tech™), based in Friendswood, Texas. This policy explains what data we collect, how we use it, and what we do not do with it.</p>
             <h3>What we scan</h3>

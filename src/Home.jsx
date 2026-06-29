@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { POSTS } from "./blog/posts.js";
 import "./home.css";
 
 const DM_FONTS =
@@ -34,6 +35,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <li><a href="#results">Results</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#faq">FAQ</a></li>
+          <li><Link to="/blog">Blog</Link></li>
         </ul>
         <div className="nav-right">
           <Link to="/privacy" className="nav-signin">Privacy</Link>
@@ -325,6 +327,14 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <div className="case-location">Houston, TX · Local Search</div>
               </div>
               <div className="case-body">
+                <img
+                  src="/electrician-success.webp"
+                  alt="Local electrician checking increased booking notifications after Canopy Guard SEO and AEO improvements by Adam McClarin CISSP Friendswood Texas"
+                  width="900"
+                  height="600"
+                  loading="lazy"
+                  style={{ width: "100%", height: "auto", display: "block", borderRadius: "var(--r-sm)", marginBottom: 16 }}
+                />
                 <div className="case-scores">
                   <div className="case-score"><div className="case-score-label">SEO</div><div className="before-after"><span className="score-before">33</span><span className="score-arrow">→</span><span className="score-after">94</span></div></div>
                   <div className="case-score"><div className="case-score-label">AEO</div><div className="before-after"><span className="score-before">6</span><span className="score-arrow">→</span><span className="score-after">91</span></div></div>
@@ -384,6 +394,14 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <div className="cred-card"><div className="cred-title">Dual MS, Cybersecurity</div><div className="cred-body">Graduate-level security training. The depth behind the security score reflects years of academic and applied security work.</div></div>
                 <div className="cred-card"><div className="cred-title">20+ Years in Tech</div><div className="cred-body">Software development, security services, AI engineering, and product building. Canopy Guard is the intersection of all of it.</div></div>
               </div>
+              <img
+                src="/practitioner-desk.webp"
+                alt="Adam McClarin CISSP Azure AI Engineer Meraki is Love Soulful Tech home office Friendswood Texas site audit and implementation services"
+                width="1040"
+                height="693"
+                loading="lazy"
+                style={{ width: "100%", maxWidth: 520, height: "auto", display: "block", borderRadius: "var(--r-md)", marginTop: 24 }}
+              />
             </div>
             <div className="adam-right">
               <div className="adam-name">Adam McClarin</div>
@@ -504,6 +522,28 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="cta-buttons">
           <button className="btn-gold" style={{ padding: "16px 36px", fontSize: "1rem" }} onClick={scanOrFocus}>Scan My Site Free</button>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: "16px 36px", fontSize: "1rem" }}>Book a call with Adam</a>
+        </div>
+      </section>
+
+      {/* BLOG PREVIEW — three most recent articles */}
+      <section className="how-section" style={{ paddingTop: 64, paddingBottom: 64 }}>
+        <div className="section-inner">
+          <div className="section-eyebrow">From the blog</div>
+          <h2 className="section-headline">Latest on AI search, SEO, and security</h2>
+          <p className="section-sub">Practical guides from Adam McClarin, CISSP. The three most recent articles.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 18 }}>
+            {POSTS.slice(0, 3).map((post) => (
+              <div key={post.slug} style={{ display: "flex", flexDirection: "column", background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 12 }}>{post.date} · {post.readingTime}</div>
+                <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "1.15rem", color: "var(--forest)", marginBottom: 10, lineHeight: 1.25 }}>{post.title}</h3>
+                <p style={{ fontSize: "0.86rem", color: "#5A7A62", lineHeight: 1.6, marginBottom: 16 }}>{post.description}</p>
+                <Link to={`/blog/${post.slug}`} style={{ marginTop: "auto", fontSize: "0.8rem", fontWeight: 700, color: "var(--mid)" }}>Read More →</Link>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 24 }}>
+            <Link to="/blog" className="btn-green">View all articles</Link>
+          </div>
         </div>
       </section>
 

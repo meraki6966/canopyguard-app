@@ -31,7 +31,7 @@ html{scroll-behavior:smooth}
 .btn-outline{background:transparent;color:var(--tod);border:1.5px solid var(--tods);padding:14px 32px;border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;display:inline-block;transition:all 0.15s}
 .btn-outline:hover{border-color:var(--todm);color:var(--tod)}
 .hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 68px)}
-.hero-left{background:var(--canopy);padding:80px 56px 80px 48px;display:flex;flex-direction:column;justify-content:center}
+.hero-left{background:var(--canopy);padding:64px 56px 64px 48px;display:flex;flex-direction:column;justify-content:flex-start}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:28px}
 .eyebrow-dot{width:4px;height:4px;background:var(--gold);border-radius:50%;opacity:0.5}
 .cg-home h1{font-family:'DM Serif Display',serif;font-size:clamp(2.2rem,3.4vw,3.1rem);line-height:1.08;color:var(--tod);letter-spacing:-0.025em;margin-bottom:20px}
@@ -47,7 +47,7 @@ html{scroll-behavior:smooth}
 .trust-badges{display:flex;gap:18px;margin-top:44px;padding-top:36px;border-top:1px solid rgba(237,244,239,0.1);flex-wrap:wrap}
 .trust-badge{display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--todm)}
 .trust-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
-.hero-right{background:var(--snow);padding:60px 48px 60px 52px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.hero-right{background:var(--snow);padding:64px 48px 64px 52px;display:flex;flex-direction:column;justify-content:flex-start;gap:14px}
 .results-label{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);margin-bottom:2px}
 .overall-card{background:var(--forest);border-radius:var(--r-lg);padding:22px 26px;display:flex;align-items:center;gap:22px}
 .ring-wrap{position:relative;flex-shrink:0}

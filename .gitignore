@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Source images (optimized .webp versions are committed and served)
+public/electrician-success.png
+public/practitioner-desk.png
+public/Gemini_Generated_Image_bmekgebmekgebmek.png

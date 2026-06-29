@@ -6,6 +6,7 @@ import './index.css'
 import './i18n.js'
 import App from './App.jsx'
 import Compare from './pages/Compare.jsx'
+import Privacy from './pages/Privacy.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/compare" element={<Compare />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Routes>
     </BrowserRouter>
     <Analytics />

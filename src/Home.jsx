@@ -36,7 +36,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <li><a href="#faq">FAQ</a></li>
         </ul>
         <div className="nav-right">
-          <a href="#privacy" className="nav-signin">Privacy</a>
+          <Link to="/privacy" className="nav-signin">Privacy</Link>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-gold">Book a Call</a>
         </div>
       </nav>
@@ -432,46 +432,12 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">Is my site data private?</div>
-              <div className="faq-a">Yes. Canopy Guard only scans publicly available data, the same information any search engine sees. We do not store your site's private content, login credentials, or analytics. See our <a href="#privacy">Privacy Policy</a> for full details.</div>
+              <div className="faq-a">Yes. Canopy Guard only scans publicly available data, the same information any search engine sees. We do not store your site's private content, login credentials, or analytics. See our <Link to="/privacy">Privacy Policy</Link> for full details.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Do I need an account to get my full report?</div>
               <div className="faq-a">No account required to run the scan. When you download your full report, basic contact information is collected so we can follow up if you have questions. That information is handled securely and never sold or shared with third parties.</div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PRIVACY */}
-      <section id="privacy" className="privacy-section">
-        <div className="section-inner">
-          <div className="section-eyebrow">Legal</div>
-          <h2 className="section-headline" style={{ fontSize: "2rem", marginBottom: 28 }}>Privacy Policy</h2>
-          <div className="privacy-block">
-            <p>Canopy Guard is operated by Adam McClarin, founder of Meraki is Love, LLC (Soulful Tech™), based in Friendswood, Texas. This policy explains what data we collect, how we use it, and what we do not do with it.</p>
-            <h3>What we scan</h3>
-            <p>When you submit a URL, Canopy Guard reads only publicly available information, the same data any search engine crawler would see. We do not access your server files, database, analytics account, or any content behind a login.</p>
-            <h3>What we collect when you download a report</h3>
-            <ul>
-              <li>Your name and email address</li>
-              <li>The domain you submitted for audit</li>
-              <li>Your audit scores and findings</li>
-            </ul>
-            <p>This information is stored securely in our lead management system. It is used to send your report and to follow up if you have questions about your findings.</p>
-            <h3>What we do not do</h3>
-            <ul>
-              <li>We do not sell your data to third parties</li>
-              <li>We do not share your information with advertisers</li>
-              <li>We do not store passwords, private site content, or payment information</li>
-              <li>We do not use cookies for advertising or cross-site tracking</li>
-            </ul>
-            <h3>Communication</h3>
-            <p>If you download a report, you may receive a follow-up from Adam regarding your findings or available services. You can opt out at any time by replying to any email with "unsubscribe."</p>
-            <h3>Security</h3>
-            <p>We take reasonable precautions to protect the information we collect. Given Adam's CISSP background, this is not a checkbox. It is a standard we hold ourselves to.</p>
-            <h3>Contact</h3>
-            <p>Questions about this policy? Email <strong>hello@merakislove.com</strong> or <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={{ color: "var(--mid)" }}>book a call</a>.</p>
-            <div className="privacy-date">Last updated: June 2026 · Meraki is Love, LLC · Friendswood, Texas</div>
           </div>
         </div>
       </section>
@@ -520,14 +486,14 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <li><a href="#pricing">Services</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href={CALENDLY} target="_blank" rel="noopener noreferrer">Book a call</a></li>
-                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><Link to="/privacy">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
             <div className="footer-copy">© 2026 Meraki is Love, LLC · Friendswood, Texas · All rights reserved</div>
             <div className="footer-bottom-links">
-              <a href="#privacy">Privacy</a>
+              <Link to="/privacy">Privacy</Link>
               <a href="#methodology">Methodology</a>
               <a href={CALENDLY} target="_blank" rel="noopener noreferrer">Contact</a>
             </div>

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { SecurityEnhanced } from "./components/SecurityEnhanced";
 import { DribbbleBadge } from "./components/DribbbleBadge";
+import { MITRE_TECHNIQUES, MitreBadge } from "./mitre";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#131316", blackBorder: "#1C1C20",
@@ -113,7 +114,7 @@ function generatePDF(r, email, t) {
     ], dns.rationale));
     if (http) seLayers.push(seCard("HTTP Headers", http.score_contribution, [
       seRow("CSP quality", http.csp_quality || "unknown"),
-      http.server_disclosure ? seRow("Server header", http.server_header_value) : "",
+      http.server_disclosure ? `<div class="se-row"><span class="se-row-label">Server header</span><span class="se-row-val">${esc(http.server_header_value)}<span class="mitre-tag">ATT&amp;CK ${MITRE_TECHNIQUES.server_disclosure.id} · ${esc(MITRE_TECHNIQUES.server_disclosure.tactic)}</span></span></div>` : "",
       http.powered_by_disclosure ? seRow("X-Powered-By", "disclosed") : "",
       http.cors_wildcard ? seRow("CORS wildcard", http.cors_credentialed_wildcard ? "with credentials — critical" : "detected") : "",
       http.dangerous_methods?.length > 0 ? seRow("Dangerous methods", http.dangerous_methods.join(", ")) : "",
@@ -231,6 +232,7 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 .se-bar-fill { height: 100% }
 .se-notes { margin-top: 8px; border-top: 1px solid #eee; padding-top: 6px }
 .se-note { font-size: 9px; color: #777; line-height: 1.5; margin-bottom: 2px }
+.mitre-tag { display: inline-block; font-size: 8px; font-weight: 700; letter-spacing: 0.04em; color: #8a6d3b; background: #f3ecd9; border: 1px solid #d8c79a; border-radius: 3px; padding: 1px 5px; margin-left: 6px; white-space: nowrap }
 .se-xref { border: 1px solid #ddd; border-left: 4px solid #999; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px; page-break-inside: avoid; background: #fafafa }
 .se-xref.critical { border-left-color: #E53935; background: #fef2f2 }
 .se-xref.high { border-left-color: #F9A825; background: #fff8e1 }
@@ -656,7 +658,7 @@ export default function CanopyGuard(){
   {/* Compliance */}
   <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`,borderRadius:3}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span></div>)}</div></div>
   {/* Missing Headers */}
-  {(sec.application_security.missing_secure_headers||[]).length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{margin:"0 0 12px",fontSize:12,fontWeight:700,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>{t("dashboard.missing_headers")}</h4><div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:12}}>{sec.application_security.missing_secure_headers.map(h=><code key={h} style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`,borderRadius:2}}>{h}</code>)}</div>{sec.application_security.missing_secure_headers.map(h=>{const k=HEADER_SNIPPET_MAP[h];return k&&FIX_SNIPPETS[k]?<FixSnippet key={h} snippet={FIX_SNIPPETS[k]}/>:null})}</div>}
+  {(sec.application_security.missing_secure_headers||[]).length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{margin:"0 0 12px",fontSize:12,fontWeight:700,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>{t("dashboard.missing_headers")}</h4><div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>{sec.application_security.missing_secure_headers.map(h=>{const m=MITRE_TECHNIQUES[h];return<div key={h} style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:8}}><code style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`,borderRadius:2}}>{h}</code>{m&&<MitreBadge technique={m}/>}</div>})}</div>{sec.application_security.missing_secure_headers.map(h=>{const k=HEADER_SNIPPET_MAP[h];return k&&FIX_SNIPPETS[k]?<FixSnippet key={h} snippet={FIX_SNIPPETS[k]}/>:null})}</div>}
   {/* CTA */}
   <div style={{textAlign:"center",padding:48,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:32,borderRadius:6}}>
     {!leadCaptured?<><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.get_full_title")} <span style={{color:C.red}}>{t("dashboard.cta.get_full_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.download_desc")}</p><button onClick={()=>setShowGate(true)} style={{background:C.red,color:C.white,border:"none",fontWeight:700,fontSize:14,padding:"18px 44px",letterSpacing:1,cursor:"pointer",fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_get_report")}</button></>:<><div style={{fontSize:36,marginBottom:12,color:C.green}}>✓</div><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.delivered_to")} <span style={{color:C.red}}>{capturedEmail}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:460,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.resolve_desc")}</p><a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:C.red,color:C.white,fontWeight:700,fontSize:14,padding:"18px 44px",textDecoration:"none",letterSpacing:1,fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_walkthrough")}</a><div style={{marginTop:16}}><button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,cursor:"pointer",fontFamily:mono,textDecoration:"underline"}}>{t("dashboard.cta.download_again")}</button></div></>}

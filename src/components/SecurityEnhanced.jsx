@@ -1,4 +1,5 @@
 // src/components/SecurityEnhanced.jsx
+import { getTechnique, MitreBadge } from '../mitre';
 
 const SEVERITY_COLORS = {
   critical: { bg: '#2D0A0A', border: '#CC4444', text: '#FF8888', badge: '#CC4444' },
@@ -212,7 +213,12 @@ export function SecurityEnhanced({ data }) {
                 {policyBadge(http.csp_quality)}
               </div>
               {http.server_disclosure && (
-                <DataRow label="Server header" value={http.server_header_value} />
+                <>
+                  <DataRow label="Server header" value={http.server_header_value} />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-2px', marginBottom: '6px' }}>
+                    <MitreBadge technique={getTechnique('server_disclosure')} />
+                  </div>
+                </>
               )}
               {http.powered_by_disclosure && (
                 <div style={{ fontSize: '11px', color: '#E0A030', marginBottom: '4px' }}>X-Powered-By disclosure detected</div>

@@ -2,20 +2,20 @@
 import { getTechnique, MitreBadge } from '../mitre';
 
 const SEVERITY_COLORS = {
-  critical: { bg: '#2D0A0A', border: '#CC4444', text: '#FF8888', badge: '#CC4444' },
-  high:     { bg: '#2D1A0A', border: '#CC7722', text: '#FFAA55', badge: '#CC7722' },
-  medium:   { bg: '#1A1A0A', border: '#AAAA22', text: '#DDDD55', badge: '#AAAA22' },
+  critical: { bg: 'rgba(194,75,58,0.12)', border: '#C24B3A', text: '#E69B8F', badge: '#C24B3A' },
+  high:     { bg: 'rgba(200,169,110,0.12)', border: '#C8A96E', text: '#E0CCA0', badge: '#C8A96E' },
+  medium:   { bg: 'rgba(200,169,110,0.07)', border: 'rgba(200,169,110,0.5)', text: '#CDBE99', badge: '#A88A52' },
 };
 
 const POLICY_COLORS = {
-  reject:      '#4CAF82',
-  quarantine:  '#E0A030',
-  softfail:    '#E0A030',
-  none:        '#CC5555',
-  pass_all:    '#CC5555',
-  absent:      '#CC5555',
-  strong:      '#4CAF82',
-  weak:        '#E0A030',
+  reject:      '#2A7A5E',
+  quarantine:  '#C8A96E',
+  softfail:    '#C8A96E',
+  none:        '#C24B3A',
+  pass_all:    '#C24B3A',
+  absent:      '#C24B3A',
+  strong:      '#2A7A5E',
+  weak:        '#C8A96E',
 };
 
 function policyBadge(value) {
@@ -39,14 +39,14 @@ function policyBadge(value) {
 }
 
 function ScoreBar({ score }) {
-  const color = score >= 80 ? '#4CAF82' : score >= 50 ? '#E0A030' : '#CC5555';
+  const color = score >= 80 ? '#2A7A5E' : score >= 50 ? '#C8A96E' : '#C24B3A';
   return (
     <div style={{ marginTop: '6px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px' }}>
         <span style={{ color: '#888' }}>layer score</span>
         <span style={{ color, fontWeight: '700' }}>{score ?? '—'}</span>
       </div>
-      <div style={{ background: '#1A1A2E', borderRadius: '2px', height: '4px' }}>
+      <div style={{ background: 'rgba(237,244,239,0.1)', borderRadius: '2px', height: '4px' }}>
         <div style={{
           width: `${Math.min(100, score ?? 0)}%`,
           height: '100%',
@@ -174,10 +174,10 @@ export function SecurityEnhanced({ data }) {
                   : 'expired'} />
               <DataRow label="Issuer" value={tls.cert_issuer} />
               {tls.cert_self_signed && (
-                <div style={{ fontSize: '11px', color: '#CC5555', marginTop: '4px' }}>Self-signed certificate detected</div>
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>Self-signed certificate detected</div>
               )}
               {tls.cert_san_mismatch && (
-                <div style={{ fontSize: '11px', color: '#CC5555', marginTop: '4px' }}>SAN mismatch detected</div>
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>SAN mismatch detected</div>
               )}
             </>
           )}
@@ -196,7 +196,7 @@ export function SecurityEnhanced({ data }) {
               <DataRow label="CAA records" value={dns.caa_present ? 'Present' : 'Absent'} />
               <DataRow label="DKIM selectors" value={dns.dkim_selectors_found?.length > 0 ? dns.dkim_selectors_found.join(', ') : 'None found'} />
               {dns.subdomain_takeover_risk?.length > 0 && (
-                <div style={{ fontSize: '11px', color: '#CC5555', marginTop: '6px' }}>
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '6px' }}>
                   Takeover risk: {dns.subdomain_takeover_risk.join(', ')}
                 </div>
               )}
@@ -221,15 +221,15 @@ export function SecurityEnhanced({ data }) {
                 </>
               )}
               {http.powered_by_disclosure && (
-                <div style={{ fontSize: '11px', color: '#E0A030', marginBottom: '4px' }}>X-Powered-By disclosure detected</div>
+                <div style={{ fontSize: '11px', color: '#C8A96E', marginBottom: '4px' }}>X-Powered-By disclosure detected</div>
               )}
               {http.cors_wildcard && (
-                <div style={{ fontSize: '11px', color: http.cors_credentialed_wildcard ? '#CC5555' : '#E0A030', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: http.cors_credentialed_wildcard ? '#C24B3A' : '#C8A96E', marginBottom: '4px' }}>
                   CORS wildcard{http.cors_credentialed_wildcard ? ' with credentials — critical' : ' detected'}
                 </div>
               )}
               {http.dangerous_methods?.length > 0 && (
-                <div style={{ fontSize: '11px', color: '#E0A030', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#C8A96E', marginBottom: '4px' }}>
                   Dangerous methods: {http.dangerous_methods.join(', ')}
                 </div>
               )}
@@ -244,7 +244,7 @@ export function SecurityEnhanced({ data }) {
             <>
               {html.vulnerable_libraries?.length > 0 && (
                 <div style={{ marginBottom: '8px' }}>
-                  <div style={{ fontSize: '11px', color: '#CC5555', fontWeight: '600', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '600', marginBottom: '4px' }}>
                     Vulnerable libraries detected:
                   </div>
                   {html.vulnerable_libraries.map((lib, i) => (
@@ -261,7 +261,7 @@ export function SecurityEnhanced({ data }) {
                 <DataRow label="Generator tag" value={html.generator_disclosure} />
               )}
               {html.debug_content_detected && (
-                <div style={{ fontSize: '11px', color: '#CC5555', marginTop: '4px' }}>Debug output detected in page body</div>
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>Debug output detected in page body</div>
               )}
             </>
           )}
@@ -273,7 +273,7 @@ export function SecurityEnhanced({ data }) {
             <>
               {paths.developer_files_exposed?.length > 0 && (
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '11px', color: '#CC5555', fontWeight: '600' }}>Developer files exposed:</div>
+                  <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '600' }}>Developer files exposed:</div>
                   {paths.developer_files_exposed.map((f, i) => (
                     <div key={i} style={{ fontSize: '11px', color: '#888' }}>{f}</div>
                   ))}
@@ -281,7 +281,7 @@ export function SecurityEnhanced({ data }) {
               )}
               {paths.backup_files_exposed?.length > 0 && (
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '11px', color: '#CC5555', fontWeight: '600' }}>Backup files exposed:</div>
+                  <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '600' }}>Backup files exposed:</div>
                   {paths.backup_files_exposed.map((f, i) => (
                     <div key={i} style={{ fontSize: '11px', color: '#888' }}>{f}</div>
                   ))}
@@ -289,7 +289,7 @@ export function SecurityEnhanced({ data }) {
               )}
               {paths.source_maps_exposed?.length > 0 && (
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '11px', color: '#E0A030', fontWeight: '600' }}>Source maps exposed:</div>
+                  <div style={{ fontSize: '11px', color: '#C8A96E', fontWeight: '600' }}>Source maps exposed:</div>
                   {paths.source_maps_exposed.map((f, i) => (
                     <div key={i} style={{ fontSize: '11px', color: '#888' }}>{f}</div>
                   ))}
@@ -313,7 +313,7 @@ export function SecurityEnhanced({ data }) {
                 ...( paths.cms_panels_exposed || []),
                 ...( paths.db_panels_exposed || []),
               ].length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack && (
-                <div style={{ fontSize: '12px', color: '#4CAF82' }}>No sensitive paths exposed</div>
+                <div style={{ fontSize: '12px', color: '#2A7A5E' }}>No sensitive paths exposed</div>
               )}
             </>
           )}

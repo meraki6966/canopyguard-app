@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { SecurityEnhanced } from "./components/SecurityEnhanced";
 import { DribbbleBadge } from "./components/DribbbleBadge";
 import { MITRE_TECHNIQUES, MitreBadge } from "./mitre";
+import Home from "./Home";
 
 const C = {
   black: "#0A0A0A", blackLight: "#0F0F0F", blackCard: "#131316", blackBorder: "#1C1C20",
@@ -391,177 +392,10 @@ export default function CanopyGuard(){
 
   if(showMethodology)return<MethodologyPage onBack={()=>setShowMethodology(false)}/>;
 
-  // ═══ LANDING — Planar-inspired redesign ═══
+  // ═══ LANDING — redesigned homepage (Home.jsx) ═══
   if(phase==="landing"){
-    const sectionStyle = { padding: "0 24px", maxWidth: 960, margin: "0 auto" };
-    return<div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}>
-      <link href={FONTS_URL} rel="stylesheet"/>
-      {/* NAV */}
-      <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"18px 32px",maxWidth:1200,margin:"0 auto"}}>
-        <span style={{fontSize:16,fontWeight:700,fontFamily:heading,letterSpacing:-0.5}}>CANOPY<span style={{color:C.red}}>GUARD</span></span>
-        <div style={{display:"flex",gap:20,alignItems:"center"}}>
-          <Link to="/compare" style={{background:"transparent",border:"none",color:C.grayDark,fontSize:11,fontFamily:mono,cursor:"pointer",letterSpacing:1,textDecoration:"none"}}>How We Compare</Link>
-          <span style={{color:C.dim}}>|</span>
-          <button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:"none",color:C.grayDark,fontSize:11,fontFamily:mono,cursor:"pointer",letterSpacing:1}}>METHODOLOGY</button>
-          <span style={{color:C.dim}}>|</span>
-          <span style={{fontSize:11,color:C.grayDark,fontFamily:mono,letterSpacing:1}}>BY SOULFUL TECH</span>
-        </div>
-      </nav>
-
-      {/* HERO */}
-      <section style={{textAlign:"center",padding:"120px 24px 100px",maxWidth:800,margin:"0 auto"}}>
-        <Reveal>
-          <div style={{display:"inline-block",padding:"6px 18px",marginBottom:28,border:`1px solid ${C.redBorder}`,background:C.redGlow,borderRadius:20}}>
-            <span style={{fontSize:11,fontWeight:700,color:C.red,fontFamily:mono,letterSpacing:1.5}}>FREE · 83 SIGNALS · 15 SECONDS</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <h1 style={{fontSize:"clamp(36px,6vw,60px)",fontWeight:700,fontFamily:heading,lineHeight:1.1,letterSpacing:-2,margin:"0 0 20px"}}>
-            Visibility and security.<br/><span style={{color:C.red}}>One scan. One report.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p style={{fontSize:17,color:C.muted,lineHeight:1.8,maxWidth:520,margin:"0 auto 44px",fontFamily:body}}>
-            Most tools check SEO or security. Canopy Guard checks both, then cross-references the gaps between them.
-          </p>
-        </Reveal>
-        <Reveal delay={0.3}>
-          <div style={{display:"flex",maxWidth:520,margin:"0 auto",border:`1.5px solid ${C.blackBorder}`,background:C.blackLight,borderRadius:6,overflow:"hidden"}}>
-            <input ref={ref} type="text" value={domain} onChange={e=>setDomain(e.target.value)} onKeyDown={e=>e.key==="Enter"&&startScan()} placeholder="yourdomain.com" style={{flex:1,background:"transparent",border:"none",outline:"none",color:C.white,fontSize:16,padding:"18px 22px",fontFamily:mono}}/>
-            <button onClick={()=>startScan()} style={{background:C.red,border:"none",color:C.white,fontWeight:700,fontSize:14,padding:"18px 32px",cursor:"pointer",letterSpacing:1,fontFamily:heading}}>SCAN</button>
-          </div>
-          <p style={{color:C.grayDark,fontSize:12,marginTop:14,fontFamily:mono}}>Free. No signup. No email required.</p>
-          {scanError&&<p style={{color:C.red,fontSize:13,marginTop:8,fontFamily:mono}}>{scanError}</p>}
-        </Reveal>
-        <Reveal delay={0.4}>
-          <button onClick={()=>startScan("merakislove.com")} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,fontSize:13,padding:"10px 24px",cursor:"pointer",marginTop:24,borderRadius:4,fontFamily:body}}>
-            View a sample report →
-          </button>
-        </Reveal>
-      </section>
-
-      {/* WHY THIS EXISTS — Story Section */}
-      <section style={{...sectionStyle,padding:"80px 24px"}}>
-        <Reveal>
-          <div style={{maxWidth:640,margin:"0 auto"}}>
-            <p style={{fontSize:10,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:12}}>THE PROBLEM</p>
-            <h2 style={{fontSize:28,fontWeight:700,fontFamily:heading,lineHeight:1.3,margin:"0 0 20px"}}>Every audit I ran required four different tools.</h2>
-            <p style={{fontSize:16,color:C.muted,lineHeight:1.8,margin:"0 0 16px"}}>One for SEO basics. One for security headers. One for structured data. A manual check on robots.txt. None of them talked to each other, and none of them checked whether AI crawlers were scraping the site without attribution.</p>
-            <p style={{fontSize:16,color:C.muted,lineHeight:1.8}}>So I built the tool I wished existed. One scan that checks visibility and security together, then maps the findings to surface gaps that only appear in the overlap.</p>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* EDUCATION — What is AEO? What is GEO? */}
-      <section style={{...sectionStyle,padding:"80px 24px"}}>
-        <Reveal>
-          <div style={{textAlign:"center",marginBottom:48}}>
-            <p style={{fontSize:10,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:12}}>BEYOND TRADITIONAL SEO</p>
-            <h2 style={{fontSize:28,fontWeight:700,fontFamily:heading,letterSpacing:-0.5}}>Three layers of discoverability</h2>
-          </div>
-        </Reveal>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:20}}>
-          {[
-            {tag:"SEO",q:"Can Google find you?",a:"Traditional search engine optimization. Crawlability, meta tags, headings, internal links, sitemaps. The foundation everything else builds on.",n:"14 signals",color:C.white},
-            {tag:"AEO",q:"Can ChatGPT cite you?",a:"Answer Engine Optimization. When someone asks an AI a question, can it pull a structured answer from your site? Schema markup, FAQ data, and Q&A content density determine this.",n:"10 signals",color:C.amber},
-            {tag:"GEO",q:"Can AI reference you?",a:"Generative Engine Optimization. When AI models summarize information, do they chunk your content cleanly and cite you as a source? This depends on content structure, specificity, and your llms.txt file.",n:"8 signals",color:C.red},
-          ].map((c,i)=><Reveal key={c.tag} delay={i*0.1}><div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:28,borderRadius:6,height:"100%"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-              <span style={{fontSize:10,fontWeight:700,fontFamily:mono,color:c.color,letterSpacing:2}}>{c.tag}</span>
-              <span style={{fontSize:10,fontFamily:mono,color:C.grayDark}}>{c.n}</span>
-            </div>
-            <h3 style={{fontSize:18,fontWeight:700,fontFamily:heading,margin:"0 0 10px",color:C.white}}>{c.q}</h3>
-            <p style={{fontSize:14,color:C.gray,lineHeight:1.7,margin:0}}>{c.a}</p>
-          </div></Reveal>)}
-        </div>
-      </section>
-
-      {/* CROSS-REFERENCE — The Differentiator */}
-      <section style={{...sectionStyle,padding:"80px 24px"}}>
-        <Reveal>
-          <div style={{background:C.blackCard,border:`1px solid ${C.redBorder}`,padding:36,borderRadius:6,maxWidth:640,margin:"0 auto"}}>
-            <p style={{fontSize:10,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:12}}>THE DIFFERENTIATOR</p>
-            <h2 style={{fontSize:24,fontWeight:700,fontFamily:heading,margin:"0 0 16px"}}>Cross-Reference Intelligence</h2>
-            <p style={{fontSize:15,color:C.muted,lineHeight:1.8,margin:"0 0 20px"}}>Some problems only appear when you check both sides at once. A permissive robots.txt is technically valid. A missing llms.txt has no CVE. But together they mean every AI model is scraping your content with zero citation guidance.</p>
-            <p style={{fontSize:15,color:C.muted,lineHeight:1.8}}>Your expertise gets summarized. Your brand never gets linked. That is a finding neither an SEO tool nor a security tool catches alone.</p>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* CASE STUDY — Before/After */}
-      <section style={{...sectionStyle,padding:"80px 24px"}}>
-        <Reveal>
-          <div style={{textAlign:"center",marginBottom:48}}>
-            <p style={{fontSize:10,fontFamily:mono,color:C.red,letterSpacing:2,marginBottom:12}}>REAL RESULTS</p>
-            <h2 style={{fontSize:28,fontWeight:700,fontFamily:heading}}>From 11 to 93. Same site.</h2>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 40px 1fr",alignItems:"center",maxWidth:600,margin:"0 auto",gap:16}}>
-            <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:28,textAlign:"center",borderRadius:6}}>
-              <p style={{fontSize:10,fontFamily:mono,color:C.grayDark,letterSpacing:2,marginBottom:8}}>BEFORE</p>
-              <div style={{fontSize:56,fontWeight:700,fontFamily:mono,color:C.red}}>11</div>
-              <p style={{fontSize:12,color:C.grayDark,marginTop:8}}>No schema. No llms.txt.<br/>Missing all 6 headers.</p>
-            </div>
-            <div style={{textAlign:"center",fontSize:24,color:C.dim}}>→</div>
-            <div style={{background:C.blackCard,border:`1px solid ${C.green}22`,padding:28,textAlign:"center",borderRadius:6}}>
-              <p style={{fontSize:10,fontFamily:mono,color:C.grayDark,letterSpacing:2,marginBottom:8}}>AFTER</p>
-              <div style={{fontSize:56,fontWeight:700,fontFamily:mono,color:C.green}}>93</div>
-              <p style={{fontSize:12,color:C.grayDark,marginTop:8}}>Full schema. llms.txt live.<br/>All headers. BALANCED policy.</p>
-            </div>
-          </div>
-          <p style={{textAlign:"center",fontSize:13,color:C.grayDark,marginTop:20}}>merakislove.com · Every fix guided by the same report you get for free.</p>
-        </Reveal>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section style={{...sectionStyle,padding:"80px 24px"}}>
-        <Reveal>
-          <div style={{textAlign:"center",marginBottom:48}}>
-            <h2 style={{fontSize:28,fontWeight:700,fontFamily:heading}}>How it works</h2>
-          </div>
-        </Reveal>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:16,maxWidth:700,margin:"0 auto"}}>
-          {[{n:"01",t:"Enter your domain",d:"Type any URL. No signup."},{n:"02",t:"Get scored in 15 seconds",d:"83 signals across 4 layers, all in parallel."},{n:"03",t:"Fix with code",d:"Every failing check includes copy-pasteable fix snippets."}].map((s,i)=>
-            <Reveal key={s.n} delay={i*0.1}><div style={{textAlign:"center",padding:24}}>
-              <div style={{fontSize:32,fontWeight:700,fontFamily:mono,color:C.red,marginBottom:12}}>{s.n}</div>
-              <h3 style={{fontSize:16,fontWeight:700,fontFamily:heading,marginBottom:8,color:C.white}}>{s.t}</h3>
-              <p style={{fontSize:13,color:C.gray,lineHeight:1.6}}>{s.d}</p>
-            </div></Reveal>)}
-        </div>
-      </section>
-
-      {/* TRUST */}
-      <section style={{...sectionStyle,padding:"60px 24px 80px",textAlign:"center"}}>
-        <Reveal>
-          <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:40,marginBottom:36}}>
-            {[{n:"CISSP",d:"Certified Information Systems Security Professional"},{n:"14yr",d:"IT and information security experience"},{n:"5",d:"Production SaaS products live"}].map(b=>
-              <div key={b.n}><div style={{fontSize:28,fontWeight:700,fontFamily:mono,color:C.red}}>{b.n}</div><div style={{fontSize:12,color:C.grayDark,maxWidth:180,marginTop:4}}>{b.d}</div></div>)}
-          </div>
-          <p style={{fontSize:15,color:C.gray,lineHeight:1.8,maxWidth:520,margin:"0 auto"}}>Built by Adam McClarin. Not a theoretical tool. A practical one, built from real audit work across real client sites.</p>
-        </Reveal>
-      </section>
-
-      {/* BOTTOM CTA */}
-      <section style={{textAlign:"center",padding:"80px 24px",borderTop:`1px solid ${C.blackBorder}`}}>
-        <Reveal>
-          <h2 style={{fontSize:28,fontWeight:700,fontFamily:heading,marginBottom:20}}>Scan your site <span style={{color:C.red}}>now</span></h2>
-          <div style={{display:"flex",maxWidth:480,margin:"0 auto",border:`1.5px solid ${C.blackBorder}`,background:C.blackLight,borderRadius:6,overflow:"hidden"}}>
-            <input type="text" value={domain} onChange={e=>setDomain(e.target.value)} onKeyDown={e=>e.key==="Enter"&&startScan()} placeholder="yourdomain.com" style={{flex:1,background:"transparent",border:"none",outline:"none",color:C.white,fontSize:16,padding:"18px 22px",fontFamily:mono}}/>
-            <button onClick={()=>startScan()} style={{background:C.red,border:"none",color:C.white,fontWeight:700,fontSize:14,padding:"18px 32px",cursor:"pointer",letterSpacing:1,fontFamily:heading}}>SCAN</button>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* FOOTER */}
-      <footer style={{borderTop:`1px solid ${C.blackBorder}`,padding:"24px 32px",textAlign:"center"}}>
-        <p style={{fontSize:11,color:C.grayDark,margin:"0 0 6px"}}>Canopy Guard · Built by <span style={{color:C.white,fontWeight:700}}>Soulful Tech™</span> · Meraki is Love, LLC</p>
-        <a href="/privacy.html" style={{fontSize:11,color:C.grayDark,textDecoration:"underline"}}>Privacy Policy</a>
-        <div style={{marginTop:16,display:"flex",justifyContent:"center"}}>
-          <DribbbleBadge />
-        </div>
-      </footer>
-    </div>}
+    return <Home domain={domain} setDomain={setDomain} startScan={startScan} scanError={scanError} inputRef={ref}/>;
+  }
 
   // ═══ SCANNING ═══
   if(phase==="scanning"){return<div style={{minHeight:"100vh",background:C.black,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,fontFamily:body}}><link href={FONTS_URL} rel="stylesheet"/><div style={{maxWidth:440,width:"100%"}}><h2 style={{color:C.white,fontSize:18,fontWeight:700,margin:"0 0 4px",fontFamily:heading}}>Scanning <span style={{color:C.red}}>{domain}</span></h2><p style={{color:C.gray,fontSize:13,fontFamily:mono,margin:"0 0 32px"}}>{PHASES[scanIndex]}...</p><div style={{width:"100%",height:2,background:C.blackBorder,marginBottom:32,borderRadius:1}}><motion.div animate={{width:`${((scanIndex+1)/PHASES.length)*100}%`}} transition={{duration:0.3}} style={{height:"100%",background:C.red,borderRadius:1}}/></div><div style={{display:"flex",flexDirection:"column",gap:2}}>{PHASES.map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"7px 0",opacity:i<=scanIndex?1:0.25,transition:"opacity 0.3s"}}><span style={{fontFamily:mono,fontSize:11,color:i<scanIndex?C.green:i===scanIndex?C.red:C.grayDark,width:16}}>{i<scanIndex?"✓":i===scanIndex?"▸":"·"}</span><span style={{fontSize:13,color:i<=scanIndex?C.muted:C.grayDark}}>{p}</span></div>)}</div></div></div>}

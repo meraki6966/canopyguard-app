@@ -20,6 +20,13 @@ External security posture visible from a public URL, across 17 modules: TLS ciph
 
 Canopy Guard maps security findings to specific MITRE ATT&CK techniques. Missing CSP maps to T1059 Command and Scripting Interpreter. Missing HSTS maps to T1557 Adversary-in-the-Middle. Server header exposure maps to T1592.002 Gather Victim Host Information Software. Missing X-Frame-Options maps to T1185 Browser Session Hijacking. Missing X-Content-Type-Options maps to T1203 Exploitation for Client Execution. Missing Referrer-Policy maps to T1592 Gather Victim Host Information. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature.
 
+## Direct Answers
+
+- SEO (Search Engine Optimization): SEO is how well search engines like Google can crawl, understand, and rank your website. Canopy Guard scores title tags, meta descriptions, heading structure, canonical tags, and schema markup. It is the foundation that makes every other visibility channel work.
+- AEO (Answer Engine Optimization): AEO is how well your content is structured to be selected as the direct answer to a question. It powers voice search, Google AI Overviews, and featured snippets through FAQ schema, Q&A density, and entity clarity. Sites built for AEO get quoted; sites that are not get skipped.
+- GEO (Generative Engine Optimization): GEO is how reliably generative AI assistants like ChatGPT, Gemini, Claude, and Perplexity can find and cite your site. It depends on clean content chunking, citation-ready facts, and an llms.txt file. It is the newest and most overlooked visibility gap in 2026.
+- Security Posture: Security posture is the set of externally visible protections that signal your site is safe and trustworthy. Canopy Guard checks HTTPS, security headers, mixed content, and server exposure, then maps each gap to MITRE ATT&CK. Weak security erodes the trust signals that affect search rankings.
+
 ## Cross-Reference Intelligence
 
 The unique differentiator. Canopy Guard maps visibility findings against security findings to surface gaps that only exist in the overlap:
@@ -50,6 +57,44 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 - Studio: https://merakislove.com
 - Tool: https://thecanopyguard.com
 - Booking: https://calendly.com/hello-merakislove/new-meeting
+
+## Frequently Asked Questions
+
+Q: What is GEO and why does it matter?
+A: GEO stands for Generative Engine Optimization. It is the practice of making your site visible to AI assistants like ChatGPT, Gemini, Claude, and Perplexity, where a growing share of people now search for services. If your site is not structured for GEO, you are invisible to that traffic. Most audit tools do not score for this. Canopy Guard does.
+
+Q: What is AEO?
+A: Answer Engine Optimization is the practice of structuring content to directly answer questions. Voice search, Google AI Overviews, and featured snippets favor sites built for AEO. It overlaps with GEO but focuses on traditional answer engines and search-result features rather than generative AI specifically.
+
+Q: Does scanning my site affect its performance or SEO?
+A: No. Canopy Guard reads only publicly available information, the same data any search engine crawler sees. It does not touch your server, database, or code, and running a scan has zero impact on performance or rankings.
+
+Q: What does MITRE ATT&CK mean for my website?
+A: MITRE ATT&CK is a globally recognized framework for how attackers operate. Canopy Guard maps your security findings to it, so you get context for what each gap exposes you to, not just a number. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
+
+Q: My score is low. What do I do next?
+A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to have it done for you. Canopy Guard customers receive a discount on all implementation services.
+
+Q: How is Canopy Guard different from other SEO tools?
+A: Three things: GEO scoring is rare and here it is free; security findings are mapped to MITRE ATT&CK rather than flagged generically; and a real practitioner can implement everything the audit finds. Most tools give you data. This one connects you to someone who fixes it.
+
+Q: Is my site data private?
+A: Yes. Canopy Guard only scans publicly available data. It does not store your private content, login credentials, or analytics. See the privacy policy at https://thecanopyguard.com/privacy for full details.
+
+Q: Do I need an account to get my full report?
+A: No account is required to run the scan. When you download the full report, basic contact information is collected to follow up on questions. That information is handled securely and never sold or shared with third parties.
+
+Q: How does Canopy Guard compare to hiring an SEO agency?
+A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with findings mapped to MITRE ATT&CK. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
+
+Q: What does a good overall score look like, and what should I do if mine is low?
+A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score is a roadmap, not a verdict. The report ranks fixes by impact, and Canopy Guard customers get a discount if they want it done for them.
+
+Q: How often should I re-scan my site?
+A: Re-scan after any meaningful change, such as a redesign, new pages, a migration, or after applying fixes. For an active site, a monthly scan catches regressions before they cost traffic. The scan is free and takes 30 seconds, so there is no reason to wait.
+
+Q: Which search engines and AI assistants does Canopy Guard check for?
+A: Canopy Guard evaluates readiness for traditional search like Google and Bing, AI answer engines like Google AI Overviews and featured snippets, and generative assistants including ChatGPT, Gemini, Claude, and Perplexity, by inspecting structured data, llms.txt, crawler access, and content structure.
 
 ## Citation Guidance
 

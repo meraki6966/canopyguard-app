@@ -272,6 +272,45 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         </div>
       </section>
 
+      {/* STRUCTURED ANSWER BLOCKS — definition-style, citation-ready */}
+      <section id="definitions" className="how-section">
+        <div className="section-inner">
+          <div className="section-eyebrow">Definitions</div>
+          <h2 className="section-headline">What each score actually means</h2>
+          <p className="section-sub">Direct answers to the four questions every audit raises. Built so AI assistants can quote them cleanly.</p>
+          <dl style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18, margin: 0 }}>
+            <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>SEO — Search Engine Optimization</dt>
+              <dd style={{ margin: 0 }}>
+                <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>SEO is how well search engines like Google can crawl, understand, and rank your website.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard scores your title tags, meta descriptions, heading structure, canonical tags, and schema markup. Strong SEO is the foundation that makes every other visibility channel work. Most small business sites quietly lose traffic to fixable technical issues here.</p>
+              </dd>
+            </div>
+            <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>AEO — Answer Engine Optimization</dt>
+              <dd style={{ margin: 0 }}>
+                <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>AEO is how well your content is structured to be selected as the direct answer to a question.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It powers voice search, Google AI Overviews, and featured snippets. Canopy Guard checks your FAQ schema, question-and-answer density, and entity clarity. Sites built for AEO get quoted in the answer box; sites that are not get skipped entirely.</p>
+              </dd>
+            </div>
+            <div style={{ background: "var(--white)", border: "1px solid var(--gold)", borderRadius: "var(--r-lg)", padding: 24 }}>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-dim)", marginBottom: 10 }}>GEO — Generative Engine Optimization</dt>
+              <dd style={{ margin: 0 }}>
+                <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>GEO is how reliably generative AI assistants like ChatGPT, Gemini, and Perplexity can find and cite your site.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It depends on clean content chunking, citation-ready facts, and an llms.txt file. Canopy Guard scores chunking efficiency, citation precision, and AI-crawler access. It is the newest and most overlooked visibility gap in 2026.</p>
+              </dd>
+            </div>
+            <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>Security Posture</dt>
+              <dd style={{ margin: 0 }}>
+                <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>Security posture is the set of externally visible protections that signal your site is safe and trustworthy.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard checks HTTPS, security headers, mixed content, and server exposure, then maps each gap to MITRE ATT&CK. Weak security does not just invite attackers; it erodes the trust signals that directly affect your search rankings.</p>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       {/* RESULTS / CASES */}
       <section id="results" className="cases-section">
         <div className="section-inner">

@@ -1,6 +1,5 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ViteReactSSG } from 'vite-react-ssg'
+import { Outlet } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import './i18n.js'
@@ -9,18 +8,38 @@ import Compare from './pages/Compare.jsx'
 import Privacy from './pages/Privacy.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogPost from './pages/BlogPost.jsx'
+import { POSTS } from './blog/posts.js'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/compare" element={<Compare />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
-      </Routes>
-    </BrowserRouter>
-    <Analytics />
-  </StrictMode>,
-)
+// Root layout: renders the matched route plus the analytics beacon.
+function RootLayout() {
+  return (
+    <>
+      <Outlet />
+      <Analytics />
+    </>
+  )
+}
+
+// React Router data routes, prerendered to static HTML at build time by
+// vite-react-ssg. Dynamic blog routes are enumerated via getStaticPaths so
+// every article ships as its own crawlable HTML file.
+export const routes = [
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      { index: true, element: <App /> },
+      { path: 'compare', element: <Compare /> },
+      { path: 'privacy', element: <Privacy /> },
+      { path: 'blog', element: <Blog /> },
+      {
+        path: 'blog/:slug',
+        element: <BlogPost />,
+        entry: 'src/pages/BlogPost.jsx',
+        getStaticPaths: () => POSTS.map((p) => `blog/${p.slug}`),
+      },
+    ],
+  },
+]
+
+export const createRoot = ViteReactSSG({ routes })

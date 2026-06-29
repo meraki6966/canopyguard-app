@@ -38,7 +38,7 @@ export default function Blog() {
                 to={`/blog/${post.slug}`}
                 style={{ display: "flex", flexDirection: "column", background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24, transition: "border-color 0.15s" }}
               >
-                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 12 }}>{post.readingTime}</div>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 12 }}>{post.readingTime}{post.date ? ` · ${post.date}` : ""}</div>
                 <h2 style={{ fontSize: "1.2rem", color: "var(--forest)", marginBottom: 10, lineHeight: 1.25 }}>{post.title}</h2>
                 <p style={{ fontSize: "0.86rem", color: "#5A7A62", lineHeight: 1.6, margin: 0 }}>{post.description}</p>
                 <span style={{ marginTop: 16, fontSize: "0.8rem", fontWeight: 700, color: "var(--mid)" }}>Read article →</span>

@@ -76,12 +76,15 @@ export default function BlogPost() {
 
       <article className="how-section" style={{ paddingTop: 72 }}>
         <div className="section-inner" style={{ maxWidth: 760 }}>
-          <div className="section-eyebrow"><Link to="/blog" style={{ color: "var(--mid)" }}>Blog</Link> · {post.readingTime}</div>
+          <div className="section-eyebrow"><Link to="/blog" style={{ color: "var(--mid)" }}>Blog</Link> · {post.readingTime}{post.date ? ` · ${post.date}` : ""}</div>
           <h1 className="section-headline" style={{ color: "var(--forest)", marginBottom: 24 }}>{post.title}</h1>
 
           {post.sections.map((sec, i) => (
             <section key={i} style={{ marginBottom: 28 }}>
               <h2 style={{ fontSize: "1.5rem", color: "var(--forest)", marginBottom: 12 }}>{sec.h2}</h2>
+              {sec.capsule && (
+                <p style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--forest)", background: "var(--sage)", borderLeft: "3px solid var(--gold)", padding: "12px 16px", borderRadius: "0 var(--r-sm) var(--r-sm) 0", marginBottom: 14, lineHeight: 1.6 }}>{sec.capsule}</p>
+              )}
               {sec.paragraphs.map((p, j) => (
                 <p key={j} style={{ fontSize: "1.02rem", color: "#3D5A48", lineHeight: 1.8, marginBottom: 14 }}>{p}</p>
               ))}

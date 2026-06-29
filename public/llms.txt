@@ -18,6 +18,8 @@ How well generative AI models can chunk, retrieve, and cite the pages: chunking 
 ### Security
 External security posture visible from a public URL, across 17 modules: TLS cipher and certificate depth, DNS policy quality (SPF, DMARC, CAA, DKIM, subdomain takeover surface), HTTP headers and CORS, HTML vulnerabilities and vulnerable library fingerprinting, exposed file-path probing, cookie flags, and AI crawl policy.
 
+Canopy Guard maps security findings to specific MITRE ATT&CK techniques. Missing CSP maps to T1059 Command and Scripting Interpreter. Missing HSTS maps to T1557 Adversary-in-the-Middle. Server header exposure maps to T1592.002 Gather Victim Host Information Software. Missing X-Frame-Options maps to T1185 Browser Session Hijacking. Missing X-Content-Type-Options maps to T1203 Exploitation for Client Execution. Missing Referrer-Policy maps to T1592 Gather Victim Host Information. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature.
+
 ## Cross-Reference Intelligence
 
 The unique differentiator. Canopy Guard maps visibility findings against security findings to surface gaps that only exist in the overlap:

@@ -10,8 +10,8 @@ export const MITRE_TECHNIQUES = {
   "Strict-Transport-Security": { id: "T1557", tactic: "Credential Access", name: "Adversary-in-the-Middle" },
   // Missing X-Frame-Options → clickjacking / session hijacking via framing
   "X-Frame-Options": { id: "T1185", tactic: "Collection", name: "Browser Session Hijacking" },
-  // Missing X-Content-Type-Options → MIME-sniffed script execution
-  "X-Content-Type-Options": { id: "T1059", tactic: "Execution", name: "Command and Scripting Interpreter" },
+  // Missing X-Content-Type-Options → MIME-sniffed client-side exploitation
+  "X-Content-Type-Options": { id: "T1203", tactic: "Execution", name: "Exploitation for Client Execution" },
   // Missing Referrer-Policy → leaks host/URL info for recon
   "Referrer-Policy": { id: "T1592", tactic: "Reconnaissance", name: "Gather Victim Host Information" },
   // Server header version disclosure → software fingerprinting for recon

@@ -141,7 +141,7 @@
           "name": "Does Canopy Guard map findings to MITRE ATT&CK?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Canopy Guard is an external, unauthenticated posture scanner, so it does not produce a formal MITRE ATT&CK matrix or simulate adversary behavior. Its findings align conceptually with early-stage ATT&CK tactics — Reconnaissance and Resource Development (exposed paths, server and version disclosure, leaked dev files) and Initial Access exposure (weak TLS, missing security headers, spoofable DMARC, subdomain takeover surface). For a full ATT&CK-mapped assessment, a penetration test is the appropriate next step, which Adam McClarin, CISSP, can scope directly."
+            "text": "Yes. Canopy Guard maps security findings to specific MITRE ATT&CK techniques. Missing CSP maps to T1059 Command and Scripting Interpreter. Missing HSTS maps to T1557 Adversary-in-the-Middle. Server header exposure maps to T1592.002 Gather Victim Host Information Software. Missing X-Frame-Options maps to T1185 Browser Session Hijacking. Missing X-Content-Type-Options maps to T1203 Exploitation for Client Execution. Missing Referrer-Policy maps to T1592 Gather Victim Host Information. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature."
           }
         },
         {

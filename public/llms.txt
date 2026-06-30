@@ -1,8 +1,8 @@
 # Canopy Guard
 # Free Website Visibility + Security Audit Tool
-# Version 3.0.1
+# Version 3.1.0
 
-> Canopy Guard is a free website audit tool that scans any domain in approximately 15 seconds across 83 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. No signup is required.
+> Canopy Guard is a free website audit tool that scans any domain in approximately 15 seconds across 104 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Every check is passive and read-only. No signup is required.
 
 ## The Four Scoring Categories
 
@@ -16,16 +16,21 @@ How well AI answer engines like ChatGPT, Google AI Overviews, and Perplexity can
 How well generative AI models can chunk, retrieve, and cite the pages: chunking efficiency, citation precision, llms.txt status, content depth, use of lists and tables, heading-to-content ratio, and semantic block structure.
 
 ### Security
-External security posture visible from a public URL, across 17 modules: TLS cipher and certificate depth, DNS policy quality (SPF, DMARC, CAA, DKIM, subdomain takeover surface), HTTP headers and CORS, HTML vulnerabilities and vulnerable library fingerprinting, exposed file-path probing, cookie flags, and AI crawl policy.
+External security posture visible from a public URL, across 21 modules and nine analysis layers: TLS cipher and certificate depth, DNS policy quality (SPF, DMARC, CAA, DKIM, subdomain takeover surface), HTTP headers and CORS, HTML vulnerabilities and vulnerable library fingerprinting, exposed file-path probing, cookie flags, and AI crawl policy. Version 3.1.0 adds four expanded capabilities:
 
-Canopy Guard maps security findings to specific MITRE ATT&CK techniques. Missing CSP maps to T1059 Command and Scripting Interpreter. Missing HSTS maps to T1557 Adversary-in-the-Middle. Server header exposure maps to T1592.002 Gather Victim Host Information Software. Missing X-Frame-Options maps to T1185 Browser Session Hijacking. Missing X-Content-Type-Options maps to T1203 Exploitation for Client Execution. Missing Referrer-Policy maps to T1592 Gather Victim Host Information. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature.
+- Malware and reputation scanning: checks the domain against the Google Safe Browsing API and common blacklist services, reporting a status of Clean, Flagged, or Blacklisted with the specific reason when flagged.
+- Expanded footprint analysis: Subresource Integrity (SRI) on every external script and link tag, Secure and HttpOnly flags on cookies, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence.
+- Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (not just present or absent), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration — domains expiring within 60 days are flagged as a hijacking risk.
+- Exposed sensitive file detection: passive checks for public accessibility of common sensitive paths including /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin (without authentication challenge); any accessible path is reported as Critical.
+
+For every security finding, Canopy Guard identifies the exposure condition associated with a specific MITRE ATT&CK technique. A missing CSP identifies the exposure condition associated with T1059 Command and Scripting Interpreter. A missing HSTS identifies the exposure condition associated with T1557 Adversary-in-the-Middle. Server header exposure identifies the exposure condition associated with T1592.002 Gather Victim Host Information: Software. A weak cipher suite identifies the exposure condition associated with T1557 Adversary-in-the-Middle. A script without Subresource Integrity identifies the exposure condition associated with T1195.002 Compromise Software Supply Chain. An exposed credential file such as /.env or /.aws/credentials identifies the exposure condition associated with T1552.001 Unsecured Credentials: Credentials In Files. A spoofable SPF or DMARC record identifies the exposure condition associated with T1566 Phishing. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature.
 
 ## Direct Answers
 
 - SEO (Search Engine Optimization): SEO is how well search engines like Google can crawl, understand, and rank your website. Canopy Guard scores title tags, meta descriptions, heading structure, canonical tags, and schema markup. It is the foundation that makes every other visibility channel work.
 - AEO (Answer Engine Optimization): AEO is how well your content is structured to be selected as the direct answer to a question. It powers voice search, Google AI Overviews, and featured snippets through FAQ schema, Q&A density, and entity clarity. Sites built for AEO get quoted; sites that are not get skipped.
 - GEO (Generative Engine Optimization): GEO is how reliably generative AI assistants like ChatGPT, Gemini, Claude, and Perplexity can find and cite your site. It depends on clean content chunking, citation-ready facts, and an llms.txt file. It is the newest and most overlooked visibility gap in 2026.
-- Security Posture: Security posture is the set of externally visible protections that signal your site is safe and trustworthy. Canopy Guard checks HTTPS, security headers, mixed content, and server exposure, then maps each gap to MITRE ATT&CK. Weak security erodes the trust signals that affect search rankings.
+- Security Posture: Security posture is the set of externally visible protections that signal your site is safe and trustworthy. Canopy Guard checks HTTPS, security headers, mixed content, server exposure, malware and blacklist reputation, Subresource Integrity, cookie flags, TLS ciphers, certificate transparency, SPF and DMARC, registrar lock and expiration, and exposed sensitive files, then identifies the exposure condition associated with the relevant MITRE ATT&CK technique for each gap. Weak security erodes the trust signals that affect search rankings.
 
 ## Cross-Reference Intelligence
 
@@ -43,9 +48,11 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 ## Tool Details
 
 - Scan time: approximately 15 seconds
-- Total signals: 83
-- Modules: 17
-- Engine version: v3.0.1
+- Total signals: 104
+- Security signals: 72 across nine analysis layers
+- Modules: 21
+- Engine version: v3.1.0
+- All checks are passive and read-only (no active exploitation, payload injection, or input sent to the scanned site)
 - Cost: Free, no signup required
 - Output formats: on-screen report, PDF download, email delivery
 
@@ -70,7 +77,10 @@ Q: Does scanning my site affect its performance or SEO?
 A: No. Canopy Guard reads only publicly available information, the same data any search engine crawler sees. It does not touch your server, database, or code, and running a scan has zero impact on performance or rankings.
 
 Q: What does MITRE ATT&CK mean for my website?
-A: MITRE ATT&CK is a globally recognized framework for how attackers operate. Canopy Guard maps your security findings to it, so you get context for what each gap exposes you to, not just a number. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
+A: MITRE ATT&CK is a globally recognized framework for how attackers operate. For each security finding, Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique, so you get context for what each gap exposes you to, not just a number. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
+
+Q: What does the security scan check for?
+A: Across nine security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus four expanded capabilities. Malware and reputation scanning checks Google Safe Browsing and common blacklists and reports Clean, Flagged, or Blacklisted. Expanded footprint analysis checks Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence. Expanded DNS and email depth parses the exact SPF mechanisms and qualifier strength, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (domains expiring within 60 days are flagged as a hijacking risk). Exposed sensitive file detection checks public accessibility of paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any accessible path as Critical. Every check is passive and read-only.
 
 Q: My score is low. What do I do next?
 A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to have it done for you. Canopy Guard customers receive a discount on all implementation services.

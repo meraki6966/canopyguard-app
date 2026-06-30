@@ -106,11 +106,28 @@ function DataRow({ label, value }) {
   );
 }
 
+// Renders the MITRE ATT&CK technique badges a layer surfaces. Each finding
+// identifies the exposure condition associated with a technique ID (corrected
+// language — not "maps to").
+function MitreRow({ mitre }) {
+  if (!mitre || mitre.length === 0) return null;
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+      {mitre.map((m, i) => (
+        <MitreBadge key={i} technique={m} style={{ fontSize: 9 }} />
+      ))}
+    </div>
+  );
+}
+
 export function SecurityEnhanced({ data }) {
   if (!data) return null;
 
-  const { tls, dns, http, html, paths, cross_reference } = data;
+  const { tls, dns, http, html, paths, reputation, footprint, domain_email, sensitive_files, cross_reference } = data;
   const crossRefs = cross_reference || [];
+  const repStatusColor = reputation
+    ? (reputation.status === 'CLEAN' ? '#2A7A5E' : reputation.status === 'UNKNOWN' ? '#C8A96E' : '#C24B3A')
+    : '#888';
 
   return (
     <div style={{ marginTop: '24px' }}>
@@ -119,7 +136,7 @@ export function SecurityEnhanced({ data }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
         <span style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C8A96E', whiteSpace: 'nowrap' }}>
-          Security Posture — 5 Layer Analysis
+          Security Posture — 9 Layer Analysis
         </span>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
       </div>
@@ -155,7 +172,7 @@ export function SecurityEnhanced({ data }) {
         </div>
       )}
 
-      {/* 5 Layer grid */}
+      {/* 9 Layer grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -314,6 +331,126 @@ export function SecurityEnhanced({ data }) {
                 ...( paths.db_panels_exposed || []),
               ].length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack && (
                 <div style={{ fontSize: '12px', color: '#2A7A5E' }}>No sensitive paths exposed</div>
+              )}
+            </>
+          )}
+        </LayerCard>
+
+        {/* Malware & Reputation Layer */}
+        <LayerCard title="Malware & Reputation" data={reputation}>
+          {reputation && (
+            <>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#888' }}>Status:</span>
+                <span style={{
+                  display: 'inline-block', padding: '1px 8px', borderRadius: '3px', fontSize: '11px', fontWeight: '700',
+                  background: repStatusColor + '22', color: repStatusColor, border: `1px solid ${repStatusColor}44`,
+                  textTransform: 'uppercase', letterSpacing: '0.06em',
+                }}>{reputation.status}</span>
+              </div>
+              <DataRow label="Google Safe Browsing"
+                value={reputation.safe_browsing?.checked
+                  ? (reputation.safe_browsing.flagged ? (reputation.safe_browsing.threat_types || []).join(', ') : 'Clean')
+                  : 'Not configured'} />
+              <DataRow label="Blacklists"
+                value={reputation.blacklists?.listed_on?.length > 0
+                  ? reputation.blacklists.listed_on.join(', ')
+                  : `Clean (${reputation.blacklists?.services_checked ?? 0} checked)`} />
+              {reputation.reasons?.length > 0 && (
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>{reputation.reasons.join('; ')}</div>
+              )}
+              <MitreRow mitre={reputation.mitre} />
+            </>
+          )}
+        </LayerCard>
+
+        {/* Footprint Analysis Layer */}
+        <LayerCard title="Footprint Analysis" data={footprint}>
+          {footprint && (
+            <>
+              <DataRow label="External resources w/o SRI"
+                value={(footprint.sri?.scripts_missing_sri + footprint.sri?.stylesheets_missing_sri) > 0
+                  ? `${footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri} missing`
+                  : 'All hashed'} />
+              <DataRow label="Cookie flags"
+                value={(footprint.cookies?.missing_secure + footprint.cookies?.missing_httponly) > 0
+                  ? `${footprint.cookies.missing_secure} no Secure, ${footprint.cookies.missing_httponly} no HttpOnly`
+                  : (footprint.cookies?.total > 0 ? 'Secure + HttpOnly set' : 'No cookies')} />
+              <DataRow label="TLS ciphers supported" value={footprint.tls_ciphers?.supported?.length} />
+              {footprint.tls_ciphers?.weak_supported?.length > 0 && (
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>
+                  Weak: {footprint.tls_ciphers.weak_supported.join(', ')}
+                </div>
+              )}
+              {footprint.tls_ciphers?.weak_protocols_supported?.length > 0 && (
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>
+                  Deprecated protocols: {footprint.tls_ciphers.weak_protocols_supported.join(', ')}
+                </div>
+              )}
+              <DataRow label="Certificate Transparency"
+                value={footprint.certificate_transparency?.checked
+                  ? (footprint.certificate_transparency.present ? `Present (${footprint.certificate_transparency.logged_certificates} logged)` : 'Not found')
+                  : 'Unverified'} />
+              <MitreRow mitre={footprint.mitre} />
+            </>
+          )}
+        </LayerCard>
+
+        {/* DNS & Email Depth Layer */}
+        <LayerCard title="DNS & Email Depth" data={domain_email}>
+          {domain_email && (
+            <>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                <span style={{ fontSize: '11px', color: '#888' }}>SPF:</span>
+                {policyBadge(domain_email.spf?.all_qualifier === 'fail' ? 'reject'
+                  : domain_email.spf?.all_qualifier === 'softfail' ? 'softfail'
+                  : domain_email.spf?.all_qualifier === 'pass' ? 'pass_all'
+                  : domain_email.spf?.present ? 'weak' : 'absent')}
+                <span style={{ fontSize: '11px', color: '#888', marginLeft: '6px' }}>DMARC:</span>
+                {policyBadge(domain_email.dmarc?.policy)}
+              </div>
+              {domain_email.spf?.all_strength && (
+                <DataRow label="SPF enforcement" value={domain_email.spf.all_strength} />
+              )}
+              <DataRow label="Registrar lock" value={domain_email.registrar?.registrar_locked ? 'Locked' : 'Unlocked'} />
+              {domain_email.registrar?.days_until_expiration !== null && domain_email.registrar?.days_until_expiration !== undefined && (
+                <DataRow label="Expires in" value={`${domain_email.registrar.days_until_expiration} days`} />
+              )}
+              {domain_email.registrar?.hijacking_risk && (
+                <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>
+                  {domain_email.registrar.days_until_expiration < 0
+                    ? 'Domain expired — hijacking risk'
+                    : domain_email.registrar.expiring_soon
+                      ? 'Expires within 60 days — hijacking risk'
+                      : 'Transfer lock missing — hijacking risk'}
+                </div>
+              )}
+              <MitreRow mitre={domain_email.mitre} />
+            </>
+          )}
+        </LayerCard>
+
+        {/* Sensitive Files Layer */}
+        <LayerCard title="Sensitive Files" data={sensitive_files}>
+          {sensitive_files && (
+            <>
+              {sensitive_files.accessible_count > 0 ? (
+                <div>
+                  <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '700', marginBottom: '4px' }}>
+                    {sensitive_files.accessible_count} CRITICAL exposure(s):
+                  </div>
+                  {sensitive_files.findings.map((f, i) => (
+                    <div key={i} style={{ marginBottom: '6px' }}>
+                      <div style={{ fontSize: '11px', color: '#E69B8F', fontFamily: "'JetBrains Mono','SF Mono',monospace" }}>{f.path}</div>
+                      <div style={{ fontSize: '10px', color: '#888' }}>{f.reason}</div>
+                      {f.technique && <div style={{ marginTop: '3px' }}><MitreBadge technique={f.technique} style={{ fontSize: 9 }} /></div>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ fontSize: '12px', color: '#2A7A5E' }}>
+                  No sensitive files exposed ({sensitive_files.paths_checked} paths checked)
+                </div>
               )}
             </>
           )}

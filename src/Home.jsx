@@ -477,7 +477,11 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">What does MITRE ATT&CK mean for my website?</div>
-              <div className="faq-a">MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. <strong>Canopy Guard maps your site security findings to this framework</strong>, so you get context for what the gaps actually expose you to, not just a number. This comes from Adam's CISSP background and 20 years in cybersecurity.</div>
+              <div className="faq-a">MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. For each security finding, <strong>Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique</strong>, so you get context for what the gap actually exposes you to, not just a number. This comes from Adam's CISSP background and 20 years in cybersecurity.</div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-q">What does the security scan actually check?</div>
+              <div className="faq-a">Across nine security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus four expanded checks: <strong>malware and reputation</strong> (Google Safe Browsing and common blacklists, reported as Clean, Flagged, or Blacklisted); an <strong>expanded footprint</strong> (Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence); <strong>DNS and email depth</strong> (exact SPF mechanisms and qualifier strength, DMARC policy of none, quarantine, or reject, and registrar lock with days until expiration — domains expiring within 60 days are flagged as a hijacking risk); and <strong>exposed sensitive file detection</strong> for paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, where any publicly accessible path is reported as Critical. Every check is passive and read-only.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">My score is low. What do I do next?</div>

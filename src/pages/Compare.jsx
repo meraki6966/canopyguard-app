@@ -108,7 +108,7 @@ export default function Compare() {
       {/* Hero */}
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '72px 24px 48px', textAlign: 'center' }}>
         <div style={{ display:'inline-block', padding:'3px 12px', background:'rgba(200,169,110,0.12)', border:`1px solid ${COLORS.goldDim}`, borderRadius:'4px', fontSize:'11px', fontWeight:'700', letterSpacing:'0.1em', textTransform:'uppercase', color:COLORS.gold, marginBottom:'20px' }}>
-          v3.0.1 — 83 Signals
+          v3.1.0 — 104 Signals
         </div>
         <h1 style={{ fontSize:'clamp(28px, 5vw, 50px)', fontWeight:'800', lineHeight:'1.1', margin:'0 0 18px', color:COLORS.white }}>
           One scan.<br /><span style={{ color: COLORS.gold }}>Nothing else comes close.</span>
@@ -118,7 +118,7 @@ export default function Compare() {
           Canopy Guard does all of it in 15 seconds, then cross-references the results to surface gaps no other tool catches.
         </p>
         <div style={{ display:'flex', justifyContent:'center', gap:'36px', flexWrap:'wrap', marginBottom:'48px' }}>
-          {[['83','Total signals'],['51','Security signals'],[exclusiveCount,'Features no other free tool has'],['15s','Scan time']].map(([val, label]) => (
+          {[['104','Total signals'],['72','Security signals'],[exclusiveCount,'Features no other free tool has'],['15s','Scan time']].map(([val, label]) => (
             <div key={label} style={{ textAlign:'center' }}>
               <div style={{ fontSize:'34px', fontWeight:'800', color:COLORS.gold, lineHeight:1 }}>{val}</div>
               <div style={{ fontSize:'12px', color:'rgba(248,248,248,0.5)', marginTop:'5px' }}>{label}</div>
@@ -178,7 +178,7 @@ export default function Compare() {
       {/* CTA */}
       <div style={{ textAlign:'center', padding:'64px 24px', background: COLORS.grayBg }}>
         <h2 style={{ fontSize:'clamp(22px, 4vw, 36px)', fontWeight:'800', marginBottom:'14px' }}>See it for yourself.</h2>
-        <p style={{ fontSize:'16px', color:'rgba(248,248,248,0.55)', marginBottom:'32px' }}>One URL. 83 signals. 15 seconds. No account required.</p>
+        <p style={{ fontSize:'16px', color:'rgba(248,248,248,0.55)', marginBottom:'32px' }}>One URL. 104 signals. 15 seconds. No account required.</p>
         <a href="/" style={{ display:'inline-block', padding:'14px 36px', background:COLORS.gold, color:COLORS.purple, fontWeight:'800', fontSize:'15px', borderRadius:'6px', textDecoration:'none' }}>
           Run Your Free Audit
         </a>

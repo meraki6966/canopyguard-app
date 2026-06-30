@@ -82,7 +82,7 @@ function generatePDF(r, email, t) {
   if (sec.business_logic_gaps?.data_provenance_leak)
     insights.push({ l: "WARNING", t: t("risks.provenance_risk_title"), b: t("risks.provenance_risk_desc") });
 
-  // Security Posture — 5 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
+  // Security Posture — 9 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
   const se = r.security_enhanced;
   const esc = v => String(v ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const seRow = (label, value) => (value === undefined || value === null || value === "")
@@ -152,6 +152,33 @@ function generatePDF(r, email, t) {
         (exposed.length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack) ? seRow("Status", "No sensitive paths exposed") : "",
       ], paths.rationale));
     }
+    const { reputation, footprint, domain_email, sensitive_files } = se;
+    if (reputation) seLayers.push(seCard("Malware & Reputation", reputation.score_contribution, [
+      seRow("Status", reputation.status),
+      seRow("Google Safe Browsing", reputation.safe_browsing?.checked ? (reputation.safe_browsing.flagged ? (reputation.safe_browsing.threat_types || []).join(", ") : "Clean") : "Not configured"),
+      seRow("Blacklists", reputation.blacklists?.listed_on?.length > 0 ? reputation.blacklists.listed_on.join(", ") : `Clean (${reputation.blacklists?.services_checked ?? 0} checked)`),
+      reputation.reasons?.length > 0 ? seRow("Reason", reputation.reasons.join("; ")) : "",
+    ], reputation.rationale));
+    if (footprint) seLayers.push(seCard("Footprint Analysis", footprint.score_contribution, [
+      seRow("External resources w/o SRI", (footprint.sri?.scripts_missing_sri + footprint.sri?.stylesheets_missing_sri) > 0 ? `${footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri} missing` : "All hashed"),
+      seRow("Cookie flags", (footprint.cookies?.missing_secure + footprint.cookies?.missing_httponly) > 0 ? `${footprint.cookies.missing_secure} no Secure, ${footprint.cookies.missing_httponly} no HttpOnly` : (footprint.cookies?.total > 0 ? "Secure + HttpOnly set" : "No cookies")),
+      seRow("TLS ciphers supported", footprint.tls_ciphers?.supported?.length),
+      footprint.tls_ciphers?.weak_supported?.length > 0 ? seRow("Weak ciphers", footprint.tls_ciphers.weak_supported.join(", ")) : "",
+      footprint.tls_ciphers?.weak_protocols_supported?.length > 0 ? seRow("Deprecated protocols", footprint.tls_ciphers.weak_protocols_supported.join(", ")) : "",
+      seRow("Certificate Transparency", footprint.certificate_transparency?.checked ? (footprint.certificate_transparency.present ? `Present (${footprint.certificate_transparency.logged_certificates} logged)` : "Not found") : "Unverified"),
+    ], footprint.rationale));
+    if (domain_email) seLayers.push(seCard("DNS & Email Depth", domain_email.score_contribution, [
+      seRow("SPF", domain_email.spf?.all_qualifier ? `${domain_email.spf.all_qualifier} all` : (domain_email.spf?.present ? "present (no all)" : "absent")),
+      domain_email.spf?.all_strength ? seRow("SPF enforcement", domain_email.spf.all_strength) : "",
+      seRow("DMARC policy", domain_email.dmarc?.policy || "absent"),
+      seRow("Registrar lock", domain_email.registrar?.registrar_locked ? "Locked" : "Unlocked"),
+      (domain_email.registrar?.days_until_expiration !== null && domain_email.registrar?.days_until_expiration !== undefined) ? seRow("Expires in", `${domain_email.registrar.days_until_expiration} days${domain_email.registrar.hijacking_risk ? " — hijacking risk" : ""}`) : "",
+    ], domain_email.rationale));
+    if (sensitive_files) seLayers.push(seCard("Sensitive Files", sensitive_files.score_contribution, [
+      sensitive_files.accessible_count > 0
+        ? seRow("CRITICAL", sensitive_files.findings.map(f => `${f.path} (${f.technique?.id})`).join(", "))
+        : seRow("Status", `No sensitive files exposed (${sensitive_files.paths_checked} paths checked)`),
+    ], sensitive_files.rationale));
   }
 
   const seCrossRefs = se?.cross_reference || [];
@@ -161,13 +188,13 @@ function generatePDF(r, email, t) {
   }).join("");
 
   const seSection = se ? `
-<!-- PAGE 3: Security Posture — 5 Layer Analysis -->
+<!-- PAGE 3: Security Posture — 9 Layer Analysis -->
 <div class="page-break"></div>
 <div class="header">
   <div><div class="logo">CANOPY<span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
   <div class="meta">${t("ui.security_posture", "Security Posture")} · ${r.audit_id.slice(0, 8)}</div>
 </div>
-<h2>${t("ui.security_posture_5layer", "Security Posture — 5 Layer Analysis")}</h2>
+<h2>${t("ui.security_posture_5layer", "Security Posture — 9 Layer Analysis")}</h2>
 ${seXrefHtml}
 <div class="se-grid">${seLayers.join("")}</div>
 ` : "";
@@ -224,7 +251,7 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 .cta a { display: inline-block; background: #E53935; color: #fff; font-weight: 900; font-size: 11px; padding: 10px 28px; text-decoration: none; letter-spacing: 2px }
 .footer { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; color: #aaa; font-size: 9px }
 
-/* Security posture — 5 layer analysis */
+/* Security posture — 9 layer analysis */
 .se-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 }
 .se-card { flex: 1 1 calc(50% - 10px); min-width: 240px; border: 1px solid #ddd; border-radius: 6px; padding: 12px 14px; background: #fdfdfd; page-break-inside: avoid }
 .se-card-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #E53935; margin-bottom: 8px }
@@ -377,7 +404,7 @@ function MethodologyPage({onBack}){
   <S><H>SEO Score (0 to 100) · 14 Signals</H><P>Measures how well search engines can crawl, index, and rank your site. Scoring 100 requires fast response, 1500+ words, 20+ internal links, perfect meta tags, and a sitemap.</P><W label="Crawlable" val="0.10"/><W label="Exactly 1 H1 (multiple penalized)" val="0.10"/><W label="Meta description + ideal length (120-160)" val="0.10"/><W label="Title tag + ideal length (30-60)" val="0.10"/><W label="Canonical URL match" val="0.08"/><W label="Viewport meta tag" val="0.05"/><W label="HTML lang attribute" val="0.03"/><W label="Image alt text coverage" val="0.08"/><W label="Word count (gradient: 200/500/1500+)" val="0.10"/><W label="Internal links (gradient: 5/10/20+)" val="0.10"/><W label="Sitemap.xml exists" val="0.06"/><W label="Response time (under 1s/3s/3s+)" val="0.05"/><W label="H2 heading structure" val="0.05"/></S>
   <S><H>AEO Score (0 to 100) · 10 Signals</H><P>Measures how well AI answer engines can extract and cite your content. Requires multiple schema types, 5+ FAQ items, and strong Q&A density for full marks.</P><W label="Any JSON-LD present" val="0.10"/><W label="Organization schema" val="0.12"/><W label="FAQ schema" val="0.10"/><W label="FAQ item count (1/3/5+)" val="0.12"/><W label="LocalBusiness schema" val="0.08"/><W label="Breadcrumb schema" val="0.06"/><W label="Schema type diversity (1/2/4+)" val="0.10"/><W label="Zero validation errors" val="0.10"/><W label="Q&A density" val="0.12"/><W label="JSON-LD block count (1/2/3+)" val="0.10"/></S>
   <S><H>GEO Score (0 to 100) · 8 Signals</H><P>Measures how generative AI models chunk, retrieve, and cite your pages. Based on how RAG systems process content.</P><W label="Chunking efficiency" val="0.25"/><W label="Citation precision" val="0.20"/><W label="llms.txt present + length bonus" val="0.23"/><W label="Content depth by word count" val="0.10"/><W label="Lists present" val="0.05"/><W label="Tables present" val="0.04"/><W label="Heading-to-content ratio" val="0.08"/><W label="Baseline reachability" val="0.05"/></S>
-  <S><H>Security Score (0 to 100) · 51 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.0 blends in additional checks across five enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, and path/exposure probing — for 51 security signals in total.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
+  <S><H>Security Score (0 to 100) · 72 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.1 blends in additional checks across nine enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, path/exposure probing, malware &amp; reputation (Google Safe Browsing + blacklists), expanded footprint (Subresource Integrity, cookie flags, full TLS cipher enumeration, certificate transparency), DNS &amp; email depth (SPF mechanisms, DMARC policy, registrar lock + expiration), and sensitive-file exposure — for 72 security signals in total. Each finding identifies the exposure condition associated with a MITRE ATT&amp;CK technique.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
   <S style={{borderColor:C.goldBorder}}><H>Open Methodology</H><P>This scoring system is published so anyone can verify how their score was calculated. If you believe a weight is wrong or a signal is missing, reach out. The methodology improves from real-world feedback.</P><P>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</P></S>
   </div></div>}
 
@@ -490,7 +517,7 @@ export default function CanopyGuard(){
     <Section title={t("dashboard.sections.geo_title")} tag={t("dashboard.sections.geo_tag")} desc={t("dashboard.sections.geo_desc")}><Row label={t("dashboard.rows.chunking_eff")} value={`${(d.visibility_canopy.geo_branch.chunking_efficiency*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.citation_prec")} value={`${(d.visibility_canopy.geo_branch.citation_metrics.precision_rate*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.market_share")} value={`${(d.visibility_canopy.geo_branch.market_share_gap*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.llms_txt")} good={d.visibility_canopy.geo_branch.llms_txt_status==="PRESENT_ROOT"} snippet="llms_txt"/></Section>
     <Section title={t("dashboard.sections.security_title")} tag={t("dashboard.sections.security_tag")} desc={t("dashboard.sections.security_desc")}><Row label={t("dashboard.rows.tls_valid")} good={sec.tls?.valid}/><Row label={t("dashboard.rows.hsts")} good={sec.tls?.hsts} snippet="hsts"/><Row label={t("dashboard.rows.https_redirect")} good={sec.tls?.redirectsToHttps}/><Row label={t("dashboard.rows.robots_policy")} value={sec.ai_crawl_risk.robots_policy}/><Row label={t("dashboard.rows.agent_spoofing")} good={!sec.ai_crawl_risk.spoofed_agent_vulnerability}/><Row label={t("dashboard.rows.rate_limiting")} good={sec.ai_crawl_risk.rate_limiting_active}/><Row label={t("dashboard.rows.exposed_endpoints")} value={(sec.application_security.exposed_endpoints||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.missing_headers")} value={(sec.application_security.missing_secure_headers||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.known_cves")} value={(sec.application_security.vulnerabilities||[]).length||t("dashboard.none")}/></Section>
   </div>
-  {/* Enhanced 5-layer security posture (v3.0) */}
+  {/* Enhanced 9-layer security posture (v3.1) */}
   {d.security_enhanced && <SecurityEnhanced data={d.security_enhanced}/>}
   {/* Compliance */}
   <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`,borderRadius:3}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span></div>)}</div></div>

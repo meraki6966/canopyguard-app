@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Canopy Guard — Free Website Audit Tool | SEO, Security, AEO, GEO</title>
-    <meta name="description" content="Canopy Guard runs 83 signals across 17 modules in 15 seconds. Get your free SEO, security, AEO, and GEO audit report. No signup required." />
+    <meta name="description" content="Canopy Guard runs 104 signals across 21 modules in 15 seconds. Get your free SEO, security, AEO, and GEO audit report. No signup required." />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Adam McClarin, Meraki is Love LLC" />
     <link rel="canonical" href="https://thecanopyguard.com/" />
@@ -13,7 +13,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://thecanopyguard.com/" />
     <meta property="og:title" content="Canopy Guard — Free Website Audit Tool" />
-    <meta property="og:description" content="83 signals. 17 modules. 15 seconds. Free SEO, security, AEO, and GEO audit for any website. No signup required." />
+    <meta property="og:description" content="104 signals. 21 modules. 15 seconds. Free SEO, security, AEO, and GEO audit for any website. No signup required." />
     <meta property="og:image" content="https://thecanopyguard.com/og-image.png" />
     <meta property="og:site_name" content="Canopy Guard" />
 
@@ -21,7 +21,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://thecanopyguard.com/" />
     <meta name="twitter:title" content="Canopy Guard — Free Website Audit Tool" />
-    <meta name="twitter:description" content="83 signals. 17 modules. 15 seconds. Free SEO, security, AEO, and GEO audit for any website." />
+    <meta name="twitter:description" content="104 signals. 21 modules. 15 seconds. Free SEO, security, AEO, and GEO audit for any website." />
     <meta name="twitter:image" content="https://thecanopyguard.com/og-image.png" />
 
     <!-- Favicon -->
@@ -34,7 +34,7 @@
       "@type": "WebSite",
       "name": "Canopy Guard",
       "url": "https://thecanopyguard.com",
-      "description": "Free website audit tool that runs 83 signals across SEO, AEO, GEO, and security in 15 seconds.",
+      "description": "Free website audit tool that runs 104 signals across SEO, AEO, GEO, and security in 15 seconds.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -83,18 +83,22 @@
       "applicationCategory": "WebApplication",
       "operatingSystem": "Any",
       "url": "https://thecanopyguard.com",
-      "description": "Free website audit tool scanning 83 signals across SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and cybersecurity in approximately 15 seconds.",
+      "description": "Free website audit tool scanning 104 signals across SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and cybersecurity in approximately 15 seconds.",
       "featureList": [
-        "83-signal website audit",
+        "104-signal website audit",
         "SEO scoring and recommendations",
         "AEO (Answer Engine Optimization) analysis",
         "GEO (Generative Engine Optimization) scoring",
-        "Security posture assessment across 17 modules",
+        "Security posture assessment across 21 modules",
         "TLS and certificate analysis",
         "DNS security validation",
         "HTTP header security review",
         "HTML vulnerability scanning",
         "Exposed path detection",
+        "Malware and reputation scanning (Google Safe Browsing and blacklists)",
+        "Subresource Integrity, cookie flag, TLS cipher, and certificate transparency analysis",
+        "SPF mechanism, DMARC policy, and registrar lock/expiration checks",
+        "Exposed sensitive file detection",
         "Cross-reference intelligence layer",
         "PDF report download",
         "Email delivery of full report",
@@ -110,7 +114,7 @@
         "name": "Meraki is Love, LLC",
         "url": "https://merakislove.com"
       },
-      "softwareVersion": "3.0.1"
+      "softwareVersion": "3.1.0"
     }
     </script>
 
@@ -149,7 +153,15 @@
           "name": "What does MITRE ATT&CK mean for my website?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. Canopy Guard maps your site security findings to this framework, so you get context for what the gaps actually expose you to, not just a number. This comes from Adam's CISSP background and 20 years in cybersecurity."
+            "text": "MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. For each security finding, Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique, so you get context for what the gap actually exposes you to, not just a number. This comes from Adam's CISSP background and 20 years in cybersecurity."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does Canopy Guard's security scan check for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Across nine security layers, Canopy Guard checks TLS and certificates, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus four expanded capabilities: malware and reputation scanning against Google Safe Browsing and common blacklists (reported as Clean, Flagged, or Blacklisted); an expanded footprint covering Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence; expanded DNS and email depth that parses SPF mechanisms and qualifiers, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (flagging domains expiring within 60 days as a hijacking risk); and exposed sensitive file detection for paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any publicly accessible path as Critical. Every check is passive and read-only, and each finding identifies the exposure condition associated with a MITRE ATT&CK technique."
           }
         },
         {

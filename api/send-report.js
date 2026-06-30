@@ -17,6 +17,49 @@ const REPLY_TO = process.env.RESEND_REPLY_TO || "adam@thecanopyguard.com";
 const CALENDLY_URL = process.env.CALENDLY_URL || "https://calendly.com/hello-merakislove/new-meeting";
 const SITE_URL = process.env.SITE_URL || "https://thecanopyguard.com";
 
+// ── Origin / Referer allowlist ──
+// Only browser requests originating from the production site are accepted.
+const ALLOWED_HOSTS = new Set(["thecanopyguard.com", "www.thecanopyguard.com"]);
+
+function hostFromUrl(u) {
+  if (!u) return null;
+  try { return new URL(u).host.toLowerCase(); } catch { return null; }
+}
+
+// Accept only when the request carries an allowlisted Origin/Referer and no
+// present provenance header points elsewhere. Missing both -> reject (e.g. curl).
+function isAllowedOrigin(req) {
+  const originHost = hostFromUrl(req.headers.origin);
+  const refererHost = hostFromUrl(req.headers.referer);
+  if (originHost && !ALLOWED_HOSTS.has(originHost)) return false;
+  if (refererHost && !ALLOWED_HOSTS.has(refererHost)) return false;
+  return Boolean((originHost && ALLOWED_HOSTS.has(originHost)) || (refererHost && ALLOWED_HOSTS.has(refererHost)));
+}
+
+// ── Per-IP rate limit (mirrors the engine's in-memory scan limiter) ──
+// NOTE: in-memory state is per warm serverless instance and resets on cold
+// starts, so this is best-effort — identical behaviour to the engine limiter.
+const SEND_LIMIT = 5;
+const sendLimiter = Object.create(null);
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  if (!sendLimiter[ip] || sendLimiter[ip].resetAt < now) {
+    sendLimiter[ip] = { count: 1, resetAt: now + 3600000 };
+    return true;
+  }
+  if (sendLimiter[ip].count >= SEND_LIMIT) return false;
+  sendLimiter[ip].count++;
+  return true;
+}
+
+function clientIp(req) {
+  return req.headers["x-forwarded-for"]?.toString().split(",")[0].trim()
+    || req.headers["x-real-ip"]?.toString()
+    || req.socket?.remoteAddress
+    || "unknown";
+}
+
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
@@ -131,6 +174,17 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Origin / Referer allowlist — reject anything not from thecanopyguard.com.
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ error: "Forbidden", reason: "origin_not_allowed" });
+  }
+
+  // Per-IP rate limit — 5 sends/hour, mirroring the engine's scan limiter.
+  const ip = clientIp(req);
+  if (!checkRateLimit(ip)) {
+    return res.status(403).json({ error: "Forbidden", reason: "rate_limited", limit: SEND_LIMIT });
   }
 
   const apiKey = process.env.RESEND_API_KEY;

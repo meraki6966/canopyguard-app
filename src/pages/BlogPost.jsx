@@ -10,6 +10,7 @@ const SITE = "https://thecanopyguard.com";
 
 // Primary topic keywords per article (used in BlogPosting schema).
 const KEYWORDS = {
+  "visibility-score-without-clicks": "AI visibility without traffic, AEO GEO audit gap, PeerPush cooldown",
   "ai-citations-not-from-page-one": "AI citations, Google AI Overviews, AEO, GEO, domain authority, small business SEO",
   "javascript-kills-ai-visibility": "JavaScript SEO, AI crawlers, server-side rendering, prerendering, GEO, page speed",
   "query-fan-out-zero-search-volume": "query fan-out, AI search, entity hub, GEO citation precision, keyword research",

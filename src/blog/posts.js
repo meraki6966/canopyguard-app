@@ -1,6 +1,64 @@
 // Auto-generated blog post data. 18 articles (10 + 8 starter).
 export const POSTS = [
   {
+    "slug": "visibility-score-without-clicks",
+    "title": "We scored 94 on AI visibility and got zero clicks. Here's what that means.",
+    "description": "A top 10% visibility score across every major AI engine looks like a win until you check the traffic. What we found when we audited our own domain, and what it means for yours.",
+    "readingTime": "6 min read",
+    "date": "2026-07-10",
+    "sections": [
+      {
+        "h2": "The number that looked like a win",
+        "capsule": "High visibility, zero traffic. Two numbers that should move together and didn't.",
+        "paragraphs": [
+          "We run audits on other people's sites every day. This time we pointed Canopy Guard at our own domain and the score came back at 94. Top ten percent of the cohort. Full coverage across ChatGPT, Claude, Gemini, and the other major engines. Two thousand impressions over thirty days.",
+          "Zero external clicks in that same window.",
+          "A score that good is supposed to mean the tool is working. It meant something else. It meant we were being seen and not being visited, and those are not the same thing."
+        ]
+      },
+      {
+        "h2": "Where the traffic actually went",
+        "capsule": "Impressions inside a third party listing are not the same as a click on your own domain.",
+        "paragraphs": [
+          "Most of our visibility was coming through a platform listing, not the domain itself. AI engines were finding us, citing us, surfacing us in answers. But the path stopped at someone else's page instead of continuing to ours.",
+          "That is the gap most audits never show you. SEO tools check whether you rank. AEO and GEO checks whether an AI model can find and cite you. Neither one checks whether the visibility actually converts into a person landing on your site."
+        ]
+      },
+      {
+        "h2": "The three things we found",
+        "capsule": "One diagnosis, three separate problems, all fixable.",
+        "paragraphs": [
+          "The domain itself had no fresh content signal. Nothing new since launch, which tells a crawler there is nothing new to index.",
+          "The listing that was driving impressions had been updated once and never touched again. A single burst of freshness, then silence.",
+          "Crawler attention was lopsided. One engine accounted for the majority of activity, the other two barely registered. That is not a ranking problem, that is often a technical one, robots.txt, crawl access, sitemap gaps."
+        ]
+      },
+      {
+        "h2": "What we are doing about it",
+        "capsule": "Fix the domain, fix the routing, fix the cadence.",
+        "paragraphs": [
+          "Content goes on the domain now, not just the listing. This post is part of that. A real, recurring signal that tells every crawler there is something alive here worth indexing.",
+          "Every external listing gets pointed at a specific page, a specific post, the audit tool itself. Not the homepage. A homepage is a shrug. A blog post or a tool is a destination.",
+          "And we are checking crawler access across all three major engines instead of assuming the one that shows up is the one that matters."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is the difference between AEO, GEO, and traditional SEO?",
+        "a": "SEO measures how well a page ranks in search engines like Google. AEO and GEO measure whether an AI model can find, understand, and cite your content when generating an answer. A site can succeed at one and fail at the other."
+      },
+      {
+        "q": "Can a site have strong AI visibility and still get no traffic?",
+        "a": "Yes. Visibility measures whether AI engines are indexing and citing a site. Traffic measures whether that visibility converts into an actual visit. A gap between the two usually points to stale content signals, indirect routing through third party listings, or uneven crawler access."
+      },
+      {
+        "q": "How often should a site publish new content to maintain AI crawler engagement?",
+        "a": "A single update followed by silence reads as a one time event to most crawlers. A steady cadence, even something modest like one post every two weeks, signals an active site worth returning to."
+      }
+    ]
+  },
+  {
     "slug": "ai-citations-not-from-page-one",
     "title": "Only 17 Percent of AI Citations Come From Page One Rankings",
     "description": "Only 17 percent of AI Overview citations rank in the organic top 10. Why small businesses can win citations on comprehensiveness, not domain authority.",

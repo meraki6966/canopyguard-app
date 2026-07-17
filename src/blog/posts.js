@@ -1,6 +1,55 @@
 // Auto-generated blog post data. 18 articles (10 + 8 starter).
 export const POSTS = [
   {
+    "slug": "robots-txt-blocking-ai-crawlers",
+    "title": "How robots.txt Is Quietly Blocking the AI Crawlers You Actually Want",
+    "description": "One old robots.txt rule can quietly block GPTBot, ClaudeBot, or Google-Extended without anyone noticing. A quick audit of common blocking patterns and how to fix them.",
+    "readingTime": "5 min read",
+    "date": "2026-07-17",
+    "sections": [
+      {
+        "h2": "The assumption that breaks visibility",
+        "capsule": "Blocking bad bots and blocking AI crawlers often use the same rule by accident.",
+        "paragraphs": [
+          "When we found our own crawler activity was lopsided, one engine dominant, two others barely present, the first place we looked was robots.txt. Most teams write that file once, early, usually to keep aggressive scrapers off a staging environment. Nobody revisits it once the site is live.",
+          "The problem is that a rule written to block a scraper three years ago can end up blocking GPTBot, ClaudeBot, or Google-Extended today, without anyone noticing, because the site still ranks fine in traditional search. AI visibility fails silently. There is no error page, no broken link. The crawler just does not come back."
+        ]
+      },
+      {
+        "h2": "Three patterns worth checking today",
+        "capsule": "A wildcard rule, a missing allow, and a crawl budget nobody planned for.",
+        "paragraphs": [
+          "A blanket Disallow rule under User-agent: * catches every crawler unless a specific engine is explicitly allowed underneath it. If the file only has one generic block, check whether it is silently catching the AI engines too.",
+          "Some teams add rules for GPTBot without knowing ClaudeBot and Google-Extended are separate user agents entirely. Blocking one does nothing to the other two, and allowing one does not mean the others are welcome.",
+          "Crawl budget matters more than people expect. A site with thousands of pages and a thin server response can get deprioritized by a crawler long before robots.txt becomes the issue. Check response times before assuming access is the only variable."
+        ]
+      },
+      {
+        "h2": "How to check your own site",
+        "capsule": "Three steps, no special tools required.",
+        "paragraphs": [
+          "Pull up yourdomain.com/robots.txt directly in a browser and read every line. Look for User-agent: * blocks and check what falls under them.",
+          "Search for GPTBot, ClaudeBot, and Google-Extended by name. If they are not mentioned at all, that usually means they are allowed by default, which is good. If they are listed under a Disallow, that is the fix.",
+          "Run the domain through an audit tool that checks crawler access specifically, not just traditional SEO signals. That is the piece most general purpose SEO tools skip entirely."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is the difference between GPTBot, ClaudeBot, and Google-Extended?",
+        "a": "These are the separate crawler user agents used by OpenAI, Anthropic, and Google to index content for their AI models. Each one respects robots.txt independently, so a rule written for one does not apply to the others."
+      },
+      {
+        "q": "Can blocking AI crawlers hurt traditional SEO too?",
+        "a": "Not directly. Traditional search crawlers like Googlebot are usually separate from AI training and retrieval crawlers like Google-Extended. But a robots.txt file written broadly enough to catch AI crawlers can sometimes catch more than intended, so it is worth checking both."
+      },
+      {
+        "q": "How often should robots.txt be reviewed?",
+        "a": "Any time a new AI engine gains meaningful market share, or any time a site's visibility across engines looks uneven despite strong content. A quarterly check is a reasonable baseline for an active site."
+      }
+    ]
+  },
+  {
     "slug": "visibility-score-without-clicks",
     "title": "We scored 94 on AI visibility and got zero clicks. Here's what that means.",
     "description": "A top 10% visibility score across every major AI engine looks like a win until you check the traffic. What we found when we audited our own domain, and what it means for yours.",

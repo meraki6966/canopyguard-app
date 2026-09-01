@@ -429,7 +429,7 @@ export default function CanopyGuard(){
   // Citation Layer: after a Stripe redirect, exchange the returned session_id
   // for a signed unlock token, store it, then re-run the free scan for that
   // domain so the report (and UnlockGate) render again in the unlocked state.
-  useEffect(()=>{if(typeof window==="undefined")return;const params=new URLSearchParams(window.location.search);const sessionId=params.get("citation_session_id");if(!sessionId)return;params.delete("citation_session_id");const rest=params.toString();window.history.replaceState({},"",window.location.pathname+(rest?`?${rest}`:""));(async()=>{try{const res=await fetch(`${API}/api/citation/entitlement?session_id=${encodeURIComponent(sessionId)}`);const data=await res.json();if(data?.unlocked&&data?.domain&&data?.token){setStoredUnlock(data.domain,{token:data.token,plan:data.plan});startScan(data.domain)}}catch(e){console.error("[CG] Citation entitlement redemption failed:",e)}})()/* eslint-disable-next-line react-hooks/exhaustive-deps */},[]);
+  useEffect(()=>{if(import.meta.env.VITE_ENABLE_CITATION_LAYER!=="true")return;if(typeof window==="undefined")return;const params=new URLSearchParams(window.location.search);const sessionId=params.get("citation_session_id");if(!sessionId)return;params.delete("citation_session_id");const rest=params.toString();window.history.replaceState({},"",window.location.pathname+(rest?`?${rest}`:""));(async()=>{try{const res=await fetch(`${API}/api/citation/entitlement?session_id=${encodeURIComponent(sessionId)}`);const data=await res.json();if(data?.unlocked&&data?.domain&&data?.token){setStoredUnlock(data.domain,{token:data.token,plan:data.plan});startScan(data.domain)}}catch(e){console.error("[CG] Citation entitlement redemption failed:",e)}})()/* eslint-disable-next-line react-hooks/exhaustive-deps */},[]);
 
   if(showMethodology)return<MethodologyPage onBack={()=>setShowMethodology(false)}/>;
 
@@ -531,7 +531,9 @@ export default function CanopyGuard(){
   {/* Enhanced 9-layer security posture (v3.1) */}
   {d.security_enhanced && <SecurityEnhanced data={d.security_enhanced}/>}
   {/* AEO Citation Layer — paid add-on (BYOK citation scan) */}
-  <div style={{marginBottom:20}}><UnlockGate auditedUrl={`https://${d.target_domain}`} aeoScore={Math.round(s.aeo_score*100)}/></div>
+  {import.meta.env.VITE_ENABLE_CITATION_LAYER === "true" && (
+    <div style={{marginBottom:20}}><UnlockGate auditedUrl={`https://${d.target_domain}`} aeoScore={Math.round(s.aeo_score*100)}/></div>
+  )}
   {/* Compliance */}
   <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`,borderRadius:3}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span></div>)}</div></div>
   {/* Missing Headers */}

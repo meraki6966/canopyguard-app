@@ -463,6 +463,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       </section>
 
       {/* AEO CITATION LAYER */}
+      {import.meta.env.VITE_ENABLE_CITATION_LAYER === "true" && (
       <section id="citation-layer" className="pricing-section">
         <div className="section-inner">
           <div className="section-eyebrow" style={{ color: "var(--gold)" }}>AI Citation Layer</div>
@@ -519,6 +520,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           </div>
         </div>
       </section>
+      )}
 
       {/* FAQ */}
       <section id="faq" className="faq-section">

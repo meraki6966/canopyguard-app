@@ -27,3 +27,6 @@ dist-ssr
 public/electrician-success.png
 public/practitioner-desk.png
 public/Gemini_Generated_Image_bmekgebmekgebmek.png
+
+# Stray audit download, not part of the app
+canopyguard-audit-download.pdf

@@ -34,7 +34,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       <link href={DM_FONTS} rel="stylesheet" />
 
       <nav>
-        <a href="#top" className="nav-logo">Canopy<span>Guard</span></a>
+        <a href="#top" className="nav-logo">Canopy <span>Guard</span></a>
         <ul className="nav-links">
           <li><a href="#how-it-works">How it works</a></li>
           <li><a href="#geo">GEO</a></li>
@@ -621,7 +621,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="footer-inner">
           <div className="footer-top">
             <div>
-              <div className="footer-logo">Canopy<span>Guard</span></div>
+              <div className="footer-logo">Canopy <span>Guard</span></div>
               <div className="footer-tagline">Free site audit across SEO, AEO, GEO, and security. Built by a practitioner. Powered by 20 years of real work.</div>
               <div className="footer-powered">A Meraki is Love product · Soulful Tech™</div>
             </div>

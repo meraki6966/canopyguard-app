@@ -46,7 +46,7 @@ export default function BlogPost() {
       <div className="cg-home">
         <link href={DM_FONTS} rel="stylesheet" />
         <nav>
-          <Link to="/" className="nav-logo">Canopy<span>Guard</span></Link>
+          <Link to="/" className="nav-logo">Canopy <span>Guard</span></Link>
           <div className="nav-right"><Link to="/blog" className="nav-signin">All articles</Link></div>
         </nav>
         <section className="how-section">
@@ -102,7 +102,7 @@ export default function BlogPost() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
 
       <nav>
-        <Link to="/" className="nav-logo">Canopy<span>Guard</span></Link>
+        <Link to="/" className="nav-logo">Canopy <span>Guard</span></Link>
         <div className="nav-right">
           <Link to="/blog" className="nav-signin">All articles</Link>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-gold">Book a Call</a>

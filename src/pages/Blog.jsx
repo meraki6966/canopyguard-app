@@ -18,7 +18,7 @@ export default function Blog() {
       <link href={DM_FONTS} rel="stylesheet" />
 
       <nav>
-        <Link to="/" className="nav-logo">Canopy<span>Guard</span></Link>
+        <Link to="/" className="nav-logo">Canopy <span>Guard</span></Link>
         <div className="nav-right">
           <Link to="/" className="nav-signin">Free Audit</Link>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-gold">Book a Call</a>

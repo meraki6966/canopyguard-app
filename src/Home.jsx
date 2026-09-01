@@ -128,7 +128,6 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
 
       <div className="stats-bar">
         <div className="stat"><div className="stat-num">57</div><div className="stat-label">Sites audited</div></div>
-        <div className="stat"><div className="stat-num">4</div><div className="stat-label">Sites transformed</div></div>
         <div className="stat"><div className="stat-num">4</div><div className="stat-label">Scoring categories</div></div>
         <div className="stat"><div className="stat-num">$0</div><div className="stat-label">Always free</div></div>
       </div>

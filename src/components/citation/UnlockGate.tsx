@@ -2,10 +2,11 @@
  * UnlockGate.tsx
  * AEO Citation Layer: paid gate wrapper
  *
- * Wraps CitationScan. Checks entitlement against the engine, and if the user
- * has not purchased, shows the two purchase paths:
- *   - One-time unlock (default $99, adjustable)
- *   - Monthly subscription for quarterly re-scans (default $29/mo, adjustable)
+ * Checks entitlement against the engine, and if the user has not purchased,
+ * shows the two purchase paths:
+ *   - One-time unlock ($99) — BYOK CitationScan, unchanged
+ *   - Monthly subscription ($14.99/mo) — platform-hosted automated tracking
+ *     (SubscriptionDashboard), with the BYOK scan still available as a bonus
  *
  * Entitlement check: the engine has no session/cookie auth, so this reads a
  * signed unlock token from localStorage (see unlockStorage.ts) and sends it
@@ -18,6 +19,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import CitationScan from './CitationScan';
+import SubscriptionDashboard from './SubscriptionDashboard';
 import { getStoredUnlock } from './unlockStorage';
 
 const NAVY = '#0B1426';
@@ -27,17 +29,16 @@ const API =
   (import.meta as any).env?.VITE_API_URL ??
   'https://canopyguard-engine-production.up.railway.app';
 
-// Real Stripe Payment Link URLs are set via env vars; see .env.example.
-// PAYMENT_LINK_* below are launch placeholders until those are set.
+// Live Payment Link URLs — overridable via env vars; see .env.example.
 const PAYMENT_LINK_ONETIME =
   (import.meta as any).env?.VITE_CITATION_LINK_ONETIME ??
-  'https://buy.stripe.com/REPLACE_ONETIME';
+  'https://buy.stripe.com/dRm7sL8Y93Rs2rd8uM7wA0m';
 const PAYMENT_LINK_SUBSCRIPTION =
   (import.meta as any).env?.VITE_CITATION_LINK_SUBSCRIPTION ??
-  'https://buy.stripe.com/REPLACE_SUBSCRIPTION';
+  'https://buy.stripe.com/28EcN5eitfAad5R4ew7wA0n';
 
 const PRICE_ONETIME = 99;
-const PRICE_SUBSCRIPTION = 29;
+const PRICE_SUBSCRIPTION = 14.99;
 
 // Flip to true only for local development before Stripe env vars are set
 const DEV_BYPASS = false;
@@ -52,6 +53,7 @@ type Entitlement = 'loading' | 'locked' | 'unlocked';
 
 export default function UnlockGate({ auditedUrl, aeoScore }: UnlockGateProps) {
   const [state, setState] = useState<Entitlement>('loading');
+  const [plan, setPlan] = useState<'one-time' | 'subscription' | null>(null);
 
   const domain = useMemo(() => {
     try {
@@ -60,6 +62,8 @@ export default function UnlockGate({ auditedUrl, aeoScore }: UnlockGateProps) {
       return '';
     }
   }, [auditedUrl]);
+
+  const storedToken = domain ? getStoredUnlock(domain)?.token ?? null : null;
 
   useEffect(() => {
     if (DEV_BYPASS) {
@@ -84,7 +88,12 @@ export default function UnlockGate({ auditedUrl, aeoScore }: UnlockGateProps) {
         );
         const data = await res.json().catch(() => ({}));
         if (!cancelled) {
-          setState(res.ok && data?.unlocked ? 'unlocked' : 'locked');
+          if (res.ok && data?.unlocked) {
+            setPlan(data.plan ?? stored.plan);
+            setState('unlocked');
+          } else {
+            setState('locked');
+          }
         }
       } catch {
         if (!cancelled) setState('locked');
@@ -96,6 +105,9 @@ export default function UnlockGate({ auditedUrl, aeoScore }: UnlockGateProps) {
   }, [domain]);
 
   if (state === 'unlocked') {
+    if (plan === 'subscription' && domain && storedToken) {
+      return <SubscriptionDashboard auditedUrl={auditedUrl} domain={domain} token={storedToken} />;
+    }
     return <CitationScan auditedUrl={auditedUrl} />;
   }
 

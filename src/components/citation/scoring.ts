@@ -12,6 +12,12 @@
  *   Prominence bonus: first-third mentions add up to 10 points (capped at 100)
  *
  * Overall score: mean of provider scores that returned at least one answer.
+ *
+ * detectMention below is duplicated (with a structured-source-first
+ * detection path added) in canopyguard-engine/modules/citationMatching.ts
+ * for the server-side platform-hosted check path — there is no shared
+ * package between the two repos, so tuning this heuristic here does not
+ * automatically propagate there.
  */
 
 import type {

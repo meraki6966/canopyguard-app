@@ -29,13 +29,17 @@ const API =
   (import.meta as any).env?.VITE_API_URL ??
   'https://canopyguard-engine-production.up.railway.app';
 
-// Live Payment Link URLs — overridable via env vars; see .env.example.
+// Payment Link URLs — overridable via env vars; see .env.example.
+// NOTHING IS SET UP IN STRIPE YET: no product, no price, no payment link.
+// The fallbacks are deliberately not URLs, so a missing env var fails
+// visibly rather than rendering a link that looks real and goes nowhere.
+// Real values get set in Vercel when the citation layer is revisited.
 const PAYMENT_LINK_ONETIME =
   (import.meta as any).env?.VITE_CITATION_LINK_ONETIME ??
-  'https://buy.stripe.com/dRm7sL8Y93Rs2rd8uM7wA0m';
+  'PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE';
 const PAYMENT_LINK_SUBSCRIPTION =
   (import.meta as any).env?.VITE_CITATION_LINK_SUBSCRIPTION ??
-  'https://buy.stripe.com/28EcN5eitfAad5R4ew7wA0n';
+  'PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE';
 
 const PRICE_ONETIME = 99;
 const PRICE_SUBSCRIPTION = 14.99;

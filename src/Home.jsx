@@ -6,12 +6,16 @@ const DM_FONTS =
   "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap";
 const CALENDLY = "https://calendly.com/hello-merakislove/new-meeting";
 
-// AEO Citation Layer — same Payment Links UnlockGate.tsx uses, sourced from
-// the same env vars so there's one place to update if they ever change.
+// AEO Citation Layer — same env vars UnlockGate.tsx reads, so there is one
+// place to update if they ever change. NOTHING IS SET UP IN STRIPE YET: no
+// product, no price, no payment link. The fallbacks below are deliberately
+// not URLs, so a missing env var fails visibly instead of rendering a link
+// that looks real and goes nowhere. Real values get set in Vercel when the
+// citation layer is revisited, never hardcoded back into this file.
 const CITATION_LINK_ONETIME =
-  import.meta.env?.VITE_CITATION_LINK_ONETIME ?? "https://buy.stripe.com/dRm7sL8Y93Rs2rd8uM7wA0m";
+  import.meta.env?.VITE_CITATION_LINK_ONETIME ?? "PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE";
 const CITATION_LINK_SUBSCRIPTION =
-  import.meta.env?.VITE_CITATION_LINK_SUBSCRIPTION ?? "https://buy.stripe.com/28EcN5eitfAad5R4ew7wA0n";
+  import.meta.env?.VITE_CITATION_LINK_SUBSCRIPTION ?? "PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE";
 
 // Landing page. The hero scanner is wired to the real startScan() in App.jsx;
 // all marketing sections below are static. Styles are scoped under .cg-home.

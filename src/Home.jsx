@@ -6,6 +6,17 @@ const DM_FONTS =
   "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap";
 const CALENDLY = "https://calendly.com/hello-merakislove/new-meeting";
 
+// AEO Citation Layer — same env vars UnlockGate.tsx reads, so there is one
+// place to update if they ever change. NOTHING IS SET UP IN STRIPE YET: no
+// product, no price, no payment link. The fallbacks below are deliberately
+// not URLs, so a missing env var fails visibly instead of rendering a link
+// that looks real and goes nowhere. Real values get set in Vercel when the
+// citation layer is revisited, never hardcoded back into this file.
+const CITATION_LINK_ONETIME =
+  import.meta.env?.VITE_CITATION_LINK_ONETIME ?? "PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE";
+const CITATION_LINK_SUBSCRIPTION =
+  import.meta.env?.VITE_CITATION_LINK_SUBSCRIPTION ?? "PLACEHOLDER_SET_IN_VERCEL_WHEN_LIVE";
+
 // Landing page. The hero scanner is wired to the real startScan() in App.jsx;
 // all marketing sections below are static. Styles are scoped under .cg-home.
 export default function Home({ domain, setDomain, startScan, scanError, inputRef }) {
@@ -454,6 +465,66 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           </div>
         </div>
       </section>
+
+      {/* AEO CITATION LAYER */}
+      {import.meta.env.VITE_ENABLE_CITATION_LAYER === "true" && (
+      <section id="citation-layer" className="pricing-section">
+        <div className="section-inner">
+          <div className="section-eyebrow" style={{ color: "var(--gold)" }}>AI Citation Layer</div>
+          <h2 className="section-headline" style={{ color: "var(--tod)" }}>Find out if AI is actually citing you.</h2>
+          <p className="section-sub" style={{ color: "var(--todm)", marginBottom: 40 }}>
+            The free scan checks whether your content is structured for AI to find and cite.
+            The Citation Layer checks the next question: whether ChatGPT, Perplexity, and Gemini
+            are actually citing you when people ask about your industry, and tracks it over time
+            so you can see if that&rsquo;s moving.
+          </p>
+          <div className="pricing-grid">
+            <div className="pricing-card">
+              <div className="pricing-badge">ONE-TIME CHECK</div>
+              <div className="pricing-name">Citation Scan</div>
+              <div className="pricing-price">$99</div>
+              <div className="pricing-period">Run once, get the full report.</div>
+              <ul className="pricing-features">
+                <li>Questions pulled from your own site</li>
+                <li>Bring your own API keys — your data never routes through our servers</li>
+                <li>Results across ChatGPT, Claude, Gemini, and Perplexity</li>
+              </ul>
+              <a
+                href={`${CITATION_LINK_ONETIME}?client_reference_id=${encodeURIComponent(domain || "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-scan"
+                style={{ display: "block", textAlign: "center", padding: 14, borderRadius: "var(--r-sm)", textDecoration: "none" }}
+              >
+                Run the check
+              </a>
+            </div>
+            <div className="pricing-card featured">
+              <div className="pricing-badge">MONTHLY TRACKING</div>
+              <div className="pricing-name" style={{ color: "var(--forest)" }}>Citation Tracking</div>
+              <div className="pricing-price" style={{ color: "var(--forest)" }}>
+                $14.99<span style={{ fontSize: "1.1rem", fontWeight: 500 }}>/mo</span>
+              </div>
+              <div className="pricing-period">Automatic monthly checks, tracked over time.</div>
+              <ul className="pricing-features">
+                <li>Runs automatically every month, no keys to manage</li>
+                <li>Trend view, status alerts, and competitor comparison</li>
+                <li>Includes the one-time scan too, run it anytime</li>
+              </ul>
+              <a
+                href={`${CITATION_LINK_SUBSCRIPTION}?client_reference_id=${encodeURIComponent(domain || "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-green"
+                style={{ display: "block", textAlign: "center", padding: 14, borderRadius: "var(--r-sm)" }}
+              >
+                Start tracking
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      )}
 
       {/* FAQ */}
       <section id="faq" className="faq-section">

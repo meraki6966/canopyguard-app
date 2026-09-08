@@ -204,7 +204,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             <div className="step"><div className="step-num">01</div><div className="step-title">Enter your URL</div><div className="step-body">Paste any domain. No login, no credit card. Takes three seconds.</div></div>
             <div className="step"><div className="step-num">02</div><div className="step-title">Get your scores</div><div className="step-body">Your site is scored across SEO, AEO, GEO, and security. Results in 30 seconds.</div></div>
             <div className="step"><div className="step-num">03</div><div className="step-title">Download your report</div><div className="step-body">Get the full findings with prioritized recommendations. Know what to fix first.</div></div>
-            <div className="step"><div className="step-num">04</div><div className="step-title">Need the work done?</div><div className="step-body">Book a call with Adam. Canopy Guard customers get a discount on all services.</div></div>
+            <div className="step"><div className="step-num">04</div><div className="step-title">Need the work done?</div><div className="step-body">If you need help fixing what the audit finds, book a call with Adam to talk through next steps.</div></div>
           </div>
         </div>
       </section>
@@ -305,7 +305,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>Security Posture</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>Security posture is the set of externally visible protections that signal your site is safe and trustworthy.</p>
-                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard checks HTTPS, security headers, mixed content, and server exposure, then maps each gap to MITRE ATT&CK. Weak security does not just invite attackers; it erodes the trust signals that directly affect your search rankings.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard checks HTTPS, security headers, mixed content, and server exposure. Each finding identifies the exposure condition associated with a MITRE ATT&CK technique. Weak security does not just invite attackers; it erodes the trust signals that directly affect your search rankings.</p>
               </dd>
             </div>
           </dl>
@@ -439,7 +439,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="pricing-badge">HIRE ADAM</div>
               <div className="pricing-name" style={{ color: "var(--forest)" }}>Implementation Services</div>
               <div className="pricing-price" style={{ color: "var(--forest)" }}>Custom</div>
-              <div className="pricing-period">Scoped per project. Canopy Guard customers save.</div>
+              <div className="pricing-period">Scoped per project, based on what the audit finds.</div>
               <ul className="pricing-features">
                 <li>Full SEO and AEO implementation</li>
                 <li>GEO optimization for AI search platforms</li>
@@ -449,7 +449,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <li>Ongoing monitoring and rescans</li>
               </ul>
               <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-green" style={{ display: "block", textAlign: "center", padding: 14, borderRadius: "var(--r-sm)" }}>Book a call</a>
-              <div className="discount-note">Canopy Guard users receive a discount on all services. Mention your audit when you book.</div>
+              <div className="next-step-note">Bring your audit to the call so we can work from what it actually found.</div>
             </div>
           </div>
         </div>
@@ -484,7 +484,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">My score is low. What do I do next?</div>
-              <div className="faq-a">Your full report includes prioritized findings so you know exactly what to fix first. If you want to implement the recommendations yourself, the report gives you enough to work from. If you want it done for you, <a href={CALENDLY} target="_blank" rel="noopener noreferrer">book a call with Adam</a>. Canopy Guard customers receive a discount on all implementation services.</div>
+              <div className="faq-a">Your full report includes prioritized findings so you know exactly what to fix first. If you want to implement the recommendations yourself, the report gives you enough to work from. If you want it done for you, <a href={CALENDLY} target="_blank" rel="noopener noreferrer">book a call with Adam</a> to talk through next steps.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">How is this different from other SEO tools?</div>
@@ -504,7 +504,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">What does a good overall score look like, and what should I do if mine is low?</div>
-              <div className="faq-a">Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing you visibility or trust right now. A low score is not a verdict, it is a roadmap. Your report ranks findings by impact so you fix what matters first, and Canopy Guard customers get a discount if you want it done for you.</div>
+              <div className="faq-a">Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing you visibility or trust right now. A low score is not a verdict, it is a roadmap. Your report ranks findings by impact so you fix what matters first, and you can book a call if you want help working through them.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">How often should I re-scan my site?</div>

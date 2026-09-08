@@ -153,8 +153,8 @@ html{scroll-behavior:smooth}
 .pricing-features li{font-size:0.82rem;color:var(--todm);display:flex;align-items:flex-start;gap:8px}
 .pricing-card.featured .pricing-features li{color:#3D6B52}
 .pricing-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0}
-.discount-note{font-size:0.76rem;color:var(--todm);margin-top:10px;font-style:italic}
-.pricing-card.featured .discount-note{color:#5A7A62}
+.next-step-note{font-size:0.76rem;color:var(--todm);margin-top:10px;font-style:italic}
+.pricing-card.featured .next-step-note{color:#5A7A62}
 .faq-section{background:var(--snow)}
 .faq-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
 .faq-item{padding:26px 30px;border-bottom:1px solid var(--border);background:var(--white)}

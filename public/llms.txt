@@ -83,7 +83,7 @@ Q: What does the security scan check for?
 A: Across nine security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus four expanded capabilities. Malware and reputation scanning checks Google Safe Browsing and common blacklists and reports Clean, Flagged, or Blacklisted. Expanded footprint analysis checks Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence. Expanded DNS and email depth parses the exact SPF mechanisms and qualifier strength, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (domains expiring within 60 days are flagged as a hijacking risk). Exposed sensitive file detection checks public accessibility of paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any accessible path as Critical. Every check is passive and read-only.
 
 Q: My score is low. What do I do next?
-A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to have it done for you. Canopy Guard customers receive a discount on all implementation services.
+A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to talk through next steps.
 
 Q: How is Canopy Guard different from other SEO tools?
 A: Three things: GEO scoring is rare and here it is free; security findings are mapped to MITRE ATT&CK rather than flagged generically; and a real practitioner can implement everything the audit finds. Most tools give you data. This one connects you to someone who fixes it.
@@ -98,7 +98,7 @@ Q: How does Canopy Guard compare to hiring an SEO agency?
 A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with findings mapped to MITRE ATT&CK. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
 
 Q: What does a good overall score look like, and what should I do if mine is low?
-A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score is a roadmap, not a verdict. The report ranks fixes by impact, and Canopy Guard customers get a discount if they want it done for them.
+A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score is a roadmap, not a verdict. The report ranks fixes by impact, and you can book a call if you want help working through them.
 
 Q: How often should I re-scan my site?
 A: Re-scan after any meaningful change, such as a redesign, new pages, a migration, or after applying fixes. For an active site, a monthly scan catches regressions before they cost traffic. The scan is free and takes 30 seconds, so there is no reason to wait.

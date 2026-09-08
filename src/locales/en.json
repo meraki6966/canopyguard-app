@@ -130,7 +130,17 @@
       "btn_download": "DOWNLOAD REPORT",
       "btn_processing": "PROCESSING...",
       "spam_notice": "No spam. Email used only for this report."
-    }
+    },
+    "fix_note_label": "BEFORE YOU APPLY",
+    "fix_confidence": {
+      "derived": "DERIVED",
+      "template": "TEMPLATE",
+      "derived_hint": "Built from this domain's own records, certificate or headers — safe to apply as written.",
+      "template_hint": "A starter you must fill in — we do not know your providers, so this needs your own values first.",
+      "template_callout": "Starter template — a starting point, not a finished fix. Check it against your own setup before publishing."
+    },
+    "email_dns_fixes": "Email, DNS & Cookie Fixes",
+    "email_dns_fixes_desc": "Generated from this domain's own SPF and DMARC records, certificate issuer and cookies."
   },
   "pdf": {
     "title": "EXECUTIVE RISK REPORT",

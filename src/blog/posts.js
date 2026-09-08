@@ -304,7 +304,7 @@ export const POSTS = [
       },
       {
         "h2": "How does a missing HSTS header weaken trust and which attack does it invite?",
-        "capsule": "A missing HTTP Strict Transport Security header lets attackers downgrade visitors from HTTPS to unencrypted HTTP. Canopy Guard maps this gap to MITRE ATT&CK technique T1557, Adversary-in-the-Middle. To a crawler, an unstable connection signals an unsafe destination, and that perception follows you into the rankings.",
+        "capsule": "A missing HTTP Strict Transport Security header lets attackers downgrade visitors from HTTPS to unencrypted HTTP. Canopy Guard identifies the exposure condition associated with MITRE ATT&CK technique T1557, Adversary-in-the-Middle. To a crawler, an unstable connection signals an unsafe destination, and that perception follows you into the rankings.",
         "paragraphs": [
           "HSTS tells browsers to refuse any non-encrypted connection to your domain. Without it, a visitor on public Wi-Fi can be silently pushed onto a tampered version of your site. That is the exact mechanism behind T1557, where an adversary positions themselves between your user and your server.",
           "Google has rewarded HTTPS for years, but the signal is binary in most people's minds. It is not. A site that can be downgraded is functionally less secure than one that cannot, and that fragility erodes the confidence a search engine places in linking users to you."
@@ -312,7 +312,7 @@ export const POSTS = [
       },
       {
         "h2": "Why does a missing Content Security Policy threaten both your users and your citations?",
-        "capsule": "Without a Content Security Policy, your pages will execute almost any script that reaches them, including injected malicious code. Canopy Guard ties this to MITRE ATT&CK technique T1059, Command and Scripting Interpreter. A page that cannot control what runs on it is not a page an AI model wants to cite.",
+        "capsule": "Without a Content Security Policy, your pages will execute almost any script that reaches them, including injected malicious code. Canopy Guard identifies the exposure condition associated with MITRE ATT&CK technique T1059, Command and Scripting Interpreter. A page that cannot control what runs on it is not a page an AI model wants to cite.",
         "paragraphs": [
           "A CSP is a whitelist that tells the browser which sources of scripts, styles, and frames it is allowed to load. Remove it and you open the door to cross-site scripting, the practical face of T1059, where attacker-supplied code runs in your visitor's session with your site's authority.",
           "AI crawlers increasingly weigh whether a source is safe to surface to their own users. A site with no CSP is a known vector for serving compromised content, and once a model learns that pattern, your odds of being quoted in an answer drop accordingly."
@@ -320,10 +320,10 @@ export const POSTS = [
       },
       {
         "h2": "What does a missing X-Frame-Options header reveal about your site's safety?",
-        "capsule": "Without X-Frame-Options, attackers can embed your site inside a hidden frame and trick users into clicking things they never intended. Canopy Guard maps this to MITRE ATT&CK technique T1185, Browser Session Hijacking. A page that can be silently framed looks careless, and careless reads as untrustworthy.",
+        "capsule": "Without X-Frame-Options, attackers can embed your site inside a hidden frame and trick users into clicking things they never intended. Canopy Guard identifies the exposure condition associated with MITRE ATT&CK technique T1185, Browser Session Hijacking. A page that can be silently framed looks careless, and careless reads as untrustworthy.",
         "paragraphs": [
           "Clickjacking, the attack T1185 describes, overlays your real interface under a deceptive one. Your user thinks they are clicking a harmless button while actually authorizing a transfer or changing a setting. X-Frame-Options shuts this down by forbidding other domains from framing your pages.",
-          "This is the connection no other free audit tool draws. Canopy Guard does not just flag a header as absent; it names the exact MITRE ATT&CK technique it exposes and explains how that exposure undermines the trust signals search engines and AI models depend on. You get the threat and the ranking consequence in one view."
+          "This is the connection no other free audit tool draws. Canopy Guard does not just flag a header as absent; it identifies the exposure condition associated with the relevant MITRE ATT&CK technique and explains how that exposure undermines the trust signals search engines and AI models depend on. You get the threat and the ranking consequence in one view."
         ]
       },
       {
@@ -342,7 +342,7 @@ export const POSTS = [
       },
       {
         "q": "Is Canopy Guard really free, and what makes it different?",
-        "a": "Yes, it is free. The difference is the mapping: Canopy Guard links each missing header to its specific MITRE ATT&CK technique ID and explains the SEO consequence. No other free audit tool connects security findings to attack techniques and search visibility in one report."
+        "a": "Yes, it is free. The difference is the context: for each missing header, Canopy Guard identifies the exposure condition associated with its specific MITRE ATT&CK technique ID and explains the SEO consequence. No other free audit tool connects security findings to attack techniques and search visibility in one report."
       },
       {
         "q": "How long does it take to fix missing security headers?",
@@ -619,9 +619,9 @@ export const POSTS = [
       },
       {
         "h2": "How does Canopy Guard show you these gaps?",
-        "capsule": "Canopy Guard scans your domain and surfaces missing SPF, DKIM, and DMARC records directly in your security score, so you see the exact deductions. It then maps each exposure to MITRE ATT&CK reconnaissance techniques, showing how an attacker would use the gap against you.",
+        "capsule": "Canopy Guard scans your domain and surfaces missing SPF, DKIM, and DMARC records directly in your security score, so you see the exact deductions. It then identifies the exposure condition associated with the relevant MITRE ATT&CK reconnaissance techniques, showing how an attacker would use the gap against you.",
         "paragraphs": [
-          "The score is the starting point, but the value is in the context. Canopy Guard does not just tell you a record is missing. It connects that gap to MITRE ATT&CK, the standard framework security teams use to describe attacker behavior, so you understand the technique, not just the symptom.",
+          "The score is the starting point, but the value is in the context. Canopy Guard does not just tell you a record is missing. It identifies the exposure condition that gap creates and the MITRE ATT&CK technique associated with it, drawn from the standard framework security teams use to describe attacker behavior, so you understand the technique, not just the symptom.",
           "Missing email authentication maps cleanly to reconnaissance, the stage where attackers gather information and identify ways to impersonate you. Seeing your own exposure named that way changes how seriously you treat it. Run your domain through Canopy Guard, fix the three records, and close one of the most common doors attackers walk through."
         ]
       }
@@ -865,18 +865,18 @@ export const POSTS = [
         "paragraphs": [
           "Start by finding out where you stand. You cannot fix what you cannot see, and most owners have never looked at their site the way an attacker does. A quick external scan gives you that view without touching your live site or your data.",
           "Then work the list in order. Fix the issues tied to the most serious techniques first, usually the ones touching script execution and connection security. Many header fixes are a few lines of configuration your developer or host can apply in minutes.",
-          "Canopy Guard does the mapping for you. It scans your site, checks your headers and external posture, and maps each finding to a specific MITRE ATT&CK technique, for free. You walk away with a plain-language list of what is exposed, why it matters, and what to fix, in priority order."
+          "Canopy Guard does this for you. It scans your site, checks your headers and external posture, and identifies the exposure condition associated with a specific MITRE ATT&CK technique for each finding, for free. You walk away with a plain-language list of what is exposed, why it matters, and what to fix, in priority order."
         ]
       }
     ],
     "faqs": [
       {
         "q": "Do I need to learn MITRE ATT&CK to use it?",
-        "a": "No. You do not need to study the framework. A tool like Canopy Guard handles the mapping and translates each finding into plain language, so you only see what is exposed on your site and what to do about it."
+        "a": "No. You do not need to study the framework. A tool like Canopy Guard identifies the exposure condition associated with each finding and translates it into plain language, so you only see what is exposed on your site and what to do about it."
       },
       {
-        "q": "Does a MITRE ATT&CK mapping mean I have been hacked?",
-        "a": "No. It describes external exposure, not a breach. A mapped technique means an attacker could use that gap, like an unlocked door. It is a prompt to fix the issue, not proof that anyone has walked through it."
+        "q": "Does a MITRE ATT&CK technique on my report mean I have been hacked?",
+        "a": "No. It describes external exposure, not a breach. A technique named on your report means an attacker could use that gap, like an unlocked door. It is a prompt to fix the issue, not proof that anyone has walked through it."
       },
       {
         "q": "Are missing security headers really a big deal?",
@@ -1102,7 +1102,7 @@ export const POSTS = [
         "paragraphs": [
           "These are some of the cheapest wins in all of security. You are not rebuilding anything and you are not hiring anyone. In most cases you add a few lines in your host or CDN settings, save, and every page on your site is covered. An afternoon of work can protect you for years.",
           "Trust and rankings ride along too. Search engines and browsers reward sites that serve clean, secure responses, and real visitors notice when a site feels safe. Missing headers can surface as browser warnings that quietly cost you customers before they ever reach your contact page.",
-          "This is exactly what Canopy Guard checks for free. It scans every one of these headers, tells you in plain English which ones are missing, and maps each gap to MITRE ATT&CK so you can see the real technique it leaves open. Run your site, read the report, and fix what matters first."
+          "This is exactly what Canopy Guard checks for free. It scans every one of these headers, tells you in plain English which ones are missing, and identifies the exposure condition associated with a MITRE ATT&CK technique for each gap, so you can see the real technique it leaves open. Run your site, read the report, and fix what matters first."
         ]
       }
     ],

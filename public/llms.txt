@@ -86,7 +86,7 @@ Q: My score is low. What do I do next?
 A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to talk through next steps.
 
 Q: How is Canopy Guard different from other SEO tools?
-A: Three things: GEO scoring is rare and here it is free; security findings are mapped to MITRE ATT&CK rather than flagged generically; and a real practitioner can implement everything the audit finds. Most tools give you data. This one connects you to someone who fixes it.
+A: Three things: GEO scoring is rare and here it is free; each security finding identifies the exposure condition associated with a MITRE ATT&CK technique rather than being flagged generically; and a real practitioner can implement everything the audit finds. Most tools give you data. This one connects you to someone who fixes it.
 
 Q: Is my site data private?
 A: Yes. Canopy Guard only scans publicly available data. It does not store your private content, login credentials, or analytics. See the privacy policy at https://thecanopyguard.com/privacy for full details.
@@ -95,7 +95,7 @@ Q: Do I need an account to get my full report?
 A: No account is required to run the scan. When you download the full report, basic contact information is collected to follow up on questions. That information is handled securely and never sold or shared with third parties.
 
 Q: How does Canopy Guard compare to hiring an SEO agency?
-A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with findings mapped to MITRE ATT&CK. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
+A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
 
 Q: What does a good overall score look like, and what should I do if mine is low?
 A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score is a roadmap, not a verdict. The report ranks fixes by impact, and you can book a call if you want help working through them.

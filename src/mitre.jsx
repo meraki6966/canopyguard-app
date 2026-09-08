@@ -1,6 +1,7 @@
 // MITRE ATT&CK technique tagging for security findings.
-// Each security finding is mapped to the ATT&CK technique an attacker would
-// use against the weakness, with its parent tactic. Displayed alongside the
+// Each security finding identifies the exposure condition associated with the
+// ATT&CK technique an attacker would use against the weakness, with its parent
+// tactic. Displayed alongside the
 // finding in the report so the posture issue is framed in adversary terms.
 
 export const MITRE_TECHNIQUES = {

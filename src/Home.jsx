@@ -67,7 +67,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           </div>
           <div className="trust-badges">
             <div className="trust-badge"><span className="trust-dot"></span>CISSP-informed</div>
-            <div className="trust-badge"><span className="trust-dot"></span>MITRE ATT&CK mapped</div>
+            <div className="trust-badge"><span className="trust-dot"></span>MITRE ATT&CK-aligned</div>
             <div className="trust-badge"><span className="trust-dot"></span>GEO scored</div>
             <div className="trust-badge"><span className="trust-dot"></span>57 sites audited</div>
           </div>
@@ -187,7 +187,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                   </svg>
                 </div>
                 <div className="geo-card-title">Security</div>
-                <div className="geo-card-body">MITRE ATT&CK-mapped security findings. Security gaps hurt your search trust signals. We score and surface them both.</div>
+                <div className="geo-card-body">MITRE ATT&CK-aligned security findings. Security gaps hurt your search trust signals. We score and surface them both.</div>
               </div>
             </div>
           </div>
@@ -260,13 +260,13 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="cat-label">Category 04</div>
               <div className="cat-name">Security</div>
               <div className="cat-score crit">—</div>
-              <div className="cat-desc">MITRE ATT&CK-mapped security findings. Security gaps do not just put your site at risk. They erode trust signals that directly affect your rankings.</div>
+              <div className="cat-desc">MITRE ATT&CK-aligned security findings. Security gaps do not just put your site at risk. They erode trust signals that directly affect your rankings.</div>
               <ul className="cat-checks">
                 <li>HTTPS and valid SSL certificate</li>
                 <li>CSP and HSTS headers</li>
                 <li>Mixed content detection</li>
                 <li>Server header exposure</li>
-                <li>MITRE ATT&CK framework mapping</li>
+                <li>MITRE ATT&CK framework alignment</li>
               </ul>
             </div>
           </div>
@@ -428,7 +428,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <ul className="pricing-features">
                 <li>Full SEO score with specific findings</li>
                 <li>AEO and GEO readiness scores</li>
-                <li>MITRE ATT&CK-mapped security score</li>
+                <li>MITRE ATT&CK-aligned security score</li>
                 <li>Prioritized recommendations</li>
                 <li>Downloadable full report</li>
                 <li>57 sites already audited</li>
@@ -488,7 +488,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">How is this different from other SEO tools?</div>
-              <div className="faq-a">Three things. First, GEO scoring is rare at this price point, which is free. Second, the security findings are mapped to MITRE ATT&CK, not flagged generically. Third, there is a real human behind this tool who can implement everything the audit finds. <strong>Most tools give you data. This one connects you to someone who fixes it.</strong></div>
+              <div className="faq-a">Three things. First, GEO scoring is rare at this price point, which is free. Second, each security finding identifies the exposure condition associated with a MITRE ATT&CK technique, rather than being flagged generically. Third, there is a real human behind this tool who can implement everything the audit finds. <strong>Most tools give you data. This one connects you to someone who fixes it.</strong></div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Is my site data private?</div>
@@ -500,7 +500,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">How does Canopy Guard compare to hiring an SEO agency?</div>
-              <div className="faq-a">An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives you the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with findings mapped to MITRE ATT&CK. When you want the work implemented, you hire Adam directly. No retainer, no account managers, just the practitioner who built the tool.</div>
+              <div className="faq-a">An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives you the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly. No retainer, no account managers, just the practitioner who built the tool.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">What does a good overall score look like, and what should I do if mine is low?</div>

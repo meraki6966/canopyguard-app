@@ -10,6 +10,8 @@ const SITE = "https://thecanopyguard.com";
 
 // Primary topic keywords per article (used in BlogPosting schema).
 const KEYWORDS = {
+  "ai-generated-faq-schema-meta-descriptions": "AI-generated FAQ schema, meta description generator, FAQPage structured data, AEO fixes, schema.org validation",
+  "mitre-attack-technique-ids-explained": "MITRE ATT&CK technique IDs, T1557 Adversary-in-the-Middle, T1584.001, T1592.002, website security findings",
   "robots-txt-blocking-ai-crawlers": "robots.txt AI crawlers, GPTBot ClaudeBot Google-Extended, crawler access audit",
   "visibility-score-without-clicks": "AI visibility without traffic, AEO GEO audit gap, PeerPush cooldown",
   "ai-citations-not-from-page-one": "AI citations, Google AI Overviews, AEO, GEO, domain authority, small business SEO",

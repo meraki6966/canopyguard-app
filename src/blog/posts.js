@@ -1,5 +1,111 @@
-// Auto-generated blog post data. 18 articles (10 + 8 starter).
+// Auto-generated blog post data. 18 articles (10 + 8 starter), plus later additions.
 export const POSTS = [
+  {
+    "slug": "ai-generated-faq-schema-meta-descriptions",
+    "title": "We Taught Canopy Guard to Write Your FAQ Schema For You",
+    "description": "Canopy Guard now writes your FAQ schema and meta description from your page's own content when a scan finds them missing. What it generates, how it is validated, and why AI-written fixes are labeled differently from header fixes.",
+    "readingTime": "5 min read",
+    "date": "2026-09-09",
+    "sections": [
+      {
+        "h2": "Where most audits stop being useful",
+        "paragraphs": [
+          "A failing FAQ Schema finding used to mean the same thing every audit tool tells you: here's what's wrong, now go fix it yourself. That gap between “here's the problem” and “here's the actual fix” is where most audits stop being useful.",
+          "Canopy Guard now closes part of that gap. When a scan finds your FAQ Schema or meta description missing, there's a button next to that finding. Click it, and the tool reads your page's real content and writes a working FAQ schema and an optimized meta description for you, specific to your actual business, not a generic template.",
+          "We tested it against a law firm's site with no FAQ schema at all. The result included questions like “What areas does the firm serve?” with an answer citing the actual counties from the page, and “What types of legal services does the firm offer?” pulling the real practice areas listed on their site. Nothing templated could produce that. It came from reading the page."
+        ]
+      },
+      {
+        "h2": "What it actually does, and what it doesn't",
+        "paragraphs": [
+          "The generation reads your page's real content, title, headings, body text, and produces two things: a valid FAQPage schema block with real questions and answers grounded in what your page says, and a meta description sized to the range search engines actually display.",
+          "Every output is validated twice before it ever reaches you. It has to parse as real JSON. It has to structurally match what schema.org's FAQPage type actually requires. If either check fails, you get a plain “unable to generate right now” message, never a broken result dressed up as a working one.",
+          "Here's the part worth being honest about. This is AI-written content. It's grounded in your real page, not invented, but it hasn't read your mind about nuance, tone, or anything that lives outside the text it was given. Every generated fix carries a clear label and a note: read every line against your actual page before you publish it. Schema that contradicts what a visitor actually sees on your site is a real structured-data violation, not just a minor mismatch, so this isn't a box to skip."
+        ]
+      },
+      {
+        "h2": "Why we built it this way",
+        "paragraphs": [
+          "A tool that hands you AI-written content and calls it “safe to apply as written” the same way it treats a header configuration pulled straight from your own DNS records would be lying to you a little. A missing security header has one correct fix. A missing FAQ schema has an infinite number of reasonable ones, and only you know which facts about your business actually matter to lead with.",
+          "So the two kinds of fixes look different on purpose. Header and DNS fixes, derived directly from your own domain's records, get one treatment. AI-generated content gets its own label, its own color, and its own explicit instruction to review before you use it. Different confidence, different presentation, no pretending they're the same thing."
+        ]
+      },
+      {
+        "h2": "Where it shows up",
+        "paragraphs": [
+          "Run a free scan. If your FAQ Schema or meta description comes back failing, you'll see the option right there next to the finding. No account required to run the scan itself, same as always. Generating a fix asks for an email the first time, the same gate that already covers the full report download, not a second ask.",
+          "It costs nothing to try. If your page doesn't have enough real content to generate something specific and useful from, the tool tells you that plainly instead of forcing out generic filler, and skips the generation entirely rather than charging you for nothing.",
+          "Free audit at thecanopyguard.com. If FAQ Schema shows up failing, that's the button worth clicking."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What does Canopy Guard generate when FAQ schema is missing?",
+        "a": "It reads the page's real content, title, headings, and body text, then produces a valid FAQPage schema block with questions and answers grounded in what the page actually says, plus a meta description sized to the range search engines display."
+      },
+      {
+        "q": "Is the generated FAQ schema safe to publish as written?",
+        "a": "Review it against your page first. The output is AI-written and grounded in your real page rather than invented, but it has not read your mind about nuance or tone. Schema that contradicts what a visitor actually sees on your site is a real structured-data violation, so read every line before you publish it."
+      },
+      {
+        "q": "Does generating a fix cost anything or require an account?",
+        "a": "No account is required to run the scan, and generating a fix is free. It asks for an email the first time, the same gate that already covers the full report download. If a page does not have enough real content to generate something specific, the tool says so plainly and skips the generation instead of producing filler."
+      }
+    ]
+  },
+  {
+    "slug": "mitre-attack-technique-ids-explained",
+    "title": "What T1557 Actually Means: MITRE ATT&CK for Non-Security People",
+    "description": "T1557, T1584.001, T1592.002. What the MITRE ATT&CK technique IDs on a Canopy Guard finding actually mean, why a free audit tool includes them, and why some findings deliberately carry none.",
+    "readingTime": "4 min read",
+    "date": "2026-09-09",
+    "sections": [
+      {
+        "h2": "What those technique codes actually are",
+        "paragraphs": [
+          "Run a Canopy Guard scan and you'll see technique codes next to some findings. T1557. T1584.001. T1592.002. If you don't work in security, these look like error codes from a system that's already decided you won't understand the real answer.",
+          "Here's what they actually are, and why a free audit tool bothers including them at all."
+        ]
+      },
+      {
+        "h2": "It's not our framework. That's the point.",
+        "paragraphs": [
+          "MITRE ATT&CK is a public, continuously updated knowledge base of how real attacks actually happen, tactics and techniques, documented from real incident data. Security teams at companies far bigger than any small business use the exact same reference. It's not a scoring system one vendor invented to sound impressive. It's the same taxonomy a SOC analyst reaches for when something goes wrong.",
+          "When Canopy Guard tags a finding with a technique ID, it's saying: this specific gap on your site corresponds to a documented, real-world attack pattern, not a made-up severity label. A weak cipher suite maps to T1557, Adversary-in-the-Middle, because a weak cipher is quite literally what makes that kind of interception possible. A domain expiring soon maps to T1584.001, Compromise Infrastructure, because an expired domain is exactly what attackers scoop up to impersonate the business that used to own it."
+        ]
+      },
+      {
+        "h2": "What we mean, and what we don't",
+        "paragraphs": [
+          "We're careful about the claim here on purpose. Canopy Guard doesn't run active attacks against your site, and it doesn't map every finding to a technique, only the ones where a real, documented correspondence exists. For each one, it identifies the exposure condition associated with the relevant technique. That's a specific claim: here's what this gap actually exposes you to, described the same way a security professional would describe it, not a badge slapped on a header check to make the report look more serious than it is.",
+          "If a finding doesn't have a clean mapping to a real technique, it doesn't get one invented for it. That restraint is the whole reason the labels that do appear mean something."
+        ]
+      },
+      {
+        "h2": "Why this matters if you're not a security person",
+        "paragraphs": [
+          "You don't need to memorize technique IDs. What matters is the plain-language note attached to each one, written specifically so you don't have to. “Weak cipher suites can be downgraded or decrypted, exposing traffic to interception” tells you what you need to know without requiring a CISSP to parse it.",
+          "The technique ID underneath is there for anyone who wants to go deeper, hand the finding to an IT contractor, cross-reference it against a compliance requirement, or just verify for themselves that this isn't marketing language dressed up as expertise. It's a receipt, not a decoration.",
+          "Run a free scan at thecanopyguard.com and you'll see exactly which findings carry a technique mapping and which don't. The distinction is deliberate both ways."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "What is MITRE ATT&CK?",
+        "a": "MITRE ATT&CK is a public, continuously updated knowledge base of how real attacks happen, tactics and techniques documented from real incident data. It is not a scoring system one vendor invented. It is the same taxonomy a SOC analyst reaches for when something goes wrong."
+      },
+      {
+        "q": "What does T1557 mean on a Canopy Guard finding?",
+        "a": "T1557 is Adversary-in-the-Middle. A weak cipher suite maps to it because a weak cipher is what makes that kind of interception possible. Every mapped finding also carries a plain-language note describing what the gap exposes you to, so you do not need to memorize the ID."
+      },
+      {
+        "q": "Does every security finding get a MITRE ATT&CK technique ID?",
+        "a": "No. Canopy Guard maps only the findings where a real, documented correspondence exists, and it does not run active attacks against your site. If a finding has no clean mapping to a real technique, one is not invented for it."
+      }
+    ]
+  },
   {
     "slug": "robots-txt-blocking-ai-crawlers",
     "title": "How robots.txt Is Quietly Blocking the AI Crawlers You Actually Want",

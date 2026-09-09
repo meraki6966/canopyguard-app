@@ -14,7 +14,7 @@
   </url>
   <url>
     <loc>https://thecanopyguard.com/blog</loc>
-    <lastmod>2026-07-17</lastmod>
+    <lastmod>2026-09-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -135,6 +135,18 @@
   <url>
     <loc>https://thecanopyguard.com/blog/robots-txt-blocking-ai-crawlers</loc>
     <lastmod>2026-07-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thecanopyguard.com/blog/ai-generated-faq-schema-meta-descriptions</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thecanopyguard.com/blog/mitre-attack-technique-ids-explained</loc>
+    <lastmod>2026-09-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

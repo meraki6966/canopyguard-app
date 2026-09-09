@@ -240,6 +240,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <li>Entity clarity for AI models</li>
                 <li>AI crawler access and llms.txt</li>
                 <li>Structured Q&A content depth</li>
+                <li>AI-generated FAQ schema and meta descriptions when they're missing</li>
               </ul>
             </div>
             <div className="cat-card" style={{ borderColor: "var(--gold)" }}>

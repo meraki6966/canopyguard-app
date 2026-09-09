@@ -129,7 +129,10 @@
       "email_placeholder": "you@company.com",
       "btn_download": "DOWNLOAD REPORT",
       "btn_processing": "PROCESSING...",
-      "spam_notice": "No spam. Email used only for this report."
+      "spam_notice": "No spam. Email used only for this report.",
+      "title_fixes": "fixes",
+      "desc_aeo": "Your email, once. It unlocks the generated FAQ schema and meta description for this domain, and your full report.",
+      "btn_generate": "Generate my fixes"
     },
     "fix_note_label": "BEFORE YOU APPLY",
     "fix_confidence": {
@@ -137,10 +140,24 @@
       "template": "TEMPLATE",
       "derived_hint": "Built from this domain's own records, certificate or headers — safe to apply as written.",
       "template_hint": "A starter you must fill in — we do not know your providers, so this needs your own values first.",
-      "template_callout": "Starter template — a starting point, not a finished fix. Check it against your own setup before publishing."
+      "template_callout": "Starter template — a starting point, not a finished fix. Check it against your own setup before publishing.",
+      "generated": "GENERATED",
+      "generated_hint": "Written by a language model from this page's own text, then checked for valid structure — not for accuracy. Read it before publishing.",
+      "generated_callout": "Model-generated — validated for structure, not for truth. Read every line against your live page before publishing: schema that claims something the page does not say is a structured-data violation."
     },
     "email_dns_fixes": "Email, DNS & Cookie Fixes",
-    "email_dns_fixes_desc": "Generated from this domain's own SPF and DMARC records, certificate issuer and cookies."
+    "email_dns_fixes_desc": "Generated from this domain's own SPF and DMARC records, certificate issuer and cookies.",
+    "aeo_gen": {
+      "title": "GENERATE FAQ SCHEMA & META DESCRIPTION",
+      "desc": "Written from this page's own content, then validated. Runs only when you ask — it is the one part of this audit that is not automatic.",
+      "cta": "Generate these now",
+      "loading": "Reading your page and writing the fixes…",
+      "done": "Generated. They are in the FAQ Schema and Meta Description rows above.",
+      "status_skipped": "SKIPPED",
+      "status_failed": "COULD NOT GENERATE",
+      "err_generic": "Unable to generate right now. Try again in a moment.",
+      "err_no_token": "Could not verify your email for this domain. Re-enter it and try again."
+    }
   },
   "pdf": {
     "title": "EXECUTIVE RISK REPORT",

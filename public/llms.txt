@@ -1,8 +1,8 @@
 # Canopy Guard
 # Free Website Visibility + Security Audit Tool
-# Version 3.1.0
+# Version 3.3.0
 
-> Canopy Guard is a free website audit tool that scans any domain in approximately 15 seconds across 104 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Every check is passive and read-only. No signup is required.
+> Canopy Guard is a free website audit tool that scans any domain in approximately 15 seconds across 105 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Every check is passive and read-only. No signup is required.
 
 ## The Four Scoring Categories
 
@@ -16,12 +16,13 @@ How well AI answer engines like ChatGPT, Google AI Overviews, and Perplexity can
 How well generative AI models can chunk, retrieve, and cite the pages: chunking efficiency, citation precision, llms.txt status, content depth, use of lists and tables, heading-to-content ratio, and semantic block structure.
 
 ### Security
-External security posture visible from a public URL, across 21 modules and nine analysis layers: TLS cipher and certificate depth, DNS policy quality (SPF, DMARC, CAA, DKIM, subdomain takeover surface), HTTP headers and CORS, HTML vulnerabilities and vulnerable library fingerprinting, exposed file-path probing, cookie flags, and AI crawl policy. Version 3.1.0 adds four expanded capabilities:
+External security posture visible from a public URL, across 23 modules and ten analysis layers: TLS cipher and certificate depth, DNS policy quality (SPF, DMARC, CAA, DKIM, subdomain takeover surface), HTTP headers and CORS, HTML vulnerabilities and vulnerable library fingerprinting, exposed file-path probing, cookie flags, and AI crawl policy. Version 3.3.0 includes five expanded capabilities:
 
 - Malware and reputation scanning: checks the domain against the Google Safe Browsing API and common blacklist services, reporting a status of Clean, Flagged, or Blacklisted with the specific reason when flagged.
 - Expanded footprint analysis: Subresource Integrity (SRI) on every external script and link tag, Secure and HttpOnly flags on cookies, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence.
 - Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (not just present or absent), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration — domains expiring within 60 days are flagged as a hijacking risk.
 - Exposed sensitive file detection: passive checks for public accessibility of common sensitive paths including /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin (without authentication challenge); any accessible path is reported as Critical.
+- Supabase anonymous exposure detection: when a site ships a Supabase project URL and public anon key in its own client code, Canopy Guard replays that public key read-only against common table names (users, profiles, customers, leads, accounts, orders, subscriptions, payments). Any table that returns live rows to an anonymous request is reported as Critical, indicating Row Level Security is disabled or misconfigured. Identifies the exposure condition associated with T1552 (Unsecured Credentials) and T1213 (Data from Information Repositories).
 
 For every security finding, Canopy Guard identifies the exposure condition associated with a specific MITRE ATT&CK technique. A missing CSP identifies the exposure condition associated with T1059 Command and Scripting Interpreter. A missing HSTS identifies the exposure condition associated with T1557 Adversary-in-the-Middle. Server header exposure identifies the exposure condition associated with T1592.002 Gather Victim Host Information: Software. A weak cipher suite identifies the exposure condition associated with T1557 Adversary-in-the-Middle. A script without Subresource Integrity identifies the exposure condition associated with T1195.002 Compromise Software Supply Chain. An exposed credential file such as /.env or /.aws/credentials identifies the exposure condition associated with T1552.001 Unsecured Credentials: Credentials In Files. A spoofable SPF or DMARC record identifies the exposure condition associated with T1566 Phishing. Each finding displays the technique ID, tactic name, and badge in both the on-screen report and PDF export. This is a live shipping feature.
 
@@ -48,10 +49,10 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 ## Tool Details
 
 - Scan time: approximately 15 seconds
-- Total signals: 104
-- Security signals: 72 across nine analysis layers
-- Modules: 21
-- Engine version: v3.1.0
+- Total signals: 105
+- Security signals: 73 across ten analysis layers
+- Modules: 23
+- Engine version: v3.3.0
 - All checks are passive and read-only (no active exploitation, payload injection, or input sent to the scanned site)
 - Cost: Free, no signup required
 - Output formats: on-screen report, PDF download, email delivery
@@ -80,7 +81,7 @@ Q: What does MITRE ATT&CK mean for my website?
 A: MITRE ATT&CK is a globally recognized framework for how attackers operate. For each security finding, Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique, so you get context for what each gap exposes you to, not just a number. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
 
 Q: What does the security scan check for?
-A: Across nine security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus four expanded capabilities. Malware and reputation scanning checks Google Safe Browsing and common blacklists and reports Clean, Flagged, or Blacklisted. Expanded footprint analysis checks Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence. Expanded DNS and email depth parses the exact SPF mechanisms and qualifier strength, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (domains expiring within 60 days are flagged as a hijacking risk). Exposed sensitive file detection checks public accessibility of paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any accessible path as Critical. Every check is passive and read-only.
+A: Across ten security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus five expanded capabilities. Malware and reputation scanning checks Google Safe Browsing and common blacklists and reports Clean, Flagged, or Blacklisted. Expanded footprint analysis checks Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence. Expanded DNS and email depth parses the exact SPF mechanisms and qualifier strength, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (domains expiring within 60 days are flagged as a hijacking risk). Exposed sensitive file detection checks public accessibility of paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any accessible path as Critical. Supabase anonymous exposure detection replays a Supabase anon key shipped in the site's own client code, read-only, against common table names and reports any table that returns live rows to an anonymous request as Critical, meaning Row Level Security is disabled or misconfigured. Every check is passive and read-only.
 
 Q: My score is low. What do I do next?
 A: Your full report ranks findings by impact so you know what to fix first. You can implement the recommendations yourself, or book a call with Adam to talk through next steps.

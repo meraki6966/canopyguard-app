@@ -123,7 +123,7 @@ function MitreRow({ mitre }) {
 export function SecurityEnhanced({ data }) {
   if (!data) return null;
 
-  const { tls, dns, http, html, paths, reputation, footprint, domain_email, sensitive_files, cross_reference } = data;
+  const { tls, dns, http, html, paths, reputation, footprint, domain_email, sensitive_files, supabase_exposure, cross_reference } = data;
   const crossRefs = cross_reference || [];
   const repStatusColor = reputation
     ? (reputation.status === 'CLEAN' ? '#2A7A5E' : reputation.status === 'UNKNOWN' ? '#C8A96E' : '#C24B3A')
@@ -136,7 +136,7 @@ export function SecurityEnhanced({ data }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
         <span style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C8A96E', whiteSpace: 'nowrap' }}>
-          Security Posture — 9 Layer Analysis
+          Security Posture — 10 Layer Analysis
         </span>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
       </div>
@@ -172,7 +172,7 @@ export function SecurityEnhanced({ data }) {
         </div>
       )}
 
-      {/* 9 Layer grid */}
+      {/* 10 Layer grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -450,6 +450,37 @@ export function SecurityEnhanced({ data }) {
               ) : (
                 <div style={{ fontSize: '12px', color: '#2A7A5E' }}>
                   No sensitive files exposed ({sensitive_files.paths_checked} paths checked)
+                </div>
+              )}
+            </>
+          )}
+        </LayerCard>
+
+        {/* Supabase Exposure Layer */}
+        <LayerCard title="Supabase Exposure" data={supabase_exposure}>
+          {supabase_exposure && (
+            <>
+              {!supabase_exposure.supabase_detected ? (
+                <div style={{ fontSize: '12px', color: '#888' }}>
+                  No Supabase project detected in shipped code
+                </div>
+              ) : supabase_exposure.accessible_count > 0 ? (
+                <div>
+                  <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '700', marginBottom: '4px' }}>
+                    {supabase_exposure.accessible_count} anon-readable table(s):
+                  </div>
+                  {supabase_exposure.accessible_tables.map((tbl, i) => (
+                    <div key={i} style={{ fontSize: '11px', color: '#E69B8F', fontFamily: "'JetBrains Mono','SF Mono',monospace" }}>{tbl}</div>
+                  ))}
+                  <MitreRow mitre={supabase_exposure.mitre} />
+                </div>
+              ) : supabase_exposure.applicable ? (
+                <div style={{ fontSize: '12px', color: '#2A7A5E' }}>
+                  RLS enforced — {supabase_exposure.tables_checked} common tables all blocked
+                </div>
+              ) : (
+                <div style={{ fontSize: '12px', color: '#888' }}>
+                  Project detected, no anon key in shipped code — not testable
                 </div>
               )}
             </>

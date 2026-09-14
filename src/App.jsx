@@ -211,7 +211,7 @@ function generatePDF(r, email, t) {
   if (sec.business_logic_gaps?.data_provenance_leak)
     insights.push({ l: "WARNING", t: t("risks.provenance_risk_title"), b: t("risks.provenance_risk_desc") });
 
-  // Security Posture — 9 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
+  // Security Posture — 10 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
   const se = r.security_enhanced;
   const esc = v => String(v ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const seRow = (label, value) => (value === undefined || value === null || value === "")
@@ -281,7 +281,7 @@ function generatePDF(r, email, t) {
         (exposed.length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack) ? seRow("Status", "No sensitive paths exposed") : "",
       ], paths.rationale));
     }
-    const { reputation, footprint, domain_email, sensitive_files } = se;
+    const { reputation, footprint, domain_email, sensitive_files, supabase_exposure } = se;
     if (reputation) seLayers.push(seCard("Malware & Reputation", reputation.score_contribution, [
       seRow("Status", reputation.status),
       seRow("Google Safe Browsing", reputation.safe_browsing?.checked ? (reputation.safe_browsing.flagged ? (reputation.safe_browsing.threat_types || []).join(", ") : "Clean") : "Not configured"),
@@ -308,6 +308,15 @@ function generatePDF(r, email, t) {
         ? seRow("CRITICAL", sensitive_files.findings.map(f => `${f.path} (${f.technique?.id})`).join(", "))
         : seRow("Status", `No sensitive files exposed (${sensitive_files.paths_checked} paths checked)`),
     ], sensitive_files.rationale));
+    if (supabase_exposure) seLayers.push(seCard("Supabase Exposure", supabase_exposure.score_contribution, [
+      !supabase_exposure.supabase_detected
+        ? seRow("Status", "No Supabase project detected in shipped code")
+        : supabase_exposure.accessible_count > 0
+          ? seRow("CRITICAL", `anon-readable: ${supabase_exposure.accessible_tables.join(", ")}`)
+          : supabase_exposure.applicable
+            ? seRow("Status", `RLS enforced — ${supabase_exposure.tables_checked} common tables blocked`)
+            : seRow("Status", "Project detected, no anon key found — not testable"),
+    ], supabase_exposure.rationale));
   }
 
   const seCrossRefs = se?.cross_reference || [];
@@ -317,13 +326,13 @@ function generatePDF(r, email, t) {
   }).join("");
 
   const seSection = se ? `
-<!-- PAGE 3: Security Posture — 9 Layer Analysis -->
+<!-- PAGE 3: Security Posture — 10 Layer Analysis -->
 <div class="page-break"></div>
 <div class="header">
   <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
   <div class="meta">${t("ui.security_posture", "Security Posture")} · ${r.audit_id.slice(0, 8)}</div>
 </div>
-<h2>${t("ui.security_posture_5layer", "Security Posture — 9 Layer Analysis")}</h2>
+<h2>${t("ui.security_posture_5layer", "Security Posture — 10 Layer Analysis")}</h2>
 ${seXrefHtml}
 <div class="se-grid">${seLayers.join("")}</div>
 ` : "";
@@ -380,7 +389,7 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 .cta a { display: inline-block; background: #E53935; color: #fff; font-weight: 900; font-size: 11px; padding: 10px 28px; text-decoration: none; letter-spacing: 2px }
 .footer { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; color: #aaa; font-size: 9px }
 
-/* Security posture — 9 layer analysis */
+/* Security posture — 10 layer analysis */
 .se-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 }
 .se-card { flex: 1 1 calc(50% - 10px); min-width: 240px; border: 1px solid #ddd; border-radius: 6px; padding: 12px 14px; background: #fdfdfd; page-break-inside: avoid }
 .se-card-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #E53935; margin-bottom: 8px }
@@ -561,7 +570,7 @@ function MethodologyPage({onBack}){
   <S><H>SEO Score (0 to 100) · 14 Signals</H><P>Measures how well search engines can crawl, index, and rank your site. Scoring 100 requires fast response, 1500+ words, 20+ internal links, perfect meta tags, and a sitemap.</P><W label="Crawlable" val="0.10"/><W label="Exactly 1 H1 (multiple penalized)" val="0.10"/><W label="Meta description + ideal length (120-160)" val="0.10"/><W label="Title tag + ideal length (30-60)" val="0.10"/><W label="Canonical URL match" val="0.08"/><W label="Viewport meta tag" val="0.05"/><W label="HTML lang attribute" val="0.03"/><W label="Image alt text coverage" val="0.08"/><W label="Word count (gradient: 200/500/1500+)" val="0.10"/><W label="Internal links (gradient: 5/10/20+)" val="0.10"/><W label="Sitemap.xml exists" val="0.06"/><W label="Response time (under 1s/3s/3s+)" val="0.05"/><W label="H2 heading structure" val="0.05"/></S>
   <S><H>AEO Score (0 to 100) · 10 Signals</H><P>Measures how well AI answer engines can extract and cite your content. Requires multiple schema types, 5+ FAQ items, and strong Q&A density for full marks.</P><W label="Any JSON-LD present" val="0.10"/><W label="Organization schema" val="0.12"/><W label="FAQ schema" val="0.10"/><W label="FAQ item count (1/3/5+)" val="0.12"/><W label="LocalBusiness schema" val="0.08"/><W label="Breadcrumb schema" val="0.06"/><W label="Schema type diversity (1/2/4+)" val="0.10"/><W label="Zero validation errors" val="0.10"/><W label="Q&A density" val="0.12"/><W label="JSON-LD block count (1/2/3+)" val="0.10"/></S>
   <S><H>GEO Score (0 to 100) · 8 Signals</H><P>Measures how generative AI models chunk, retrieve, and cite your pages. Based on how RAG systems process content.</P><W label="Chunking efficiency" val="0.25"/><W label="Citation precision" val="0.20"/><W label="llms.txt present + length bonus" val="0.23"/><W label="Content depth by word count" val="0.10"/><W label="Lists present" val="0.05"/><W label="Tables present" val="0.04"/><W label="Heading-to-content ratio" val="0.08"/><W label="Baseline reachability" val="0.05"/></S>
-  <S><H>Security Score (0 to 100) · 72 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.1 blends in additional checks across nine enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, path/exposure probing, malware &amp; reputation (Google Safe Browsing + blacklists), expanded footprint (Subresource Integrity, cookie flags, full TLS cipher enumeration, certificate transparency), DNS &amp; email depth (SPF mechanisms, DMARC policy, registrar lock + expiration), and sensitive-file exposure — for 72 security signals in total. Each finding identifies the exposure condition associated with a MITRE ATT&amp;CK technique.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
+  <S><H>Security Score (0 to 100) · 73 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.3 blends in additional checks across ten enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, path/exposure probing, malware &amp; reputation (Google Safe Browsing + blacklists), expanded footprint (Subresource Integrity, cookie flags, full TLS cipher enumeration, certificate transparency), DNS &amp; email depth (SPF mechanisms, DMARC policy, registrar lock + expiration), sensitive-file exposure, and Supabase anonymous exposure (anonymous PostgREST reads against a Supabase anon key shipped in the site's own code) — for 73 security signals in total. Each finding identifies the exposure condition associated with a MITRE ATT&amp;CK technique.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
   <S style={{borderColor:C.goldBorder}}><H>Open Methodology</H><P>This scoring system is published so anyone can verify how their score was calculated. If you believe a weight is wrong or a signal is missing, reach out. The methodology improves from real-world feedback.</P><P>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</P></S>
   </div></div>}
 

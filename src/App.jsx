@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { SecurityEnhanced } from "./components/SecurityEnhanced";
 import { DribbbleBadge } from "./components/DribbbleBadge";
 import { MITRE_TECHNIQUES, MitreBadge } from "./mitre";
+import { computeScores } from "./lib/scores";
+import { getRows, getChecks, summarizeGaps, getComplianceChecks } from "./lib/checks";
+import { getTopActions, actionText } from "./lib/topActions";
 import Home from "./Home";
 
 // Design system — matches the landing (Home.jsx / home.css):
@@ -172,96 +175,144 @@ function HeaderFix({header}){
   return fix?<FixSnippet snippet={fix}/>:null;
 }
 
-function getTopActions(r){const a=[];const s=r.security_roots;const g=r.visibility_canopy.geo_branch;const ae=r.visibility_canopy.aeo_branch;const se=r.visibility_canopy.seo_branch;
-if(g.llms_txt_status!=="PRESENT_ROOT")a.push({p:1,a:"Add an llms.txt file to your domain root",i:"AI engines will know how to cite your content instead of summarizing without attribution.",s:"llms_txt",key:"llms_txt"});
-if((s.application_security.missing_secure_headers||[]).includes("Content-Security-Policy"))a.push({p:2,a:"Add a Content-Security-Policy header",i:"Prevents cross-site scripting and data injection attacks.",s:"csp",key:"csp"});
-if(!ae.schema_validation.has_faq_json_ld)a.push({p:3,a:"Add FAQ schema markup",i:"Makes your content eligible for rich results and AI citations.",s:"faq_schema",key:"faq_schema"});
-if(se.html_structure.missing_meta_descriptions)a.push({p:4,a:"Add a meta description",i:"Controls how your site appears in search results.",s:"meta_desc",key:"meta_desc"});
-if(!se.html_structure.canonical_match)a.push({p:5,a:"Fix your canonical URL",i:"Prevents duplicate content issues.",s:"canonical",key:"canonical"});
-return a.slice(0,3)}
+// ── Measurement wording ──
+// Shared by the report view and the PDF so both say the same thing about what
+// was and was not measured.
+const categoryName=(c,t)=>t(`ui.${c}`);
+function listText(names){try{return new Intl.ListFormat("en",{style:"long",type:"conjunction"}).format(names)}catch{return names.join(", ")}}
+function unmeasuredBannerText(r,scores,t){
+  if(!scores.unmeasured.length)return "";
+  const names=scores.unmeasured.map(c=>categoryName(c,t));const list=listText(names);
+  const note=typeof r?.fetch_status?.note==="string"?r.fetch_status.note.trim():"";
+  // A page the engine did read cannot be blamed on loading, so it gets the
+  // plainer sentence.
+  if(r?.fetch_status?.ok===true)return t("dashboard.unmeasured_banner.page_read",{defaultValue:"{{list}} could not be measured on this scan.",list});
+  const parts=[names.length===1
+    ?t("dashboard.unmeasured_banner.page_unread_single",{defaultValue:"We could not load this page from our scanner, so {{list}} was not measured.",list})
+    :t("dashboard.unmeasured_banner.page_unread_multi",{defaultValue:"We could not load this page from our scanner, so {{list}} were not measured.",list})];
+  if(note)parts.push(note);
+  if(!scores.unmeasured.includes("security"))parts.push(t("dashboard.unmeasured_banner.security_shown","Security checks that do not need the page are shown below."));
+  return parts.join(" ");
+}
+function measuredLineText(scores,t){
+  const parts=[];
+  if(scores.measured.length)parts.push(t("dashboard.measured_line",{defaultValue:"Measured: {{list}}.",list:scores.measured.map(c=>categoryName(c,t)).join(", ")}));
+  if(scores.unmeasured.length)parts.push(t("dashboard.not_measured_line",{defaultValue:"Not measured: {{list}}.",list:scores.unmeasured.map(c=>categoryName(c,t)).join(", ")}));
+  return parts.join(" ");
+}
 
-function getComplianceChecks(r){const s=r.security_roots;return[{key:"https_active",label:"HTTPS Active",pass:s.tls?.valid||false},{key:"privacy_policy",label:"Privacy Policy",pass:false},{key:"security_headers",label:"Security Headers",pass:(s.application_security.missing_secure_headers||[]).length<=2},{key:"no_exposed",label:"No Exposed Endpoints",pass:(s.application_security.exposed_endpoints||[]).length===0},{key:"structured_data",label:"Structured Data",pass:r.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld},{key:"ai_crawl",label:"AI Crawl Policy",pass:s.ai_crawl_risk.robots_policy==="BALANCED"||s.ai_crawl_risk.robots_policy==="RESTRICTIVE"}]}
+// Cross-reference intelligence, for the page and the PDF. llms.txt and the
+// provenance check come from the homepage and GEO, so they only speak when
+// those were measured; a robots policy that was not read is not "permissive".
+function getInsights(r,scores,t){
+  const sec=r?.security_roots;const policy=sec?.ai_crawl_risk?.robots_policy;const eps=sec?.application_security?.exposed_endpoints;
+  const llms=scores.unmeasured.includes("geo")?null:r?.visibility_canopy?.geo_branch?.llms_txt_status;
+  const ins=[];
+  if(llms==="MISSING"&&policy==="PERMISSIVE")
+    ins.push({l:"CRITICAL",t:t("risks.traffic_leak_title"),b:t("risks.traffic_leak_desc")});
+  if(llms==="MISSING"&&typeof policy==="string"&&policy!=="RESTRICTIVE")
+    ins.push({l:"WARNING",t:t("risks.blind_assistants_title"),b:t("risks.blind_assistants_desc")});
+  if(Array.isArray(eps)&&eps.length>0)
+    ins.push({l:"CRITICAL",t:t("risks.exposed_endpoints_title"),b:`${eps.length} ${t("risks.exposed_endpoints_desc_suffix", "path(s) accessible:")} ${eps.slice(0,4).join(", ")}`});
+  if(!scores.unmeasured.includes("seo")&&sec?.business_logic_gaps?.data_provenance_leak===true)
+    ins.push({l:"WARNING",t:t("risks.provenance_risk_title"),b:t("risks.provenance_risk_desc")});
+  return ins;
+}
+
+// true when any condition is a finding, null when none is but one was not
+// measured (so "secured" cannot be claimed), false only when all were measured
+// and none is a finding.
+const anyOf=(...conds)=>conds.some(c=>c===true)?true:conds.some(c=>c!==false)?null:false;
+const isFalse=v=>typeof v==="boolean"?!v:null;
 
 // ── PDF (compact) ──
 // ── PDF (compact) ──
 function generatePDF(r, email, t) {
-  const s = r.summary_scores;
-  const overall = Math.round(((s.seo_score + s.aeo_score + s.geo_score + s.security_posture_score) / 4) * 100);
-  const sc = v => { const p = Math.round(v * 100); return p >= 70 ? "#43A047" : p >= 40 ? "#F9A825" : "#E53935" };
-  const sec = r.security_roots;
-  const aeo = r.visibility_canopy.aeo_branch;
-  const geo = r.visibility_canopy.geo_branch;
-  const actions = getTopActions(r);
-  const compliance = getComplianceChecks(r);
+  const scores = computeScores(r);
+  const sc = p => p >= 70 ? "#43A047" : p >= 40 ? "#F9A825" : "#E53935";
+  const sec = r?.security_roots;
+  const sv = r?.visibility_canopy?.aeo_branch?.schema_validation;
+  const geo = r?.visibility_canopy?.geo_branch;
+  const actions = getTopActions(r, scores);
+  const compliance = getComplianceChecks(r, scores);
+  const NM = t("dashboard.not_measured", "Not measured");
+  const nm = v => (v === null || v === undefined || v === "") ? NM : v;
+  const arrOrNull = v => Array.isArray(v) ? v : null;
+  const bannerText = unmeasuredBannerText(r, scores, t);
 
-  // Business risk conditions
-  const isTrafficLeak = geo.llms_txt_status !== "PRESENT_ROOT" || sec.ai_crawl_risk.robots_policy === "PERMISSIVE";
-  const isBlindAssistants = !aeo.schema_validation.has_any_json_ld || !aeo.schema_validation.has_faq_json_ld;
-  const isOpenDoor = (sec.application_security.exposed_endpoints || []).length > 0 || !sec.ai_crawl_risk.rate_limiting_active;
-  const isFoundationCrack = !sec.tls?.valid || (sec.application_security.missing_secure_headers || []).length > 2;
+  // Business risk conditions: true, false, or null when not measured.
+  const llms = scores.unmeasured.includes("geo") ? null : geo?.llms_txt_status;
+  const policy = sec?.ai_crawl_risk?.robots_policy;
+  const eps = arrOrNull(sec?.application_security?.exposed_endpoints);
+  const missingHeaders = arrOrNull(sec?.application_security?.missing_secure_headers);
+  const isTrafficLeak = anyOf(typeof llms === "string" ? llms !== "PRESENT_ROOT" : null, typeof policy === "string" ? policy === "PERMISSIVE" : null);
+  const isBlindAssistants = scores.unmeasured.includes("aeo") ? null : anyOf(isFalse(sv?.has_any_json_ld), isFalse(sv?.has_faq_json_ld));
+  const isOpenDoor = anyOf(eps ? eps.length > 0 : null, isFalse(sec?.ai_crawl_risk?.rate_limiting_active));
+  const isFoundationCrack = anyOf(isFalse(sec?.tls?.valid), missingHeaders ? missingHeaders.length > 2 : null);
 
   // Cross-reference intelligence for page 1
-  const insights = [];
-  if (geo.llms_txt_status === "MISSING" && sec.ai_crawl_risk.robots_policy === "PERMISSIVE")
-    insights.push({ l: "CRITICAL", t: t("risks.traffic_leak_title"), b: t("risks.traffic_leak_desc") });
-  if (geo.llms_txt_status === "MISSING" && sec.ai_crawl_risk.robots_policy !== "RESTRICTIVE")
-    insights.push({ l: "WARNING", t: t("risks.blind_assistants_title"), b: t("risks.blind_assistants_desc") });
-  if ((sec.application_security.exposed_endpoints || []).length > 0)
-    insights.push({ l: "CRITICAL", t: t("risks.exposed_endpoints_title"), b: `${sec.application_security.exposed_endpoints.length} ${t("risks.exposed_endpoints_desc_suffix", "path(s) accessible:")} ${sec.application_security.exposed_endpoints.slice(0, 4).join(", ")}` });
-  if (sec.business_logic_gaps?.data_provenance_leak)
-    insights.push({ l: "WARNING", t: t("risks.provenance_risk_title"), b: t("risks.provenance_risk_desc") });
+  const insights = getInsights(r, scores, t);
 
   // Security Posture — 10 layer analysis (mirrors the on-screen SecurityEnhanced component for the PDF)
-  const se = r.security_enhanced;
+  const se = r?.security_enhanced;
   const esc = v => String(v ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const seRow = (label, value) => (value === undefined || value === null || value === "")
     ? ""
     : `<div class="se-row"><span class="se-row-label">${esc(label)}</span><span class="se-row-val">${esc(value)}</span></div>`;
   const seCard = (title, score, rows, notes = []) => {
     const body = rows.filter(Boolean).join("");
-    const bar = (score === undefined || score === null)
-      ? ""
-      : `<div class="se-score"><span>layer score</span><span style="color:${sc(score / 100)};font-weight:700">${score}</span></div>
-         <div class="se-bar"><div class="se-bar-fill" style="width:${Math.min(100, Math.max(0, score))}%;background:${sc(score / 100)}"></div></div>`;
+    const bar = (typeof score !== "number" || !Number.isFinite(score))
+      ? `<div class="se-score"><span>layer score</span><span>${esc(NM)}</span></div>`
+      : `<div class="se-score"><span>layer score</span><span style="color:${sc(score)};font-weight:700">${score}</span></div>
+         <div class="se-bar"><div class="se-bar-fill" style="width:${Math.min(100, Math.max(0, score))}%;background:${sc(score)}"></div></div>`;
     const noteHtml = (notes || []).filter(Boolean).map(n => `<div class="se-note">${esc(n)}</div>`).join("");
     return `<div class="se-card"><div class="se-card-title">${esc(title)}</div>${body}${bar}${noteHtml ? `<div class="se-notes">${noteHtml}</div>` : ""}</div>`;
   };
+  // A layer the engine returned nothing for was not measured; it is shown as
+  // such rather than dropped, so a failed TLS handshake does not vanish.
+  const layer = (title, data, rows) => seLayers.push(data ? seCard(title, data.score_contribution, rows(data), data.rationale) : seCard(title, null, [seRow("Status", NM)]));
+  const yesNo = (v, yes, no) => typeof v === "boolean" ? (v ? yes : no) : NM;
+  const listOr = (v, empty) => Array.isArray(v) ? (v.length > 0 ? v.join(", ") : empty) : NM;
+  const num = v => typeof v === "number" && Number.isFinite(v);
 
   const seLayers = [];
   if (se) {
     const { tls, dns, http, html, paths } = se;
-    if (tls) seLayers.push(seCard("TLS / Certificate", tls.score_contribution, [
-      seRow("TLS version", tls.tls_version),
-      seRow("Cipher suite", tls.cipher_suite),
-      seRow("Cert expiry", tls.cert_expiry_days >= 0 ? `${tls.cert_expiry_days} days (${tls.cert_expiry_status})` : "expired"),
-      seRow("Issuer", tls.cert_issuer),
+    layer("TLS / Certificate", tls, tls => [
+      seRow("TLS version", nm(tls.tls_version)),
+      seRow("Cipher suite", nm(tls.cipher_suite)),
+      seRow("Cert expiry", num(tls.cert_expiry_days) ? (tls.cert_expiry_days >= 0 ? `${tls.cert_expiry_days} days (${nm(tls.cert_expiry_status)})` : "expired") : NM),
+      seRow("Issuer", nm(tls.cert_issuer)),
       tls.cert_self_signed ? seRow("Self-signed", "yes") : "",
       tls.cert_san_mismatch ? seRow("SAN mismatch", "yes") : "",
-    ], tls.rationale));
-    if (dns) seLayers.push(seCard("DNS Security", dns.score_contribution, [
-      seRow("SPF policy", dns.spf_policy || "unknown"),
-      seRow("DMARC policy", dns.dmarc_policy || "unknown"),
-      seRow("CAA records", dns.caa_present ? "Present" : "Absent"),
-      seRow("DKIM selectors", dns.dkim_selectors_found?.length > 0 ? dns.dkim_selectors_found.join(", ") : "None found"),
+    ]);
+    layer("DNS Security", dns, dns => [
+      seRow("SPF policy", nm(dns.spf_policy)),
+      seRow("DMARC policy", nm(dns.dmarc_policy)),
+      seRow("CAA records", yesNo(dns.caa_present, "Present", "Absent")),
+      seRow("DKIM selectors", listOr(dns.dkim_selectors_found, "None found")),
       dns.subdomain_takeover_risk?.length > 0 ? seRow("Takeover risk", dns.subdomain_takeover_risk.join(", ")) : "",
-    ], dns.rationale));
-    if (http) seLayers.push(seCard("HTTP Headers", http.score_contribution, [
-      seRow("CSP quality", http.csp_quality || "unknown"),
+    ]);
+    layer("HTTP Headers", http, http => [
+      seRow("CSP quality", nm(http.csp_quality)),
       http.server_disclosure ? `<div class="se-row"><span class="se-row-label">Server header</span><span class="se-row-val">${esc(http.server_header_value)}<span class="mitre-tag">ATT&amp;CK ${MITRE_TECHNIQUES.server_disclosure.id} · ${esc(MITRE_TECHNIQUES.server_disclosure.tactic)}</span></span></div>` : "",
       http.powered_by_disclosure ? seRow("X-Powered-By", "disclosed") : "",
       http.cors_wildcard ? seRow("CORS wildcard", http.cors_credentialed_wildcard ? "with credentials — critical" : "detected") : "",
       http.dangerous_methods?.length > 0 ? seRow("Dangerous methods", http.dangerous_methods.join(", ")) : "",
-      seRow("security.txt", http.security_txt_present ? "Present" : "Absent"),
-    ], http.rationale));
-    if (html) seLayers.push(seCard("HTML Analysis", html.score_contribution, [
+      seRow("security.txt", yesNo(http.security_txt_present, "Present", "Absent")),
+    ]);
+    layer("HTML Analysis", html, html => [
       html.vulnerable_libraries?.length > 0 ? seRow("Vulnerable libs", html.vulnerable_libraries.map(l => `${l.lib} ${l.version} (${l.cve})`).join("; ")) : "",
-      seRow("Forms missing CSRF", html.forms_without_csrf > 0 ? html.forms_without_csrf : "None"),
-      seRow("Mixed content", html.mixed_content_urls?.length > 0 ? `${html.mixed_content_urls.length} found` : "Clean"),
-      seRow("Inline scripts", html.inline_script_count),
+      seRow("Forms missing CSRF", num(html.forms_without_csrf) ? (html.forms_without_csrf > 0 ? html.forms_without_csrf : "None") : NM),
+      seRow("Mixed content", Array.isArray(html.mixed_content_urls) ? (html.mixed_content_urls.length > 0 ? `${html.mixed_content_urls.length} found` : "Clean") : NM),
+      seRow("Inline scripts", nm(html.inline_script_count)),
       html.generator_disclosure ? seRow("Generator tag", html.generator_disclosure) : "",
       html.debug_content_detected ? seRow("Debug output", "detected") : "",
-    ], html.rationale));
-    if (paths) {
+    ]);
+    // probes_answered === 0 means no probe got an answer: nothing was measured,
+    // which is not the same as nothing being exposed.
+    const pathsMeasured = paths && paths.probes_answered !== 0 && Array.isArray(paths.developer_files_exposed);
+    layer("Path Exposure", pathsMeasured ? paths : null, paths => {
       const exposed = [
         ...(paths.developer_files_exposed || []),
         ...(paths.backup_files_exposed || []),
@@ -269,54 +320,60 @@ function generatePDF(r, email, t) {
         ...(paths.cms_panels_exposed || []),
         ...(paths.db_panels_exposed || []),
       ];
-      seLayers.push(seCard("Path Exposure", paths.score_contribution, [
+      return [
         paths.developer_files_exposed?.length > 0 ? seRow("Developer files", paths.developer_files_exposed.join(", ")) : "",
         paths.backup_files_exposed?.length > 0 ? seRow("Backup files", paths.backup_files_exposed.join(", ")) : "",
         paths.source_maps_exposed?.length > 0 ? seRow("Source maps", paths.source_maps_exposed.join(", ")) : "",
         paths.cms_panels_exposed?.length > 0 ? seRow("CMS panels", paths.cms_panels_exposed.join(", ")) : "",
         paths.db_panels_exposed?.length > 0 ? seRow("DB panels", paths.db_panels_exposed.join(", ")) : "",
-        seRow("Directory listing", paths.directory_listing_confirmed ? "Enabled" : "Disabled"),
-        seRow("Error disclosure", paths.error_page_discloses_stack ? "Detected" : "Clean"),
+        seRow("Directory listing", yesNo(paths.directory_listing_confirmed, "Enabled", "Disabled")),
+        seRow("Error disclosure", yesNo(paths.error_page_discloses_stack, "Detected", "Clean")),
         paths.api_paths_exposed?.length > 0 ? seRow("Open API paths", paths.api_paths_exposed.join(", ")) : "",
-        (exposed.length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack) ? seRow("Status", "No sensitive paths exposed") : "",
-      ], paths.rationale));
-    }
+        (exposed.length === 0 && paths.directory_listing_confirmed === false && paths.error_page_discloses_stack === false) ? seRow("Status", "No sensitive paths exposed") : "",
+      ];
+    });
     const { reputation, footprint, domain_email, sensitive_files, supabase_exposure } = se;
-    if (reputation) seLayers.push(seCard("Malware & Reputation", reputation.score_contribution, [
-      seRow("Status", reputation.status),
+    layer("Malware & Reputation", reputation, reputation => [
+      seRow("Status", nm(reputation.status)),
       seRow("Google Safe Browsing", reputation.safe_browsing?.checked ? (reputation.safe_browsing.flagged ? (reputation.safe_browsing.threat_types || []).join(", ") : "Clean") : "Not configured"),
-      seRow("Blacklists", reputation.blacklists?.listed_on?.length > 0 ? reputation.blacklists.listed_on.join(", ") : `Clean (${reputation.blacklists?.services_checked ?? 0} checked)`),
+      seRow("Blacklists", reputation.blacklists?.listed_on?.length > 0 ? reputation.blacklists.listed_on.join(", ") : (reputation.blacklists?.services_checked > 0 && Array.isArray(reputation.blacklists.listed_on) ? `Clean (${reputation.blacklists.services_checked} checked)` : NM)),
       reputation.reasons?.length > 0 ? seRow("Reason", reputation.reasons.join("; ")) : "",
-    ], reputation.rationale));
-    if (footprint) seLayers.push(seCard("Footprint Analysis", footprint.score_contribution, [
-      seRow("External resources w/o SRI", (footprint.sri?.scripts_missing_sri + footprint.sri?.stylesheets_missing_sri) > 0 ? `${footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri} missing` : "All hashed"),
-      seRow("Cookie flags", (footprint.cookies?.missing_secure + footprint.cookies?.missing_httponly) > 0 ? `${footprint.cookies.missing_secure} no Secure, ${footprint.cookies.missing_httponly} no HttpOnly` : (footprint.cookies?.total > 0 ? "Secure + HttpOnly set" : "No cookies")),
-      seRow("TLS ciphers supported", footprint.tls_ciphers?.supported?.length),
-      footprint.tls_ciphers?.weak_supported?.length > 0 ? seRow("Weak ciphers", footprint.tls_ciphers.weak_supported.join(", ")) : "",
-      footprint.tls_ciphers?.weak_protocols_supported?.length > 0 ? seRow("Deprecated protocols", footprint.tls_ciphers.weak_protocols_supported.join(", ")) : "",
-      seRow("Certificate Transparency", footprint.certificate_transparency?.checked ? (footprint.certificate_transparency.present ? `Present (${footprint.certificate_transparency.logged_certificates} logged)` : "Not found") : "Unverified"),
-    ], footprint.rationale));
-    if (domain_email) seLayers.push(seCard("DNS & Email Depth", domain_email.score_contribution, [
-      seRow("SPF", domain_email.spf?.all_qualifier ? `${domain_email.spf.all_qualifier} all` : (domain_email.spf?.present ? "present (no all)" : "absent")),
+    ]);
+    layer("Footprint Analysis", footprint, footprint => {
+      const sri = footprint.sri, ck = footprint.cookies;
+      const sriMissing = sri && num(sri.scripts_missing_sri) && num(sri.stylesheets_missing_sri) ? sri.scripts_missing_sri + sri.stylesheets_missing_sri : null;
+      const ckMeasured = ck && num(ck.missing_secure) && num(ck.missing_httponly) && num(ck.total);
+      return [
+        seRow("External resources w/o SRI", sriMissing === null ? NM : sriMissing > 0 ? `${sriMissing} missing` : "All hashed"),
+        seRow("Cookie flags", !ckMeasured ? NM : (ck.missing_secure + ck.missing_httponly) > 0 ? `${ck.missing_secure} no Secure, ${ck.missing_httponly} no HttpOnly` : (ck.total > 0 ? "Secure + HttpOnly set" : "No cookies")),
+        seRow("TLS ciphers supported", footprint.tls_ciphers?.supported?.length),
+        footprint.tls_ciphers?.weak_supported?.length > 0 ? seRow("Weak ciphers", footprint.tls_ciphers.weak_supported.join(", ")) : "",
+        footprint.tls_ciphers?.weak_protocols_supported?.length > 0 ? seRow("Deprecated protocols", footprint.tls_ciphers.weak_protocols_supported.join(", ")) : "",
+        seRow("Certificate Transparency", footprint.certificate_transparency?.checked ? (footprint.certificate_transparency.present ? `Present (${footprint.certificate_transparency.logged_certificates} logged)` : "Not found") : "Unverified"),
+      ];
+    });
+    layer("DNS & Email Depth", domain_email, domain_email => [
+      seRow("SPF", domain_email.spf?.all_qualifier ? `${domain_email.spf.all_qualifier} all` : (domain_email.spf?.present === true ? "present (no all)" : domain_email.spf?.present === false ? "absent" : NM)),
       domain_email.spf?.all_strength ? seRow("SPF enforcement", domain_email.spf.all_strength) : "",
-      seRow("DMARC policy", domain_email.dmarc?.policy || "absent"),
-      seRow("Registrar lock", domain_email.registrar?.registrar_locked ? "Locked" : "Unlocked"),
-      (domain_email.registrar?.days_until_expiration !== null && domain_email.registrar?.days_until_expiration !== undefined) ? seRow("Expires in", `${domain_email.registrar.days_until_expiration} days${domain_email.registrar.hijacking_risk ? " — hijacking risk" : ""}`) : "",
-    ], domain_email.rationale));
-    if (sensitive_files) seLayers.push(seCard("Sensitive Files", sensitive_files.score_contribution, [
+      seRow("DMARC policy", domain_email.dmarc ? (domain_email.dmarc.policy || "absent") : NM),
+      seRow("Registrar lock", domain_email.registrar?.checked === false ? NM : yesNo(domain_email.registrar?.registrar_locked, "Locked", "Unlocked")),
+      num(domain_email.registrar?.days_until_expiration) ? seRow("Expires in", `${domain_email.registrar.days_until_expiration} days${domain_email.registrar.hijacking_risk ? " — hijacking risk" : ""}`) : "",
+    ]);
+    const filesMeasured = sensitive_files && sensitive_files.probes_answered !== 0 && num(sensitive_files.accessible_count);
+    layer("Sensitive Files", filesMeasured ? sensitive_files : null, sensitive_files => [
       sensitive_files.accessible_count > 0
-        ? seRow("CRITICAL", sensitive_files.findings.map(f => `${f.path} (${f.technique?.id})`).join(", "))
-        : seRow("Status", `No sensitive files exposed (${sensitive_files.paths_checked} paths checked)`),
-    ], sensitive_files.rationale));
-    if (supabase_exposure) seLayers.push(seCard("Supabase Exposure", supabase_exposure.score_contribution, [
+        ? seRow("CRITICAL", (sensitive_files.findings || []).map(f => `${f.path} (${f.technique?.id})`).join(", ") || `${sensitive_files.accessible_count} exposed`)
+        : seRow("Status", num(sensitive_files.paths_checked) ? `No sensitive files exposed (${sensitive_files.paths_checked} paths checked)` : "No sensitive files exposed"),
+    ]);
+    layer("Supabase Exposure", supabase_exposure, supabase_exposure => [
       !supabase_exposure.supabase_detected
         ? seRow("Status", "No Supabase project detected in shipped code")
         : supabase_exposure.accessible_count > 0
-          ? seRow("CRITICAL", `anon-readable: ${supabase_exposure.accessible_tables.join(", ")}`)
+          ? seRow("CRITICAL", `anon-readable: ${(supabase_exposure.accessible_tables || []).join(", ")}`)
           : supabase_exposure.applicable
             ? seRow("Status", `RLS enforced — ${supabase_exposure.tables_checked} common tables blocked`)
             : seRow("Status", "Project detected, no anon key found — not testable"),
-    ], supabase_exposure.rationale));
+    ]);
   }
 
   const seCrossRefs = se?.cross_reference || [];
@@ -325,12 +382,30 @@ function generatePDF(r, email, t) {
     return `<div class="se-xref ${sev}"><span class="se-xref-sev">Cross-Reference Finding — ${esc(f.severity)}</span><div class="se-xref-msg">${esc(f.message)}</div></div>`;
   }).join("");
 
+  const domainHtml = esc(r?.target_domain);
+  const shortId = esc(String(r?.audit_id ?? "").slice(0, 8));
+  const scoreBlock = (value, label) => value === null
+    ? `<div class="score-block"><div class="score-val" style="color:#999">${esc(t("dashboard.not_available", "N/A"))}</div><div class="score-label">${label}</div><div class="score-desc">${esc(NM)}</div></div>`
+    : `<div class="score-block"><div class="score-val" style="color:${sc(value)}">${value}</div><div class="score-label">${label}</div></div>`;
+  const riskBox = (state, level, key) => {
+    const box = state === true ? `active-${level}` : state === false ? "secured" : "unmeasured";
+    const badge = state === true ? level : state === false ? "passed" : "unmeasured";
+    const text = state === true ? t(`pdf.status.${level}`) : state === false ? t("pdf.status.secured") : NM;
+    return `<div class="risk-box ${box}">
+  <div class="risk-header">
+    <span class="risk-title">${t(`pdf.risks.${key}_title`)}</span>
+    <span class="risk-badge ${badge}">${esc(text)}</span>
+  </div>
+  <p class="risk-desc">${t(`pdf.risks.${key}_desc`)}</p>
+</div>`;
+  };
+
   const seSection = se ? `
 <!-- PAGE 3: Security Posture — 10 Layer Analysis -->
 <div class="page-break"></div>
 <div class="header">
-  <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
-  <div class="meta">${t("ui.security_posture", "Security Posture")} · ${r.audit_id.slice(0, 8)}</div>
+  <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${domainHtml} · ${t("pdf.title")}</div></div>
+  <div class="meta">${t("ui.security_posture", "Security Posture")} · ${shortId}</div>
 </div>
 <h2>${t("ui.security_posture_5layer", "Security Posture — 10 Layer Analysis")}</h2>
 ${seXrefHtml}
@@ -366,21 +441,27 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 .compliance-item { font-size: 10px; padding: 4px 10px; border: 1px solid #ddd; display: flex; align-items: center; gap: 4px }
 .compliance-item.pass-bg { background: #f0faf0; border-color: #43A04733 }
 .compliance-item.fail-bg { background: #fef2f2; border-color: #E5393533 }
+.compliance-item.nm-bg { background: #fafafa; border-color: #ddd; color: #777 }
 .pass { color: #43A047; font-weight: 700 }
 .fail { color: #E53935; font-weight: 700 }
 .warn { color: #F9A825; font-weight: 700 }
+.nm { color: #999; font-weight: 700 }
+.unmeasured-banner { border: 1px solid #C8A96E; border-left: 4px solid #C8A96E; background: #fdf8ec; padding: 10px 14px; margin: 0 0 16px; font-size: 11px; color: #444; line-height: 1.6 }
+.measured-line { font-size: 9px; color: #888; text-align: center; margin: -8px 0 12px }
 
 /* Executive Risk boxes */
 .risk-box { border: 1px solid #ddd; border-radius: 6px; padding: 16px; margin-bottom: 14px; background: #fdfdfd }
 .risk-box.active-critical { border-left: 5px solid #E53935; background: #fef2f2 }
 .risk-box.active-warning { border-left: 5px solid #F9A825; background: #fff8e1 }
 .risk-box.secured { border-left: 5px solid #43A047; background: #f0faf0 }
+.risk-box.unmeasured { border-left: 5px solid #bbb; background: #fafafa }
 .risk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px }
 .risk-title { font-size: 13px; font-weight: 800; color: #111; letter-spacing: 0.5px }
 .risk-badge { font-size: 9px; font-weight: 800; font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 3px; text-transform: uppercase }
 .risk-badge.critical { background: #E53935; color: #fff }
 .risk-badge.warning { background: #F9A825; color: #fff }
 .risk-badge.passed { background: #43A047; color: #fff }
+.risk-badge.unmeasured { background: #999; color: #fff }
 .risk-desc { font-size: 10.5px; color: #444; line-height: 1.6 }
 
 .cta { text-align: center; margin: 28px 0 14px; padding: 22px; border: 2px solid #E53935 }
@@ -414,80 +495,54 @@ h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacin
 <div class="header">
   <div>
     <div class="logo">CANOPY <span>GUARD</span></div>
-    <div class="domain">${r.target_domain}</div>
+    <div class="domain">${domainHtml}</div>
   </div>
   <div class="meta">
-    Audit ID: ${r.audit_id.slice(0, 8)}<br>
-    ${new Date(r.timestamp).toLocaleString()}<br>
-    Scan: ${r.scan_duration_ms}ms<br>
-    Report for: ${email}
+    ${shortId ? `Audit ID: ${shortId}<br>` : ""}
+    ${r?.timestamp ? `${esc(new Date(r.timestamp).toLocaleString())}<br>` : ""}
+    ${num(r?.scan_duration_ms) ? `Scan: ${r.scan_duration_ms}ms<br>` : ""}
+    Report for: ${esc(email)}
   </div>
 </div>
 
+${bannerText ? `<div class="unmeasured-banner">${esc(bannerText)}</div>` : ""}
+
 ${actions.length ? `<h2>${t("pdf.top_actions")}</h2>
-${actions.map((a, i) => `<div class="action-box"><span class="action-num">${i + 1}</span><strong>${t(`dashboard.actions.${a.key}_title`, a.a)}</strong><br><span style="color:#555;font-size:10px">${t(`dashboard.actions.${a.key}_desc`, a.i)}</span></div>`).join("")}` : ""}
+${actions.map((a, i) => { const tx = actionText(a, t); return `<div class="action-box"><span class="action-num">${i + 1}</span><strong>${esc(tx.title)}</strong><br><span style="color:#555;font-size:10px">${esc(tx.desc)}</span></div>`; }).join("")}` : ""}
 
 <div class="scores">
-  <div class="score-block"><div class="score-val" style="color:${sc(overall / 100)}">${overall}</div><div class="score-label">${t("pdf.overall_score")}</div></div>
+  ${scoreBlock(scores.overall, t("pdf.overall_score"))}
   <div class="score-divider"></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.seo_score)}">${Math.round(s.seo_score * 100)}</div><div class="score-label">${t("pdf.seo_score")}</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.aeo_score)}">${Math.round(s.aeo_score * 100)}</div><div class="score-label">${t("pdf.aeo_score")}</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.geo_score)}">${Math.round(s.geo_score * 100)}</div><div class="score-label">${t("pdf.geo_score")}</div></div>
-  <div class="score-block"><div class="score-val" style="color:${sc(s.security_posture_score)}">${Math.round(s.security_posture_score * 100)}</div><div class="score-label">${t("pdf.security_score")}</div></div>
+  ${scoreBlock(scores.seo, t("pdf.seo_score"))}
+  ${scoreBlock(scores.aeo, t("pdf.aeo_score"))}
+  ${scoreBlock(scores.geo, t("pdf.geo_score"))}
+  ${scoreBlock(scores.security, t("pdf.security_score"))}
 </div>
+<div class="measured-line">${esc(measuredLineText(scores, t))}</div>
 
 ${insights.length ? `<h2>${t("ui.cross_ref_intel")}</h2>
-${insights.map(i => `<div class="insight ${i.l === 'WARNING' ? 'warning' : ''}"><span class="insight-level ${i.l === 'CRITICAL' ? 'fail' : 'warn'}">${i.l}</span><span class="insight-title">${i.t}</span><div class="insight-body">${i.b}</div></div>`).join("")}` : ""}
+${insights.map(i => `<div class="insight ${i.l === 'WARNING' ? 'warning' : ''}"><span class="insight-level ${i.l === 'CRITICAL' ? 'fail' : 'warn'}">${i.l}</span><span class="insight-title">${esc(i.t)}</span><div class="insight-body">${esc(i.b)}</div></div>`).join("")}` : ""}
 
 <h2>${t("dashboard.compliance_check")}</h2>
 <div class="compliance-grid">
-${compliance.map(c => `<div class="compliance-item ${c.pass ? 'pass-bg' : 'fail-bg'}"><span class="${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✗'}</span> ${t(`dashboard.compliance.${c.key}`)}</div>`).join("")}
+${compliance.map(c => c.pass === null
+  ? `<div class="compliance-item nm-bg"><span class="nm">·</span> ${t(`dashboard.compliance.${c.key}`)}: ${esc(NM)}</div>`
+  : `<div class="compliance-item ${c.pass ? 'pass-bg' : 'fail-bg'}"><span class="${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✗'}</span> ${t(`dashboard.compliance.${c.key}`)}</div>`).join("")}
 </div>
 
 <!-- PAGE 2: Executive Risks Summary -->
 <div class="page-break"></div>
 <div class="header">
-  <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${r.target_domain} · ${t("pdf.title")}</div></div>
-  <div class="meta">Page 2 · ${r.audit_id.slice(0, 8)}</div>
+  <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${domainHtml} · ${t("pdf.title")}</div></div>
+  <div class="meta">Page 2 · ${shortId}</div>
 </div>
 
 <h2>${t("pdf.risks_summary_title")}</h2>
 
-<!-- Box 1: The AI Traffic Leak -->
-<div class="risk-box ${isTrafficLeak ? 'active-critical' : 'secured'}">
-  <div class="risk-header">
-    <span class="risk-title">${t("pdf.risks.traffic_leak_title")}</span>
-    <span class="risk-badge ${isTrafficLeak ? 'critical' : 'passed'}">${isTrafficLeak ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
-  </div>
-  <p class="risk-desc">${t("pdf.risks.traffic_leak_desc")}</p>
-</div>
-
-<!-- Box 2: Blind to AI Assistants -->
-<div class="risk-box ${isBlindAssistants ? 'active-warning' : 'secured'}">
-  <div class="risk-header">
-    <span class="risk-title">${t("pdf.risks.blind_assistants_title")}</span>
-    <span class="risk-badge ${isBlindAssistants ? 'warning' : 'passed'}">${isBlindAssistants ? t("pdf.status.warning") : t("pdf.status.secured")}</span>
-  </div>
-  <p class="risk-desc">${t("pdf.risks.blind_assistants_desc")}</p>
-</div>
-
-<!-- Box 3: Open Door for Scrapers & Botnets -->
-<div class="risk-box ${isOpenDoor ? 'active-critical' : 'secured'}">
-  <div class="risk-header">
-    <span class="risk-title">${t("pdf.risks.exposed_endpoints_title")}</span>
-    <span class="risk-badge ${isOpenDoor ? 'critical' : 'passed'}">${isOpenDoor ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
-  </div>
-  <p class="risk-desc">${t("pdf.risks.exposed_endpoints_desc")}</p>
-</div>
-
-<!-- Box 4: The Foundation Crack -->
-<div class="risk-box ${isFoundationCrack ? 'active-critical' : 'secured'}">
-  <div class="risk-header">
-    <span class="risk-title">${t("pdf.risks.foundation_crack_title")}</span>
-    <span class="risk-badge ${isFoundationCrack ? 'critical' : 'passed'}">${isFoundationCrack ? t("pdf.status.critical") : t("pdf.status.secured")}</span>
-  </div>
-  <p class="risk-desc">${t("pdf.risks.foundation_crack_desc")}</p>
-</div>
+${riskBox(isTrafficLeak, "critical", "traffic_leak")}
+${riskBox(isBlindAssistants, "warning", "blind_assistants")}
+${riskBox(isOpenDoor, "critical", "exposed_endpoints")}
+${riskBox(isFoundationCrack, "critical", "foundation_crack")}
 
 ${seSection}
 
@@ -504,7 +559,9 @@ ${seSection}
 </body></html>`
 }
 function downloadPDF(r,e,t){const w=window.open("","_blank");if(w){w.document.write(generatePDF(r,e,t));w.document.close();setTimeout(()=>w.print(),400)}}
-async function storeLead(email,r,name=""){const s=r.summary_scores;const overall=Math.round(((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4)*100);try{const res=await fetch(`${API}/api/canopyguard/leads`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,domain:r.target_domain,audit_id:r.audit_id.slice(0,8),scores:{seo:Math.round(s.seo_score*100),aeo:Math.round(s.aeo_score*100),geo:Math.round(s.geo_score*100),security:Math.round(s.security_posture_score*100)},overall,report_json:JSON.stringify(r),timestamp:r.timestamp})});const data=await res.json().catch(()=>null);return (data&&data.access_token)||null}catch(e){console.error("[CG] Lead store:",e);return null}}
+// Unmeasured categories go out as null, never 0, so a lead record cannot show
+// a score the scan did not produce.
+async function storeLead(email,r,name=""){const{seo,aeo,geo,security,overall}=computeScores(r);try{const res=await fetch(`${API}/api/canopyguard/leads`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,email,domain:r.target_domain,audit_id:String(r.audit_id??"").slice(0,8),scores:{seo,aeo,geo,security},overall,report_json:JSON.stringify(r),timestamp:r.timestamp})});const data=await res.json().catch(()=>null);return (data&&data.access_token)||null}catch(e){console.error("[CG] Lead store:",e);return null}}
 // Generation is PAID — two model calls per request — so it only ever runs from
 // an explicit click, never automatically on scan. The engine resolves faq_schema
 // and meta_desc independently: either can come back ok, skipped (too little text
@@ -520,11 +577,17 @@ async function requestAeoFixes({email,token,domain,content}){
   return data;
 }
 
-async function sendReportEmail(email,report,name=""){const s=report.summary_scores;const overall=Math.round(((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4)*100);try{await fetch(`/api/send-report`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,name,domain:report.target_domain,scores:{seo:Math.round(s.seo_score*100),aeo:Math.round(s.aeo_score*100),geo:Math.round(s.geo_score*100),security:Math.round(s.security_posture_score*100),overall}})})}catch(e){console.error("[CG] Email send:",e)}}
+async function sendReportEmail(email,report,name=""){const{seo,aeo,geo,security,overall}=computeScores(report);try{await fetch(`/api/send-report`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,name,domain:report.target_domain,scores:{seo,aeo,geo,security,overall}})})}catch(e){console.error("[CG] Email send:",e)}}
 
 // ── Report Components ──
-function ScoreBlock({score,label,delay=0}){const[v,setV]=useState(0);useEffect(()=>{const t=setTimeout(()=>{let s=0;const step=()=>{s+=0.02;if(s>=score){setV(score);return}setV(s);requestAnimationFrame(step)};requestAnimationFrame(step)},delay);return()=>clearTimeout(t)},[score,delay]);const pct=Math.round(v*100);return<div style={{textAlign:"center",minWidth:80}}><div style={{fontSize:40,fontWeight:700,fontFamily:mono,color:scoreColor(pct),lineHeight:1}}>{pct}</div><div style={{fontSize:9,fontWeight:700,color:C.gray,textTransform:"uppercase",letterSpacing:2,marginTop:8}}>{label}</div></div>}
+// Renders the final value on first paint. The old count-up ran on
+// requestAnimationFrame, which background tabs throttle, so a report opened
+// in another tab could sit mid-count for a minute with every score reading
+// nearly the same. score is the 0-100 integer from computeScores, or null.
+function ScoreBlock({score,label,size=40,testId}){const { t } = useTranslation();const measured=typeof score==="number";return<div data-testid={testId} style={{textAlign:"center",minWidth:80}}><div style={{fontSize:size,fontWeight:700,fontFamily:mono,color:measured?scoreColor(score):C.gray,lineHeight:1}}>{measured?score:t("dashboard.not_available","N/A")}</div><div style={{fontSize:9,fontWeight:700,color:C.gray,textTransform:"uppercase",letterSpacing:2,marginTop:8}}>{label}</div>{!measured&&<div style={{fontSize:11,color:C.gray,marginTop:4}}>{t("dashboard.not_measured","Not measured")}</div>}</div>}
 function Badge({good}){const { t } = useTranslation();return<span style={{fontFamily:mono,fontSize:10,fontWeight:700,letterSpacing:1,padding:"3px 8px",color:good?C.green:C.red,background:good?C.greenGlow:C.redGlow,border:`1px solid ${good?C.green:C.red}22`,borderRadius:2}}>{good?t("dashboard.pass"):t("dashboard.fail")}</span>}
+function NotMeasuredBadge(){const { t } = useTranslation();return<span style={{fontFamily:mono,fontSize:10,fontWeight:700,letterSpacing:1,padding:"3px 8px",color:C.gray,background:"transparent",border:`1px solid ${C.blackBorder}`,borderRadius:2}}>{t("dashboard.not_measured_badge","NOT MEASURED")}</span>}
+function formatMetric(row,t){if(row.unit==="clicks")return`${row.value} ${t("dashboard.clicks")}`;if(row.unit==="count")return row.value||t("dashboard.none");if(row.unit==="pct")return`${(row.value*100).toFixed(0)}%`;return row.value}
 // A failing row renders its fix inline the moment one exists, the same way
 // HeaderFix and EmailDnsFixes already do. There is no show/hide toggle: every
 // fix a row can reach is present by the time the row renders, so the click only
@@ -538,25 +601,52 @@ function Badge({good}){const { t } = useTranslation();return<span style={{fontFa
 // version when the AEO panel's explicit, paid call returns, which reaches this
 // component through GeneratedFixesContext and so needs no second click. The
 // generation trigger itself lives in AeoPanel and is untouched.
-function Row({label,value,good,snippet}){const fix=useFix(snippet);const hasFix=!!fix&&good===false;return<div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 0",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{color:C.gray,fontSize:14}}>{label}</span><div style={{display:"flex",alignItems:"center",gap:8}}>{typeof good==="boolean"?<Badge good={good}/>:<span style={{color:C.white,fontSize:13,fontFamily:mono,fontWeight:600}}>{value}</span>}</div></div>{hasFix&&<FixSnippet snippet={fix}/>}</div>}
+// row comes from getRows (src/lib/checks.js). A row that was not measured
+// shows a neutral badge and never a fix: there is nothing observed to fix.
+function Row({row}){const { t } = useTranslation();const fix=useFix(row.snippet);const isCheck=row.kind==="check";const measured=isCheck?row.pass!==null:row.value!==null;const hasFix=!!fix&&isCheck&&row.pass===false;return<div data-row={row.key}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 0",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{color:C.gray,fontSize:14}}>{t(row.labelKey,row.label)}</span><div style={{display:"flex",alignItems:"center",gap:8}}>{!measured?<NotMeasuredBadge/>:isCheck?<Badge good={row.pass}/>:<span style={{color:C.white,fontSize:13,fontFamily:mono,fontWeight:600}}>{formatMetric(row,t)}</span>}</div></div>{hasFix&&<FixSnippet snippet={fix}/>}</div>}
 function Section({title,tag,desc,children}){return<div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6}}><div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}><h3 style={{margin:0,fontSize:15,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:0.5}}>{title}</h3><span style={{fontSize:9,fontWeight:700,fontFamily:mono,color:C.gold,letterSpacing:2,padding:"2px 8px",border:`1px solid ${C.goldBorder}`,borderRadius:2}}>{tag}</span></div>{desc&&<p style={{fontSize:12,color:C.grayDark,marginBottom:14,lineHeight:1.6}}>{desc}</p>}{children}</div>}
-function ActionItem({action,index}){const { t } = useTranslation();const[show,setShow]=useState(false);const fix=useFix(action.s);return<div><div style={{display:"flex",gap:14,alignItems:"flex-start"}}><div style={{fontSize:20,fontWeight:700,fontFamily:mono,color:C.gold,lineHeight:1,minWidth:24}}>{index+1}</div><div style={{flex:1}}><div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}><div style={{fontSize:14,fontWeight:700,color:C.white}}>{t(`dashboard.actions.${action.key}_title`, action.a)}</div>{fix&&<button onClick={()=>setShow(!show)} style={{background:show?C.redGlow:"transparent",border:`1px solid ${show?C.red:C.blackBorder}`,color:show?C.red:C.grayDark,fontSize:9,fontFamily:mono,fontWeight:700,padding:"2px 8px",cursor:"pointer",letterSpacing:1,borderRadius:2}}>{show?t("dashboard.hide_code"):t("dashboard.show_fix")}</button>}</div><div style={{fontSize:13,color:C.gray,lineHeight:1.5,marginTop:3}}>{t(`dashboard.actions.${action.key}_desc`, action.i)}</div>{show&&fix&&<FixSnippet snippet={fix}/>}</div></div></div>}
-function Insights({data}){
+function ActionItem({action,index}){const { t } = useTranslation();const[show,setShow]=useState(false);const fix=useFix(action.fixKey);const text=actionText(action,t);return<div data-action={action.key}><div style={{display:"flex",gap:14,alignItems:"flex-start"}}><div style={{fontSize:20,fontWeight:700,fontFamily:mono,color:C.gold,lineHeight:1,minWidth:24}}>{index+1}</div><div style={{flex:1}}><div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}><div style={{fontSize:14,fontWeight:700,color:C.white}}>{text.title}</div>{fix&&<button onClick={()=>setShow(!show)} style={{background:show?C.redGlow:"transparent",border:`1px solid ${show?C.red:C.blackBorder}`,color:show?C.red:C.grayDark,fontSize:9,fontFamily:mono,fontWeight:700,padding:"2px 8px",cursor:"pointer",letterSpacing:1,borderRadius:2}}>{show?t("dashboard.hide_code"):t("dashboard.show_fix")}</button>}</div><div style={{fontSize:13,color:C.gray,lineHeight:1.5,marginTop:3}}>{text.desc}</div>{show&&fix&&<FixSnippet snippet={fix}/>}</div></div></div>}
+function Insights({data,scores}){
   const { t } = useTranslation();
-  const sec=data.security_roots;
-  const geo=data.visibility_canopy.geo_branch;
-  const ins=[];
-  if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy==="PERMISSIVE")
-    ins.push({l:"CRITICAL",t:t("risks.traffic_leak_title"),b:t("risks.traffic_leak_desc")});
-  if(geo.llms_txt_status==="MISSING"&&sec.ai_crawl_risk.robots_policy!=="RESTRICTIVE")
-    ins.push({l:"WARNING",t:t("risks.blind_assistants_title"),b:t("risks.blind_assistants_desc")});
-  if((sec.application_security.exposed_endpoints||[]).length>0)
-    ins.push({l:"CRITICAL",t:t("risks.exposed_endpoints_title"),b:`${sec.application_security.exposed_endpoints.length} ${t("risks.exposed_endpoints_desc_suffix", "path(s) accessible:")} ${sec.application_security.exposed_endpoints.slice(0,4).join(", ")}`});
-  if(sec.business_logic_gaps?.data_provenance_leak)
-    ins.push({l:"WARNING",t:t("risks.provenance_risk_title"),b:t("risks.provenance_risk_desc")});
+  const ins=getInsights(data,scores,t);
   if(!ins.length)return null;
   return<div style={{background:C.blackCard,border:`1px solid ${C.goldBorder}`,padding:24,marginBottom:20,borderRadius:6}}><h3 style={{margin:"0 0 20px",fontSize:14,fontWeight:700,color:C.gold,fontFamily:heading,textTransform:"uppercase",letterSpacing:1}}>{t("ui.cross_ref_intel", "Cross-Reference Intelligence")}</h3><div style={{display:"flex",flexDirection:"column",gap:16}}>{ins.map((i,x)=><div key={x} style={{borderLeft:`3px solid ${i.l==="CRITICAL"?C.red:C.amber}`,paddingLeft:16}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}><span style={{fontSize:9,fontWeight:800,fontFamily:mono,letterSpacing:1.5,color:i.l==="CRITICAL"?C.red:C.amber}}>{i.l}</span><span style={{fontSize:14,fontWeight:700,color:C.white}}>{i.t}</span></div><p style={{margin:0,fontSize:13,color:C.gray,lineHeight:1.65}}>{i.b}</p></div>)}</div></div>;
 }
+
+// ── Measurement cards ──
+function UnmeasuredBanner({report,scores}){const { t } = useTranslation();const text=unmeasuredBannerText(report,scores,t);if(!text)return null;return<div role="status" data-testid="unmeasured-banner" style={{border:`1px solid ${C.amber}`,borderLeft:`3px solid ${C.amber}`,background:C.amberGlow,padding:"14px 18px",borderRadius:6,marginBottom:24,fontSize:13,color:C.muted,lineHeight:1.65}}>{text}</div>}
+const cardStyle={background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6,display:"flex",flexDirection:"column",gap:12};
+const cardLabel={fontSize:10,fontWeight:700,fontFamily:mono,color:C.gray,letterSpacing:1.5,textTransform:"uppercase"};
+// Built only from the categories that were measured, with the matching divisor,
+// so the sum on screen can be checked by hand against the overall above it.
+function FormulaCard({scores}){
+  const { t } = useTranslation();
+  const terms=scores.measured.map(c=>`${categoryName(c,t)} ${scores[c]}`);
+  return<div style={cardStyle} data-testid="formula-card">
+    <span style={cardLabel}>{t("dashboard.formula.title","How your score is calculated")}</span>
+    {scores.overall===null
+      ?<div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>{t("dashboard.formula.none","No category could be measured on this scan, so there is no overall score.")}</div>
+      :<><div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>{t("dashboard.formula.desc","Your overall score is the average of the category scores we measured.")}</div>
+        <div data-testid="formula" style={{fontSize:15,fontFamily:mono,fontWeight:700,color:C.white,lineHeight:1.5}}>({terms.join(" + ")}) ÷ {scores.measured.length} = {scores.overall}</div></>}
+    {scores.unmeasured.length>0&&scores.overall!==null&&<div style={{fontSize:11,color:C.gray}}>{t("dashboard.formula.excluded",{defaultValue:"Not measured and left out: {{list}}.",list:scores.unmeasured.map(c=>categoryName(c,t)).join(", ")})}</div>}
+  </div>;
+}
+// Counts the same pass/fail values the detail rows render; not-measured rows
+// are in neither number.
+function GapsCard({checks}){
+  const { t } = useTranslation();
+  const g=summarizeGaps(checks);
+  const breakdown=Object.entries(g.byCategory).map(([c,n])=>`${categoryName(c,t)} ${n}`).join(" · ");
+  return<div style={cardStyle} data-testid="gaps-card">
+    <span style={cardLabel}>{t("dashboard.gaps.title","Gaps found")}</span>
+    {g.total===0
+      ?<div style={{fontSize:13,color:C.muted}}>{t("dashboard.gaps.none","No checks could be measured on this scan.")}</div>
+      :<><div data-testid="gaps-headline" data-failing={g.failing} data-total={g.total} style={{fontSize:26,fontWeight:700,fontFamily:mono,color:g.failing>0?C.red:C.green,lineHeight:1.2}}>{g.total===1?t("dashboard.gaps.headline_single",{defaultValue:"{{failing}} of 1 check failing",failing:g.failing}):t("dashboard.gaps.headline",{defaultValue:"{{failing}} of {{total}} checks failing",failing:g.failing,total:g.total})}</div>
+        <div style={{fontSize:12,fontFamily:mono,color:C.muted}}>{breakdown}</div></>}
+    <div style={{fontSize:11,color:C.gray,lineHeight:1.6}}>{t("dashboard.gaps.note","Counted from the pass and fail rows below. Rows we could not measure are left out.")}</div>
+  </div>;
+}
+function CategoryRows({rows,category}){return rows.filter(r=>r.category===category).map(r=><Row key={r.key} row={r}/>)}
 function EmailGate({onSubmit,onClose,intent="report"}){const isAeo=intent==="aeo";const { t } = useTranslation();const[email,setEmail]=useState("");const[name,setName]=useState("");const[sending,setSending]=useState(false);const ref=useRef(null);useEffect(()=>{ref.current?.focus()},[]);const submit=async()=>{if(!email.includes("@"))return;setSending(true);await onSubmit(email,name);setSending(false)};return<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:20}} onClick={onClose}><motion.div initial={{opacity:0,scale:0.95}} animate={{opacity:1,scale:1}} transition={{duration:0.2}} style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:40,maxWidth:420,width:"100%",borderRadius:8}} onClick={e=>e.stopPropagation()}><h2 style={{fontSize:22,fontWeight:700,color:C.white,margin:"0 0 6px",fontFamily:heading}}>{t("dashboard.email_gate.title_get")} <span style={{color:C.gold}}>{t(isAeo?"dashboard.email_gate.title_fixes":"dashboard.email_gate.title_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",lineHeight:1.7}}>{t(isAeo?"dashboard.email_gate.desc_aeo":"dashboard.email_gate.desc")}</p><div style={{display:"flex",flexDirection:"column",gap:12}}><input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder={t("dashboard.email_gate.name_placeholder")} style={{background:C.black,border:`1px solid ${C.blackBorder}`,color:C.white,padding:"14px 16px",fontSize:14,outline:"none",borderRadius:4}}/><input ref={ref} type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder={t("dashboard.email_gate.email_placeholder")} style={{background:C.black,border:`1px solid ${C.blackBorder}`,color:C.white,padding:"14px 16px",fontSize:14,fontFamily:mono,outline:"none",borderRadius:4}}/><button onClick={submit} disabled={sending||!email.includes("@")} style={{background:sending?C.grayDark:C.gold,border:"none",color:C.black,fontWeight:700,fontSize:14,padding:"16px 32px",cursor:sending?"default":"pointer",letterSpacing:1,opacity:!email.includes("@")?0.5:1,borderRadius:4}}>{sending?t("dashboard.email_gate.btn_processing"):t(isAeo?"dashboard.email_gate.btn_generate":"dashboard.email_gate.btn_download")}</button></div><p style={{color:C.grayDark,fontSize:10,marginTop:16,fontFamily:mono}}>{t("dashboard.email_gate.spam_notice")}</p></motion.div></div>}
 
 // ═══ METHODOLOGY PAGE ═══
@@ -575,10 +665,13 @@ function MethodologyPage({onBack}){
   </div></div>}
 
 // ═══ MAIN APP ═══
-export default function CanopyGuard(){
+// initialReport opens straight onto the report view with a given scan result.
+// The site never passes it; the render tests use it to mount the real report
+// view with a fixture.
+export default function CanopyGuard({initialReport=null}={}){
   const { t } = useTranslation();
-  const[domain,setDomain]=useState("");const[phase,setPhase]=useState("landing");const[scanIndex,setScanIndex]=useState(0);
-  const[report,setReport]=useState(null);const[scanError,setScanError]=useState("");
+  const[domain,setDomain]=useState(initialReport?.target_domain||"");const[phase,setPhase]=useState(initialReport?"report":"landing");const[scanIndex,setScanIndex]=useState(0);
+  const[report,setReport]=useState(initialReport);const[scanError,setScanError]=useState("");
   const[showGate,setShowGate]=useState(false);const[leadCaptured,setLeadCaptured]=useState(false);const[capturedEmail,setCapturedEmail]=useState("");
   const[showMethodology,setShowMethodology]=useState(false);const ref=useRef(null);
   // AEO generation. leadToken comes back from the same lead capture that gates
@@ -629,99 +722,51 @@ export default function CanopyGuard(){
   if(phase==="scanning"){return<div style={{minHeight:"100vh",background:C.black,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,fontFamily:body}}><link href={FONTS_URL} rel="stylesheet"/><div style={{maxWidth:440,width:"100%"}}><h2 style={{color:C.white,fontSize:18,fontWeight:700,margin:"0 0 4px",fontFamily:heading}}>Scanning <span style={{color:C.gold}}>{domain}</span></h2><p style={{color:C.gray,fontSize:13,fontFamily:mono,margin:"0 0 32px"}}>{PHASES[scanIndex]}...</p><div style={{width:"100%",height:2,background:C.blackBorder,marginBottom:32,borderRadius:1}}><motion.div animate={{width:`${((scanIndex+1)/PHASES.length)*100}%`}} transition={{duration:0.3}} style={{height:"100%",background:C.gold,borderRadius:1}}/></div><div style={{display:"flex",flexDirection:"column",gap:2}}>{PHASES.map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"7px 0",opacity:i<=scanIndex?1:0.25,transition:"opacity 0.3s"}}><span style={{fontFamily:mono,fontSize:11,color:i<scanIndex?C.green:i===scanIndex?C.gold:C.grayDark,width:16}}>{i<scanIndex?"✓":i===scanIndex?"▸":"·"}</span><span style={{fontSize:13,color:i<=scanIndex?C.muted:C.grayDark}}>{p}</span></div>)}</div></div></div>}
 
   // ═══ REPORT ═══
-  const d=report;const s=d.summary_scores;const sec=d.security_roots;const overall=+((s.seo_score+s.aeo_score+s.geo_score+s.security_posture_score)/4).toFixed(2);const overallPct=Math.round(overall*100);const actions=getTopActions(d);const compliance=getComplianceChecks(d);
+  const d=report;const sec=d.security_roots;const scores=computeScores(d);const actions=getTopActions(d,scores);const compliance=getComplianceChecks(d,scores);
+  const rows=getRows(d,scores);const checks=getChecks(d,scores);
+  const missingHeaders=Array.isArray(sec?.application_security?.missing_secure_headers)?sec.application_security.missing_secure_headers:[];
+  const aeoMeasured=!scores.unmeasured.includes("aeo");
+  const hs=d.visibility_canopy?.seo_branch?.html_structure;const sv=d.visibility_canopy?.aeo_branch?.schema_validation;
+  const scanMeta=[d.timestamp?new Date(d.timestamp).toLocaleString():null,d.audit_id?String(d.audit_id).slice(0,8):null,typeof d.scan_duration_ms==="number"?`${d.scan_duration_ms}ms`:null].filter(Boolean).join(" · ");
   const mergedFixes=aeoFixes?{...(d.generated_fixes||{}),...aeoFixes}:(d.generated_fixes||null);
   return<GeneratedFixesContext.Provider value={mergedFixes}><div style={{minHeight:"100vh",background:C.black,fontFamily:body,color:C.white}}><link href={FONTS_URL} rel="stylesheet"/>{showGate&&<EmailGate intent={gateIntent} onSubmit={handleEmail} onClose={()=>{setShowGate(false);setGateIntent("report")}}/>}
   {/* Nav */}
   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{fontSize:14,fontWeight:700,fontFamily:heading,cursor:"pointer"}} onClick={reset}>CANOPY <span style={{color:C.gold}}>GUARD</span></span><div style={{display:"flex",gap:8,alignItems:"center"}}>{!leadCaptured?<button onClick={()=>setShowGate(true)} style={{background:C.gold,border:"none",color:C.black,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:1,borderRadius:3}}>{t("dashboard.get_report")}</button>:<button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:`1px solid ${C.green}`,color:C.green,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,borderRadius:3}}>↓ PDF</button>}<button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.grayDark,padding:"6px 14px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:mono,letterSpacing:1,borderRadius:3}}>{t("dashboard.docs")}</button><button onClick={reset} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer",borderRadius:3}}>{t("dashboard.new_scan")}</button></div></div>
   <div style={{maxWidth:900,margin:"0 auto",padding:"32px 20px"}}>
-  <div style={{marginBottom:32}}><p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px"}}>{t("dashboard.audit_report")}</p><h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,margin:"0 0 4px",fontFamily:heading,letterSpacing:-1}}>{d.target_domain}</h1><p style={{color:C.grayDark,fontSize:11,fontFamily:mono}}>{new Date(d.timestamp).toLocaleString()} · {d.audit_id.slice(0,8)} · {d.scan_duration_ms}ms</p></div>
+  <div style={{marginBottom:32}}><p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px"}}>{t("dashboard.audit_report")}</p><h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,margin:"0 0 4px",fontFamily:heading,letterSpacing:-1}}>{d.target_domain}</h1>{scanMeta&&<p style={{color:C.grayDark,fontSize:11,fontFamily:mono}}>{scanMeta}</p>}</div>
+  <UnmeasuredBanner report={d} scores={scores}/>
   {/* Top Actions */}
-  {actions.length>0&&<div style={{marginBottom:24,padding:24,background:C.blackCard,border:`1px solid ${C.goldBorder}`,borderRadius:6}}><h3 style={{fontSize:14,fontWeight:700,color:C.gold,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.top_actions")}</h3><div style={{display:"flex",flexDirection:"column",gap:14}}>{actions.map((a,i)=><ActionItem key={i} action={a} index={i}/>)}</div></div>}
+  {actions.length>0&&<div data-testid="top-actions" style={{marginBottom:24,padding:24,background:C.blackCard,border:`1px solid ${C.goldBorder}`,borderRadius:6}}><h3 style={{fontSize:14,fontWeight:700,color:C.gold,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.top_actions")}</h3><div style={{display:"flex",flexDirection:"column",gap:14}}>{actions.map((a,i)=><ActionItem key={a.key} action={a} index={i}/>)}</div></div>}
   {/* Scores */}
-  <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.5}} style={{display:"flex",alignItems:"flex-end",justifyContent:"center",flexWrap:"wrap",gap:40,padding:"40px 24px",marginBottom:24,border:`1px solid ${C.blackBorder}`,background:C.blackCard,borderRadius:6}}>
-    <div style={{textAlign:"center"}}><div style={{fontSize:72,fontWeight:700,fontFamily:mono,color:scoreColor(overallPct),lineHeight:1}}>{overallPct}</div><div style={{fontSize:9,fontWeight:700,color:C.gray,letterSpacing:2,marginTop:8}}>{t("dashboard.overall")}</div></div>
-    <div style={{width:1,height:60,background:C.blackBorder}}/>
-    <ScoreBlock score={s.seo_score} label={t("dashboard.seo")} delay={200}/><ScoreBlock score={s.aeo_score} label={t("dashboard.aeo")} delay={400}/><ScoreBlock score={s.geo_score} label={t("dashboard.geo")} delay={600}/><ScoreBlock score={s.security_posture_score} label={t("dashboard.security")} delay={800}/>
+  <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.5}} style={{padding:"40px 24px 20px",marginBottom:24,border:`1px solid ${C.blackBorder}`,background:C.blackCard,borderRadius:6}}>
+    <div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",flexWrap:"wrap",gap:40}}>
+      <ScoreBlock score={scores.overall} label={t("dashboard.overall")} size={72} testId="score-overall"/>
+      <div style={{width:1,height:60,background:C.blackBorder}}/>
+      <ScoreBlock score={scores.seo} label={t("dashboard.seo")} testId="score-seo"/><ScoreBlock score={scores.aeo} label={t("dashboard.aeo")} testId="score-aeo"/><ScoreBlock score={scores.geo} label={t("dashboard.geo")} testId="score-geo"/><ScoreBlock score={scores.security} label={t("dashboard.security")} testId="score-security"/>
+    </div>
+    <p data-testid="measured-line" style={{textAlign:"center",fontSize:11,color:C.gray,fontFamily:mono,margin:"24px 0 0"}}>{measuredLineText(scores,t)}</p>
   </motion.div>
 
-  {/* Benchmarking & Revenue Leakage */}
+  {/* How the score is calculated, and what failed */}
   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16,marginBottom:24}}>
-    {/* Sector Benchmark Card */}
-    <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-      <div>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <span style={{fontSize:10,fontWeight:700,fontFamily:mono,color:C.gray,letterSpacing:1.5}}>SECTOR BENCHMARK</span>
-          <span style={{fontSize:11,fontWeight:700,fontFamily:mono,color:(overallPct - 68) >= 0 ? C.green : C.red}}>
-            {(overallPct - 68) >= 0 ? "+" + (overallPct - 68) + "% above average" : (68 - overallPct) + "% below average"}
-          </span>
-        </div>
-        <div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>
-          Your website's overall readiness ranks <strong style={{color:C.white}}>{overallPct}%</strong> against the typical software & services industry benchmark of <strong style={{color:C.white}}>68%</strong>.
-        </div>
-      </div>
-      
-      <div style={{position:"relative",marginTop:24}}>
-        {/* Industry Average Indicator */}
-        <div style={{position:"absolute",left:`68%`,bottom:14,transform:"translateX(-50%)",zIndex:3,display:"flex",flexDirection:"column",alignItems:"center"}}>
-          <span style={{fontSize:8,fontFamily:mono,fontWeight:700,color:C.white,background:C.blackCard,padding:"2px 6px",border:`1px solid ${C.blackBorder}`,borderRadius:3,whiteSpace:"nowrap"}}>
-            AVG (68%)
-          </span>
-          <div style={{width:1,height:4,background:C.white}}/>
-        </div>
-        
-        {/* Bar */}
-        <div style={{width:"100%",height:8,background:C.black,border:`1px solid ${C.blackBorder}`,borderRadius:4,overflow:"hidden"}}>
-          <div style={{width:`${overallPct}%`,height:"100%",background:scoreColor(overallPct),borderRadius:4}}/>
-        </div>
-        
-        <div style={{display:"flex",justifyContent:"space-between",marginTop:4,fontSize:9,fontFamily:mono,color:C.grayDark}}>
-          <span>0%</span>
-          <span>100%</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Revenue Leakage Card */}
-    <div style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:24,borderRadius:6,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-      <div>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <span style={{fontSize:10,fontWeight:700,fontFamily:mono,color:C.gray,letterSpacing:1.5}}>REVENUE LEAKAGE CALCULATOR</span>
-          <span style={{fontSize:9,fontWeight:800,fontFamily:mono,color:(100 - overallPct) > 0 ? C.red : C.green,background:(100 - overallPct) > 0 ? C.redGlow : C.greenGlow,padding:"2px 6px",border:`1px solid ${(100 - overallPct) > 0 ? C.red : C.green}22`,borderRadius:2}}>
-            {(100 - overallPct) > 0 ? "REVENUE AT RISK" : "OPTIMIZED"}
-          </span>
-        </div>
-        <div style={{fontSize:13,color:C.muted,lineHeight:1.6}}>
-          Security flaws and visibility gaps directly impact conversion. Based on industry standards, each unmet optimization signal costs an estimated $25 in lost customer acquisitions.
-        </div>
-      </div>
-      
-      <div style={{marginTop:20}}>
-        <div style={{fontSize:38,fontWeight:700,fontFamily:mono,color:(100 - overallPct) > 0 ? C.red : C.green,lineHeight:1}}>
-          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Math.max(0, (100 - overallPct) * 25))}
-          <span style={{fontSize:14,color:C.gray,fontWeight:500}}> / mo</span>
-        </div>
-        <div style={{fontSize:10,fontWeight:700,color:C.gray,letterSpacing:1,marginTop:6,textTransform:"uppercase"}}>
-          Monthly Revenue Leakage
-        </div>
-      </div>
-    </div>
+    <FormulaCard scores={scores}/>
+    <GapsCard checks={checks}/>
   </div>
 
-  <Insights data={d}/>
+  <Insights data={d} scores={scores}/>
   {/* Detail Grid */}
   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16,marginBottom:20}}>
-    <Section title={t("dashboard.sections.seo_title")} tag={t("dashboard.sections.seo_tag")} desc={t("dashboard.sections.seo_desc")}><Row label={t("dashboard.rows.crawlable")} good={d.visibility_canopy.seo_branch.crawlability}/><Row label={t("dashboard.rows.h1_tags")} good={d.visibility_canopy.seo_branch.html_structure.h1_count===1} snippet="h1"/><Row label={t("dashboard.rows.meta_desc")} good={!d.visibility_canopy.seo_branch.html_structure.missing_meta_descriptions} snippet="meta_desc"/><Row label={t("dashboard.rows.canonical_match")} good={d.visibility_canopy.seo_branch.html_structure.canonical_match} snippet="canonical"/><Row label={t("dashboard.rows.link_depth")} value={`${d.visibility_canopy.seo_branch.internal_linking_depth} ${t("dashboard.clicks")}`}/>{d.visibility_canopy.seo_branch.html_structure.title&&<Row label={t("dashboard.rows.page_title")} value={d.visibility_canopy.seo_branch.html_structure.title.slice(0,40)}/>}</Section>
-    <Section title={t("dashboard.sections.aeo_title")} tag={t("dashboard.sections.aeo_tag")} desc={t("dashboard.sections.aeo_desc")}><Row label={t("dashboard.rows.faq_schema")} good={d.visibility_canopy.aeo_branch.schema_validation.has_faq_json_ld} snippet="faq_schema"/><Row label={t("dashboard.rows.org_schema")} good={d.visibility_canopy.aeo_branch.schema_validation.has_organization_json_ld} snippet="org_schema"/><Row label={t("dashboard.rows.any_json_ld")} good={d.visibility_canopy.aeo_branch.schema_validation.has_any_json_ld}/><Row label={t("dashboard.rows.validation_errors")} value={d.visibility_canopy.aeo_branch.schema_validation.validation_errors.length||t("dashboard.none")}/><Row label={t("dashboard.rows.qa_density")} value={`${(d.visibility_canopy.aeo_branch.qa_density_score*100).toFixed(0)}%`}/><AeoPanel phase={aeoPhase} gen={aeoGen} error={aeoError} onStart={startAeo} canGenerate={!d.visibility_canopy.aeo_branch.schema_validation.has_faq_json_ld||!!d.visibility_canopy.seo_branch.html_structure.missing_meta_descriptions}/></Section>
-    <Section title={t("dashboard.sections.geo_title")} tag={t("dashboard.sections.geo_tag")} desc={t("dashboard.sections.geo_desc")}><Row label={t("dashboard.rows.chunking_eff")} value={`${(d.visibility_canopy.geo_branch.chunking_efficiency*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.citation_prec")} value={`${(d.visibility_canopy.geo_branch.citation_metrics.precision_rate*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.market_share")} value={`${(d.visibility_canopy.geo_branch.market_share_gap*100).toFixed(0)}%`}/><Row label={t("dashboard.rows.llms_txt")} good={d.visibility_canopy.geo_branch.llms_txt_status==="PRESENT_ROOT"} snippet="llms_txt"/></Section>
-    <Section title={t("dashboard.sections.security_title")} tag={t("dashboard.sections.security_tag")} desc={t("dashboard.sections.security_desc")}><Row label={t("dashboard.rows.tls_valid")} good={sec.tls?.valid}/><Row label={t("dashboard.rows.hsts")} good={sec.tls?.hsts}/><Row label={t("dashboard.rows.https_redirect")} good={sec.tls?.redirectsToHttps}/><Row label={t("dashboard.rows.robots_policy")} value={sec.ai_crawl_risk.robots_policy}/><Row label={t("dashboard.rows.agent_spoofing")} good={!sec.ai_crawl_risk.spoofed_agent_vulnerability}/><Row label={t("dashboard.rows.rate_limiting")} good={sec.ai_crawl_risk.rate_limiting_active}/><Row label={t("dashboard.rows.exposed_endpoints")} value={(sec.application_security.exposed_endpoints||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.missing_headers")} value={(sec.application_security.missing_secure_headers||[]).length||t("dashboard.none")}/><Row label={t("dashboard.rows.known_cves")} value={(sec.application_security.vulnerabilities||[]).length||t("dashboard.none")}/></Section>
+    <Section title={t("dashboard.sections.seo_title")} tag={t("dashboard.sections.seo_tag")} desc={t("dashboard.sections.seo_desc")}><CategoryRows rows={rows} category="seo"/></Section>
+    <Section title={t("dashboard.sections.aeo_title")} tag={t("dashboard.sections.aeo_tag")} desc={t("dashboard.sections.aeo_desc")}><CategoryRows rows={rows} category="aeo"/>{aeoMeasured&&<AeoPanel phase={aeoPhase} gen={aeoGen} error={aeoError} onStart={startAeo} canGenerate={d.content_extract!==null&&(sv?.has_faq_json_ld===false||hs?.missing_meta_descriptions===true)}/>}</Section>
+    <Section title={t("dashboard.sections.geo_title")} tag={t("dashboard.sections.geo_tag")} desc={t("dashboard.sections.geo_desc")}><CategoryRows rows={rows} category="geo"/></Section>
+    <Section title={t("dashboard.sections.security_title")} tag={t("dashboard.sections.security_tag")} desc={t("dashboard.sections.security_desc")}><CategoryRows rows={rows} category="security"/></Section>
   </div>
   {/* Enhanced 9-layer security posture (v3.1) */}
   {d.security_enhanced && <SecurityEnhanced data={d.security_enhanced}/>}
   {/* Compliance */}
-  <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=><div key={c.label} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:c.pass?C.greenGlow:C.redGlow,border:`1px solid ${c.pass?C.green:C.red}22`,borderRadius:3}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:c.pass?C.green:C.red}}>{c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span></div>)}</div></div>
+  <div style={{padding:24,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{fontSize:12,fontWeight:700,color:C.white,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.compliance_check")}</h4><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}}>{compliance.map(c=>{const nm=c.pass===null;const col=nm?C.gray:c.pass?C.green:C.red;return<div key={c.key} data-compliance={c.key} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:nm?"transparent":c.pass?C.greenGlow:C.redGlow,border:`1px solid ${nm?C.blackBorder:col+"22"}`,borderRadius:3,flexWrap:"wrap"}}><span style={{fontFamily:mono,fontSize:11,fontWeight:700,color:col}}>{nm?"·":c.pass?"✓":"✗"}</span><span style={{fontSize:12,color:C.muted}}>{t(`dashboard.compliance.${c.key}`)}</span>{nm&&<span style={{fontSize:9,fontFamily:mono,fontWeight:700,letterSpacing:1,color:C.gray}}>{t("dashboard.not_measured_badge","NOT MEASURED")}</span>}</div>})}</div></div>
   {/* Missing Headers */}
-  {(sec.application_security.missing_secure_headers||[]).length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{margin:"0 0 12px",fontSize:12,fontWeight:700,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>{t("dashboard.missing_headers")}</h4><div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>{sec.application_security.missing_secure_headers.map(h=>{const m=MITRE_TECHNIQUES[h];return<div key={h} style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:8}}><code style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`,borderRadius:2}}>{h}</code>{m&&<MitreBadge technique={m}/>}</div>})}</div>{sec.application_security.missing_secure_headers.map(h=><HeaderFix key={h} header={h}/>)}</div>}
+  {missingHeaders.length>0&&<div style={{padding:20,background:C.blackCard,border:`1px solid ${C.blackBorder}`,marginBottom:20,borderRadius:6}}><h4 style={{margin:"0 0 12px",fontSize:12,fontWeight:700,color:C.red,letterSpacing:1,textTransform:"uppercase"}}>{t("dashboard.missing_headers")}</h4><div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:12}}>{missingHeaders.map(h=>{const m=MITRE_TECHNIQUES[h];return<div key={h} style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:8}}><code style={{padding:"4px 10px",fontSize:11,fontFamily:mono,fontWeight:600,background:C.redGlow,color:C.red,border:`1px solid ${C.red}33`,borderRadius:2}}>{h}</code>{m&&<MitreBadge technique={m}/>}</div>})}</div>{missingHeaders.map(h=><HeaderFix key={h} header={h}/>)}</div>}
   {/* Email, DNS & cookie fixes — engine-generated only (v3.2+) */}
   <EmailDnsFixes/>
   {/* CTA */}

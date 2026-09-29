@@ -1,0 +1,256 @@
+{
+  "outcome": {
+    "success": true,
+    "error_code": null,
+    "error_message": null
+  },
+  "execution": {
+    "engine_version": "3.4.0",
+    "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+    "target_domain": "example.com",
+    "timestamp": "2026-09-28T15:00:00.000Z",
+    "scan_duration_ms": 8421,
+    "modules_executed": [
+      "dns",
+      "html_structure",
+      "schema_markup",
+      "geo",
+      "tls",
+      "security_headers"
+    ],
+    "modules_total": 22,
+    "signal_count": 32,
+    "security_signals": 73,
+    "total_signals": 105
+  },
+  "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+  "target_domain": "example.com",
+  "timestamp": "2026-09-28T15:00:00.000Z",
+  "scan_duration_ms": 8421,
+  "dns": {
+    "resolves": true,
+    "ip": "192.0.2.10"
+  },
+  "summary_scores": {
+    "seo_score": null,
+    "aeo_score": null,
+    "geo_score": null,
+    "security_posture_score": null,
+    "overall_score": null,
+    "measured_categories": [],
+    "unmeasured_categories": [
+      "seo",
+      "aeo",
+      "geo",
+      "security"
+    ]
+  },
+  "visibility_canopy": {
+    "seo_branch": {
+      "crawlability": null,
+      "html_structure": null,
+      "internal_linking_depth": null,
+      "internal_link_count": null,
+      "has_privacy_link": null
+    },
+    "aeo_branch": {
+      "schema_validation": null,
+      "qa_density_score": null,
+      "question_count": null,
+      "sentence_count": null
+    },
+    "geo_branch": {
+      "chunking_efficiency": null,
+      "market_share_gap": null,
+      "citation_metrics": null,
+      "llms_txt_status": null,
+      "llms_txt_length": null,
+      "content_stats": null
+    }
+  },
+  "security_roots": {
+    "tls": {
+      "valid": null,
+      "hsts": null,
+      "hstsMaxAge": null,
+      "redirectsToHttps": null,
+      "status": null,
+      "error_code": null,
+      "host": null
+    },
+    "ai_crawl_risk": {
+      "robots_policy": null,
+      "spoofed_agent_vulnerability": null,
+      "rate_limiting_active": null,
+      "has_sitemap_ref": null
+    },
+    "application_security": {
+      "exposed_endpoints": null,
+      "missing_secure_headers": null,
+      "present_headers": null,
+      "cookie_flags": null,
+      "vulnerabilities": null
+    },
+    "business_logic_gaps": {
+      "data_provenance_leak": null,
+      "has_sitemap": null,
+      "orphaned_priority_assets": null,
+      "provenance_status": null
+    }
+  },
+  "security_enhanced": {
+    "tls": null,
+    "dns": {
+      "spf_policy": "softfail",
+      "dmarc_policy": "absent",
+      "caa_present": false,
+      "dkim_selectors_found": [],
+      "subdomain_takeover_risk": [],
+      "score_contribution": 60,
+      "rationale": [
+        "No DMARC record (-25)",
+        "No CAA record (-5)"
+      ]
+    },
+    "http": null,
+    "html": null,
+    "paths": {
+      "source_maps_exposed": null,
+      "developer_files_exposed": null,
+      "backup_files_exposed": null,
+      "cms_panels_exposed": null,
+      "db_panels_exposed": null,
+      "directory_listing_confirmed": null,
+      "error_page_discloses_stack": null,
+      "api_paths_exposed": null,
+      "probes_answered": 0,
+      "score_contribution": null,
+      "rationale": []
+    },
+    "reputation": {
+      "status": "CLEAN",
+      "reasons": [],
+      "safe_browsing": {
+        "checked": true,
+        "flagged": false,
+        "threat_types": [],
+        "note": null
+      },
+      "blacklists": {
+        "checked_ip": "192.0.2.10",
+        "listed_on": [],
+        "services_checked": 3
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "footprint": {
+      "sri": null,
+      "cookies": null,
+      "tls_ciphers": {
+        "enumerated": 0,
+        "supported": [],
+        "weak_supported": [],
+        "weak_protocols_supported": []
+      },
+      "certificate_transparency": {
+        "checked": true,
+        "present": true,
+        "logged_certificates": 14,
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": null,
+      "rationale": []
+    },
+    "domain_email": {
+      "spf": {
+        "present": true,
+        "raw": "v=spf1 include:_spf.example.net ~all",
+        "mechanisms": [],
+        "all_qualifier": "softfail",
+        "all_strength": "soft"
+      },
+      "dmarc": {
+        "present": false,
+        "raw": null,
+        "policy": "absent",
+        "subdomain_policy": null,
+        "pct": null
+      },
+      "registrar": {
+        "checked": true,
+        "registrar_locked": true,
+        "statuses": [
+          "clientTransferProhibited"
+        ],
+        "expiration_date": "2027-08-01T00:00:00Z",
+        "days_until_expiration": 307,
+        "expiring_soon": false,
+        "hijacking_risk": false,
+        "registrar_name": "Example Registrar",
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "sensitive_files": {
+      "findings": null,
+      "paths_checked": null,
+      "accessible_count": null,
+      "catch_all_detected": null,
+      "probes_answered": 0,
+      "score_contribution": null,
+      "rationale": []
+    },
+    "supabase_exposure": {
+      "applicable": false,
+      "supabase_detected": false,
+      "project_url": null,
+      "project_ref": null,
+      "anon_key_detected": false,
+      "anon_key_role": null,
+      "anon_key_source": null,
+      "bundles_scanned": 2,
+      "tables_checked": 0,
+      "accessible_count": 0,
+      "accessible_tables": [],
+      "findings": [],
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "cross_reference": [],
+    "signal_count": 73,
+    "base_security_score": null,
+    "blended_security_score": null
+  },
+  "generated_fixes": {
+    "dmarc": {
+      "title": "DMARC record",
+      "desc": "Publish this TXT record at _dmarc.example.com:",
+      "code": "v=DMARC1; p=none; rua=mailto:dmarc@example.com",
+      "confidence": "template"
+    },
+    "caa": {
+      "title": "CAA record",
+      "desc": "Add this DNS record:",
+      "code": "example.com. CAA 0 issue \"example-ca.example\"",
+      "confidence": "template"
+    }
+  },
+  "content_extract": null,
+  "fetch_status": {
+    "ok": false,
+    "final_url": null,
+    "http_status": null,
+    "error_class": "timeout",
+    "error_code": "HEADERS_TIMEOUT",
+    "attempts": 3,
+    "elapsed_ms": 35000,
+    "tls_relaxed_for_read": false,
+    "note": "Your homepage did not respond within 35 seconds."
+  }
+}

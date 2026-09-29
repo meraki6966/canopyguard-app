@@ -90,12 +90,26 @@ function firstName(name) {
   return n.split(/\s+/)[0];
 }
 
+// A category the scan could not measure arrives as null and is printed as
+// such. It is never shown as 0/100, which would read as a measured failure.
+const NOT_MEASURED = "Not measured";
+const scoreText = (val) => (val === null ? NOT_MEASURED : `${val}/100`);
+
+// null, undefined, "" and anything non-numeric are unmeasured. Note that
+// Number.isFinite(+null) is true, because +null is 0, so null is checked
+// before coercing.
+function cleanScore(v) {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : null;
+}
+
 function buildReportEmail({ name, domain, scores, reportUrl }) {
   const greeting = firstName(name) ? `Hi ${escapeHtml(firstName(name))},` : "Hi,";
   const d = escapeHtml(domain);
   const scoreLine = (label, val) => `<tr>
     <td style="padding:4px 16px 4px 0;color:#555;">${label}</td>
-    <td style="padding:4px 0;font-weight:700;font-family:'SF Mono',Menlo,Consolas,monospace;">${val}/100</td>
+    <td style="padding:4px 0;font-weight:700;font-family:'SF Mono',Menlo,Consolas,monospace;">${scoreText(val)}</td>
   </tr>`;
 
   const html = plainWrap(`
@@ -105,7 +119,7 @@ function buildReportEmail({ name, domain, scores, reportUrl }) {
 <table style="margin:0 0 16px;border-collapse:collapse;">
   <tr>
     <td style="padding:4px 16px 4px 0;color:#555;">Overall</td>
-    <td style="padding:4px 0;font-weight:700;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:18px;">${scores.overall}/100</td>
+    <td style="padding:4px 0;font-weight:700;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:18px;">${scoreText(scores.overall)}</td>
   </tr>
   ${scoreLine("SEO", scores.seo)}
   ${scoreLine("AEO", scores.aeo)}
@@ -125,11 +139,11 @@ function buildReportEmail({ name, domain, scores, reportUrl }) {
 Here is your Canopy Guard audit report for ${domain}.
 
 Your scores:
-Overall: ${scores.overall}/100
-SEO: ${scores.seo}/100
-AEO: ${scores.aeo}/100
-GEO: ${scores.geo}/100
-Security: ${scores.security}/100
+Overall: ${scoreText(scores.overall)}
+SEO: ${scoreText(scores.seo)}
+AEO: ${scoreText(scores.aeo)}
+GEO: ${scoreText(scores.geo)}
+Security: ${scoreText(scores.security)}
 
 Download your full PDF report: ${reportUrl}
 It lists every finding with the exact fix for each one.
@@ -170,6 +184,9 @@ Canopy Guard`;
   return { html, text };
 }
 
+// Exported for the tests in src/lib/__tests__; the handler below is the route.
+export { buildReportEmail, cleanScore };
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -206,11 +223,11 @@ export default async function handler(req, res) {
   }
   const s = scores || {};
   const safeScores = {
-    overall: Number.isFinite(+s.overall) ? Math.round(+s.overall) : 0,
-    seo: Number.isFinite(+s.seo) ? Math.round(+s.seo) : 0,
-    aeo: Number.isFinite(+s.aeo) ? Math.round(+s.aeo) : 0,
-    geo: Number.isFinite(+s.geo) ? Math.round(+s.geo) : 0,
-    security: Number.isFinite(+s.security) ? Math.round(+s.security) : 0,
+    overall: cleanScore(s.overall),
+    seo: cleanScore(s.seo),
+    aeo: cleanScore(s.aeo),
+    geo: cleanScore(s.geo),
+    security: cleanScore(s.security),
   };
 
   const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/+$/, "").trim().toLowerCase();

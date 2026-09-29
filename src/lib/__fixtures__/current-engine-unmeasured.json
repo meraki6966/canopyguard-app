@@ -1,0 +1,372 @@
+{
+  "outcome": {
+    "success": true,
+    "error_code": null,
+    "error_message": null
+  },
+  "execution": {
+    "engine_version": "3.3.0",
+    "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+    "target_domain": "example.com",
+    "timestamp": "2026-09-28T15:00:00.000Z",
+    "scan_duration_ms": 8421,
+    "modules_executed": [
+      "dns",
+      "html_structure",
+      "schema_markup",
+      "geo",
+      "tls",
+      "security_headers"
+    ],
+    "modules_total": 22,
+    "signal_count": 32,
+    "security_signals": 73,
+    "total_signals": 105
+  },
+  "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+  "target_domain": "example.com",
+  "timestamp": "2026-09-28T15:00:00.000Z",
+  "scan_duration_ms": 8421,
+  "dns": {
+    "resolves": true,
+    "ip": "192.0.2.10"
+  },
+  "summary_scores": {
+    "seo_score": 0.06,
+    "aeo_score": 0,
+    "geo_score": 0.05,
+    "security_posture_score": 0.48,
+    "overall_score": 0.15
+  },
+  "visibility_canopy": {
+    "seo_branch": {
+      "crawlability": false,
+      "html_structure": {
+        "h1_count": 0,
+        "h2_count": 0,
+        "missing_meta_descriptions": true,
+        "meta_description_length": 0,
+        "canonical_match": false,
+        "title": null,
+        "title_length": 0,
+        "has_viewport": false,
+        "has_lang": false,
+        "image_count": 0,
+        "images_missing_alt": 0,
+        "word_count": 0,
+        "response_time_ms": 12000
+      },
+      "internal_linking_depth": 0,
+      "internal_link_count": 0
+    },
+    "aeo_branch": {
+      "schema_validation": {
+        "has_faq_json_ld": false,
+        "has_organization_json_ld": false,
+        "has_local_business": false,
+        "has_breadcrumb": false,
+        "has_any_json_ld": false,
+        "json_ld_count": 0,
+        "faq_item_count": 0,
+        "types_found": [],
+        "validation_errors": []
+      },
+      "qa_density_score": 0,
+      "question_count": 0,
+      "sentence_count": 0
+    },
+    "geo_branch": {
+      "chunking_efficiency": 0,
+      "market_share_gap": 0,
+      "citation_metrics": {
+        "precision_rate": 0,
+        "market_share_gap": 0
+      },
+      "llms_txt_status": "MISSING",
+      "llms_txt_length": 0,
+      "content_stats": {
+        "word_count": 0,
+        "heading_count": 0,
+        "paragraph_count": 0,
+        "has_lists": false,
+        "has_tables": false,
+        "heading_to_content_ratio": 0
+      }
+    }
+  },
+  "security_roots": {
+    "tls": {
+      "valid": false,
+      "hsts": false,
+      "hstsMaxAge": 0,
+      "redirectsToHttps": false,
+      "status": "INVALID"
+    },
+    "ai_crawl_risk": {
+      "robots_policy": "NONE",
+      "spoofed_agent_vulnerability": true,
+      "rate_limiting_active": false,
+      "has_sitemap_ref": false
+    },
+    "application_security": {
+      "exposed_endpoints": [],
+      "missing_secure_headers": [
+        "Content-Security-Policy",
+        "Strict-Transport-Security",
+        "X-Frame-Options",
+        "X-Content-Type-Options",
+        "Referrer-Policy",
+        "Permissions-Policy"
+      ],
+      "present_headers": {},
+      "cookie_flags": {
+        "secure": true,
+        "httponly": true,
+        "samesite": "Lax"
+      },
+      "vulnerabilities": []
+    },
+    "business_logic_gaps": {
+      "data_provenance_leak": true,
+      "has_sitemap": false,
+      "orphaned_priority_assets": [],
+      "provenance_status": "UNATTRIBUTED"
+    }
+  },
+  "security_enhanced": {
+    "tls": {
+      "tls_version": "TLSv1.3",
+      "tls_version_secure": true,
+      "cipher_suite": "TLS_AES_256_GCM_SHA384",
+      "cipher_suite_secure": true,
+      "cert_expiry_days": 74,
+      "cert_expiry_status": "healthy",
+      "cert_issuer": "Example CA",
+      "cert_self_signed": false,
+      "cert_san_mismatch": false,
+      "cert_chain_depth": 3,
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "dns": {
+      "spf_policy": "reject",
+      "dmarc_policy": "reject",
+      "caa_present": true,
+      "dkim_selectors_found": [
+        "selector1"
+      ],
+      "subdomain_takeover_risk": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "http": {
+      "csp_quality": "absent",
+      "csp_issues": [],
+      "server_disclosure": false,
+      "server_header_value": null,
+      "powered_by_disclosure": false,
+      "redirect_chain": [],
+      "redirect_chain_secure": true,
+      "redirect_hops": 0,
+      "cors_wildcard": false,
+      "cors_credentialed_wildcard": false,
+      "dangerous_methods": [],
+      "security_txt_present": false,
+      "cache_control_missing": false,
+      "cookie_samesite_quality": "lax",
+      "score_contribution": 55,
+      "rationale": [
+        "No Content-Security-Policy header (-20)"
+      ]
+    },
+    "html": {
+      "forms_without_csrf": 0,
+      "password_fields_insecure": 0,
+      "mixed_content_urls": [],
+      "html_comment_disclosures": [],
+      "inline_script_count": 0,
+      "vulnerable_libraries": [],
+      "sensitive_paths_exposed": [],
+      "generator_disclosure": null,
+      "debug_content_detected": false,
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "paths": {
+      "source_maps_exposed": [],
+      "developer_files_exposed": [],
+      "backup_files_exposed": [],
+      "cms_panels_exposed": [],
+      "db_panels_exposed": [],
+      "directory_listing_confirmed": false,
+      "error_page_discloses_stack": false,
+      "api_paths_exposed": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "reputation": {
+      "status": "CLEAN",
+      "reasons": [],
+      "safe_browsing": {
+        "checked": true,
+        "flagged": false,
+        "threat_types": [],
+        "note": null
+      },
+      "blacklists": {
+        "checked_ip": "192.0.2.10",
+        "listed_on": [],
+        "services_checked": 3
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "footprint": {
+      "sri": {
+        "external_scripts": 0,
+        "scripts_missing_sri": 0,
+        "external_stylesheets": 0,
+        "stylesheets_missing_sri": 0,
+        "missing_examples": []
+      },
+      "cookies": {
+        "total": 0,
+        "missing_secure": 0,
+        "missing_httponly": 0,
+        "insecure_cookie_names": []
+      },
+      "tls_ciphers": {
+        "enumerated": 12,
+        "supported": [
+          "TLS_AES_128_GCM_SHA256",
+          "TLS_AES_256_GCM_SHA384"
+        ],
+        "weak_supported": [],
+        "weak_protocols_supported": []
+      },
+      "certificate_transparency": {
+        "checked": true,
+        "present": true,
+        "logged_certificates": 14,
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "domain_email": {
+      "spf": {
+        "present": true,
+        "raw": "v=spf1 include:_spf.example.net -all",
+        "mechanisms": [],
+        "all_qualifier": "fail",
+        "all_strength": "strict"
+      },
+      "dmarc": {
+        "present": true,
+        "raw": "v=DMARC1; p=reject",
+        "policy": "reject",
+        "subdomain_policy": null,
+        "pct": 100
+      },
+      "registrar": {
+        "checked": true,
+        "registrar_locked": true,
+        "statuses": [
+          "clientTransferProhibited"
+        ],
+        "expiration_date": "2027-08-01T00:00:00Z",
+        "days_until_expiration": 307,
+        "expiring_soon": false,
+        "hijacking_risk": false,
+        "registrar_name": "Example Registrar",
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "sensitive_files": {
+      "findings": [],
+      "paths_checked": 5,
+      "accessible_count": 0,
+      "catch_all_detected": false,
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "supabase_exposure": {
+      "applicable": false,
+      "supabase_detected": false,
+      "project_url": null,
+      "project_ref": null,
+      "anon_key_detected": false,
+      "anon_key_role": null,
+      "anon_key_source": null,
+      "bundles_scanned": 2,
+      "tables_checked": 0,
+      "accessible_count": 0,
+      "accessible_tables": [],
+      "findings": [],
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "cross_reference": [],
+    "signal_count": 73,
+    "base_security_score": 0.74,
+    "blended_security_score": 0.71
+  },
+  "generated_fixes": {
+    "csp": {
+      "title": "Content-Security-Policy",
+      "desc": "Add this header:",
+      "tabs": [
+        {
+          "label": "Nginx",
+          "code": "add_header Content-Security-Policy \"default-src 'self'\" always;"
+        },
+        {
+          "label": "Vercel",
+          "code": "// vercel.json\n{\n  \"headers\": [{\n    \"source\": \"/(.*)\",\n    \"headers\": [{\n      \"key\": \"Content-Security-Policy\",\n      \"value\": \"default-src 'self'\"\n    }]\n  }]\n}"
+        }
+      ],
+      "confidence": "derived"
+    },
+    "hsts": {
+      "title": "Strict-Transport-Security",
+      "desc": "Add this header:",
+      "tabs": [
+        {
+          "label": "Nginx",
+          "code": "add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;"
+        },
+        {
+          "label": "Vercel",
+          "code": "// vercel.json\n{\n  \"headers\": [{\n    \"source\": \"/(.*)\",\n    \"headers\": [{\n      \"key\": \"Strict-Transport-Security\",\n      \"value\": \"max-age=31536000; includeSubDomains\"\n    }]\n  }]\n}"
+        }
+      ],
+      "confidence": "derived"
+    },
+    "llms_txt": {
+      "title": "Create llms.txt",
+      "desc": "Add this file to your domain root:",
+      "code": "# example.com\n",
+      "confidence": "template"
+    },
+    "h1": {
+      "title": "Add an H1 heading",
+      "desc": "Suggested H1:",
+      "code": "<h1>What this page is about</h1>",
+      "confidence": "template"
+    }
+  },
+  "content_extract": {
+    "title": null,
+    "h1": null,
+    "h1s": [],
+    "headings": [],
+    "text": "",
+    "word_count": 0
+  }
+}

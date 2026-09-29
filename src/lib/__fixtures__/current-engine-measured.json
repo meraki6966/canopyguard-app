@@ -1,0 +1,365 @@
+{
+  "outcome": {
+    "success": true,
+    "error_code": null,
+    "error_message": null
+  },
+  "execution": {
+    "engine_version": "3.3.0",
+    "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+    "target_domain": "example.com",
+    "timestamp": "2026-09-28T15:00:00.000Z",
+    "scan_duration_ms": 8421,
+    "modules_executed": [
+      "dns",
+      "html_structure",
+      "schema_markup",
+      "geo",
+      "tls",
+      "security_headers"
+    ],
+    "modules_total": 22,
+    "signal_count": 32,
+    "security_signals": 73,
+    "total_signals": 105
+  },
+  "audit_id": "0f8e2c1a-5b7d-4e3f-9a21-1c2d3e4f5a61",
+  "target_domain": "example.com",
+  "timestamp": "2026-09-28T15:00:00.000Z",
+  "scan_duration_ms": 8421,
+  "dns": {
+    "resolves": true,
+    "ip": "192.0.2.10"
+  },
+  "summary_scores": {
+    "seo_score": 0.81,
+    "aeo_score": 0.51,
+    "geo_score": 0.58,
+    "security_posture_score": 0.71,
+    "overall_score": 0.65
+  },
+  "visibility_canopy": {
+    "seo_branch": {
+      "crawlability": true,
+      "html_structure": {
+        "h1_count": 1,
+        "h2_count": 6,
+        "missing_meta_descriptions": false,
+        "meta_description_length": 148,
+        "canonical_match": true,
+        "title": "Example Services | Example Co",
+        "title_length": 29,
+        "has_viewport": true,
+        "has_lang": true,
+        "image_count": 12,
+        "images_missing_alt": 0,
+        "word_count": 1320,
+        "response_time_ms": 640
+      },
+      "internal_linking_depth": 2,
+      "internal_link_count": 18
+    },
+    "aeo_branch": {
+      "schema_validation": {
+        "has_faq_json_ld": false,
+        "has_organization_json_ld": true,
+        "has_local_business": true,
+        "has_breadcrumb": false,
+        "has_any_json_ld": true,
+        "json_ld_count": 2,
+        "faq_item_count": 0,
+        "types_found": [
+          "Organization",
+          "LocalBusiness"
+        ],
+        "validation_errors": []
+      },
+      "qa_density_score": 0.18,
+      "question_count": 3,
+      "sentence_count": 64
+    },
+    "geo_branch": {
+      "chunking_efficiency": 0.72,
+      "market_share_gap": 0.43,
+      "citation_metrics": {
+        "precision_rate": 0.35,
+        "market_share_gap": 0.43
+      },
+      "llms_txt_status": "MISSING",
+      "llms_txt_length": 0,
+      "content_stats": {
+        "word_count": 1320,
+        "heading_count": 7,
+        "paragraph_count": 22,
+        "has_lists": true,
+        "has_tables": false,
+        "heading_to_content_ratio": 0.3
+      }
+    }
+  },
+  "security_roots": {
+    "tls": {
+      "valid": true,
+      "hsts": true,
+      "hstsMaxAge": 31536000,
+      "redirectsToHttps": true,
+      "status": "VALID"
+    },
+    "ai_crawl_risk": {
+      "robots_policy": "BALANCED",
+      "spoofed_agent_vulnerability": false,
+      "rate_limiting_active": true,
+      "has_sitemap_ref": true
+    },
+    "application_security": {
+      "exposed_endpoints": [],
+      "missing_secure_headers": [
+        "Content-Security-Policy"
+      ],
+      "present_headers": {
+        "strict-transport-security": "max-age=31536000",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "permissions-policy": "camera=()",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-resource-policy": "same-origin"
+      },
+      "cookie_flags": {
+        "secure": true,
+        "httponly": true,
+        "samesite": "Lax"
+      },
+      "vulnerabilities": []
+    },
+    "business_logic_gaps": {
+      "data_provenance_leak": false,
+      "has_sitemap": true,
+      "orphaned_priority_assets": [],
+      "provenance_status": "ATTRIBUTED"
+    }
+  },
+  "security_enhanced": {
+    "tls": {
+      "tls_version": "TLSv1.3",
+      "tls_version_secure": true,
+      "cipher_suite": "TLS_AES_256_GCM_SHA384",
+      "cipher_suite_secure": true,
+      "cert_expiry_days": 74,
+      "cert_expiry_status": "healthy",
+      "cert_issuer": "Example CA",
+      "cert_self_signed": false,
+      "cert_san_mismatch": false,
+      "cert_chain_depth": 3,
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "dns": {
+      "spf_policy": "reject",
+      "dmarc_policy": "reject",
+      "caa_present": true,
+      "dkim_selectors_found": [
+        "selector1"
+      ],
+      "subdomain_takeover_risk": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "http": {
+      "csp_quality": "absent",
+      "csp_issues": [],
+      "server_disclosure": true,
+      "server_header_value": "cloudflare",
+      "powered_by_disclosure": false,
+      "redirect_chain": [
+        "https://example.com/"
+      ],
+      "redirect_chain_secure": true,
+      "redirect_hops": 0,
+      "cors_wildcard": false,
+      "cors_credentialed_wildcard": false,
+      "dangerous_methods": [],
+      "security_txt_present": true,
+      "cache_control_missing": false,
+      "cookie_samesite_quality": "lax",
+      "score_contribution": 80,
+      "rationale": [
+        "No Content-Security-Policy header (-20)"
+      ]
+    },
+    "html": {
+      "forms_without_csrf": 0,
+      "password_fields_insecure": 0,
+      "mixed_content_urls": [],
+      "html_comment_disclosures": [],
+      "inline_script_count": 3,
+      "vulnerable_libraries": [],
+      "sensitive_paths_exposed": [],
+      "generator_disclosure": null,
+      "debug_content_detected": false,
+      "score_contribution": 95,
+      "rationale": []
+    },
+    "paths": {
+      "source_maps_exposed": [],
+      "developer_files_exposed": [],
+      "backup_files_exposed": [],
+      "cms_panels_exposed": [],
+      "db_panels_exposed": [],
+      "directory_listing_confirmed": false,
+      "error_page_discloses_stack": false,
+      "api_paths_exposed": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "reputation": {
+      "status": "CLEAN",
+      "reasons": [],
+      "safe_browsing": {
+        "checked": true,
+        "flagged": false,
+        "threat_types": [],
+        "note": null
+      },
+      "blacklists": {
+        "checked_ip": "192.0.2.10",
+        "listed_on": [],
+        "services_checked": 3
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "footprint": {
+      "sri": {
+        "external_scripts": 2,
+        "scripts_missing_sri": 0,
+        "external_stylesheets": 1,
+        "stylesheets_missing_sri": 0,
+        "missing_examples": []
+      },
+      "cookies": {
+        "total": 1,
+        "missing_secure": 0,
+        "missing_httponly": 0,
+        "insecure_cookie_names": []
+      },
+      "tls_ciphers": {
+        "enumerated": 12,
+        "supported": [
+          "TLS_AES_128_GCM_SHA256",
+          "TLS_AES_256_GCM_SHA384"
+        ],
+        "weak_supported": [],
+        "weak_protocols_supported": []
+      },
+      "certificate_transparency": {
+        "checked": true,
+        "present": true,
+        "logged_certificates": 14,
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "domain_email": {
+      "spf": {
+        "present": true,
+        "raw": "v=spf1 include:_spf.example.net -all",
+        "mechanisms": [],
+        "all_qualifier": "fail",
+        "all_strength": "strict"
+      },
+      "dmarc": {
+        "present": true,
+        "raw": "v=DMARC1; p=reject",
+        "policy": "reject",
+        "subdomain_policy": null,
+        "pct": 100
+      },
+      "registrar": {
+        "checked": true,
+        "registrar_locked": true,
+        "statuses": [
+          "clientTransferProhibited"
+        ],
+        "expiration_date": "2027-08-01T00:00:00Z",
+        "days_until_expiration": 307,
+        "expiring_soon": false,
+        "hijacking_risk": false,
+        "registrar_name": "Example Registrar",
+        "note": null
+      },
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "sensitive_files": {
+      "findings": [],
+      "paths_checked": 5,
+      "accessible_count": 0,
+      "catch_all_detected": false,
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "supabase_exposure": {
+      "applicable": false,
+      "supabase_detected": false,
+      "project_url": null,
+      "project_ref": null,
+      "anon_key_detected": false,
+      "anon_key_role": null,
+      "anon_key_source": null,
+      "bundles_scanned": 2,
+      "tables_checked": 0,
+      "accessible_count": 0,
+      "accessible_tables": [],
+      "findings": [],
+      "mitre": [],
+      "score_contribution": 100,
+      "rationale": []
+    },
+    "cross_reference": [],
+    "signal_count": 73,
+    "base_security_score": 0.74,
+    "blended_security_score": 0.71
+  },
+  "generated_fixes": {
+    "csp": {
+      "title": "Content-Security-Policy",
+      "desc": "Add this header:",
+      "tabs": [
+        {
+          "label": "Nginx",
+          "code": "add_header Content-Security-Policy \"default-src 'self'\" always;"
+        },
+        {
+          "label": "Vercel",
+          "code": "// vercel.json\n{\n  \"headers\": [{\n    \"source\": \"/(.*)\",\n    \"headers\": [{\n      \"key\": \"Content-Security-Policy\",\n      \"value\": \"default-src 'self'\"\n    }]\n  }]\n}"
+        }
+      ],
+      "confidence": "derived"
+    },
+    "llms_txt": {
+      "title": "Create llms.txt",
+      "desc": "Add this file to your domain root:",
+      "code": "# Example Co\n> Example services.\n",
+      "confidence": "derived"
+    }
+  },
+  "content_extract": {
+    "title": "Example Services | Example Co",
+    "h1": "Example Services",
+    "h1s": [
+      "Example Services"
+    ],
+    "headings": [
+      "Example Services",
+      "What we do",
+      "Contact"
+    ],
+    "text": "Example Co provides example services.",
+    "word_count": 1320
+  }
+}

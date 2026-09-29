@@ -1,5 +1,16 @@
 // src/components/SecurityEnhanced.jsx
+import { useTranslation } from 'react-i18next';
 import { getTechnique, MitreBadge } from '../mitre';
+
+// Engine 3.4 returns null for anything it could not observe: a layer whose
+// module returned nothing, or a field inside one. Those render as "Not
+// measured" in neutral grey, never as a pass, a fail, "None" or "Absent".
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+function NotMeasured() {
+  const { t } = useTranslation();
+  return <span style={{ color: '#888', fontWeight: 600 }}>{t('dashboard.not_measured', 'Not measured')}</span>;
+}
+const nmText = (t) => t('dashboard.not_measured', 'Not measured');
 
 const SEVERITY_COLORS = {
   critical: { bg: 'rgba(194,75,58,0.12)', border: '#C24B3A', text: '#E69B8F', badge: '#C24B3A' },
@@ -18,7 +29,7 @@ const POLICY_COLORS = {
   weak:        '#C8A96E',
 };
 
-function policyBadge(value) {
+function policyBadge(value, emptyLabel = 'unknown') {
   const color = POLICY_COLORS[value] || '#888';
   return (
     <span style={{
@@ -33,22 +44,30 @@ function policyBadge(value) {
       textTransform: 'uppercase',
       letterSpacing: '0.06em',
     }}>
-      {value || 'unknown'}
+      {value || emptyLabel}
     </span>
   );
 }
 
 function ScoreBar({ score }) {
+  if (!isNum(score)) {
+    return (
+      <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+        <span style={{ color: '#888' }}>layer score</span>
+        <NotMeasured />
+      </div>
+    );
+  }
   const color = score >= 80 ? '#2A7A5E' : score >= 50 ? '#C8A96E' : '#C24B3A';
   return (
     <div style={{ marginTop: '6px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px' }}>
         <span style={{ color: '#888' }}>layer score</span>
-        <span style={{ color, fontWeight: '700' }}>{score ?? '—'}</span>
+        <span style={{ color, fontWeight: '700' }}>{score}</span>
       </div>
       <div style={{ background: 'rgba(237,244,239,0.1)', borderRadius: '2px', height: '4px' }}>
         <div style={{
-          width: `${Math.min(100, score ?? 0)}%`,
+          width: `${Math.min(100, Math.max(0, score))}%`,
           height: '100%',
           background: color,
           borderRadius: '2px',
@@ -59,8 +78,24 @@ function ScoreBar({ score }) {
   );
 }
 
+// A layer with no data was not measured. It keeps its card so a failed TLS
+// handshake or an unanswered probe set is visible rather than silently absent.
 function LayerCard({ title, data, children }) {
-  if (!data) return null;
+  if (!data) {
+    return (
+      <div data-layer-unmeasured={title} style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '8px',
+        padding: '16px',
+      }}>
+        <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C8A96E', marginBottom: '10px' }}>
+          {title}
+        </div>
+        <div style={{ fontSize: '12px' }}><NotMeasured /></div>
+      </div>
+    );
+  }
   const score = data.score_contribution;
   const rationale = data.rationale || [];
 
@@ -121,9 +156,16 @@ function MitreRow({ mitre }) {
 }
 
 export function SecurityEnhanced({ data }) {
+  const { t } = useTranslation();
   if (!data) return null;
 
-  const { tls, dns, http, html, paths, reputation, footprint, domain_email, sensitive_files, supabase_exposure, cross_reference } = data;
+  const { tls, dns, http, html, reputation, footprint, domain_email, supabase_exposure, cross_reference } = data;
+  // probes_answered === 0 means no probe got an answer: nothing was measured,
+  // which is not the same as nothing being exposed.
+  const paths = data.paths && data.paths.probes_answered !== 0 && Array.isArray(data.paths.developer_files_exposed) ? data.paths : null;
+  const sensitive_files = data.sensitive_files && data.sensitive_files.probes_answered !== 0 && isNum(data.sensitive_files.accessible_count) ? data.sensitive_files : null;
+  const NM = nmText(t);
+  const yesNo = (v, yes, no) => (typeof v === 'boolean' ? (v ? yes : no) : NM);
   const crossRefs = cross_reference || [];
   const repStatusColor = reputation
     ? (reputation.status === 'CLEAN' ? '#2A7A5E' : reputation.status === 'UNKNOWN' ? '#C8A96E' : '#C24B3A')
@@ -183,12 +225,13 @@ export function SecurityEnhanced({ data }) {
         <LayerCard title="TLS / Certificate" data={tls}>
           {tls && (
             <>
-              <DataRow label="TLS version" value={tls.tls_version} />
-              <DataRow label="Cipher suite" value={tls.cipher_suite} />
+              <DataRow label="TLS version" value={tls.tls_version ?? NM} />
+              <DataRow label="Cipher suite" value={tls.cipher_suite ?? NM} />
               <DataRow label="Cert expiry"
-                value={tls.cert_expiry_days >= 0
-                  ? `${tls.cert_expiry_days} days (${tls.cert_expiry_status})`
-                  : 'expired'} />
+                value={!isNum(tls.cert_expiry_days) ? NM
+                  : tls.cert_expiry_days >= 0
+                    ? `${tls.cert_expiry_days} days (${tls.cert_expiry_status ?? NM})`
+                    : 'expired'} />
               <DataRow label="Issuer" value={tls.cert_issuer} />
               {tls.cert_self_signed && (
                 <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>Self-signed certificate detected</div>
@@ -206,12 +249,12 @@ export function SecurityEnhanced({ data }) {
             <>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
                 <span style={{ fontSize: '11px', color: '#888' }}>SPF:</span>
-                {policyBadge(dns.spf_policy)}
+                {policyBadge(dns.spf_policy, NM)}
                 <span style={{ fontSize: '11px', color: '#888', marginLeft: '6px' }}>DMARC:</span>
-                {policyBadge(dns.dmarc_policy)}
+                {policyBadge(dns.dmarc_policy, NM)}
               </div>
-              <DataRow label="CAA records" value={dns.caa_present ? 'Present' : 'Absent'} />
-              <DataRow label="DKIM selectors" value={dns.dkim_selectors_found?.length > 0 ? dns.dkim_selectors_found.join(', ') : 'None found'} />
+              <DataRow label="CAA records" value={yesNo(dns.caa_present, 'Present', 'Absent')} />
+              <DataRow label="DKIM selectors" value={!Array.isArray(dns.dkim_selectors_found) ? NM : dns.dkim_selectors_found.length > 0 ? dns.dkim_selectors_found.join(', ') : 'None found'} />
               {dns.subdomain_takeover_risk?.length > 0 && (
                 <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '6px' }}>
                   Takeover risk: {dns.subdomain_takeover_risk.join(', ')}
@@ -227,7 +270,7 @@ export function SecurityEnhanced({ data }) {
             <>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
                 <span style={{ fontSize: '11px', color: '#888' }}>CSP:</span>
-                {policyBadge(http.csp_quality)}
+                {policyBadge(http.csp_quality, NM)}
               </div>
               {http.server_disclosure && (
                 <>
@@ -250,7 +293,7 @@ export function SecurityEnhanced({ data }) {
                   Dangerous methods: {http.dangerous_methods.join(', ')}
                 </div>
               )}
-              <DataRow label="security.txt" value={http.security_txt_present ? 'Present' : 'Absent'} />
+              <DataRow label="security.txt" value={yesNo(http.security_txt_present, 'Present', 'Absent')} />
             </>
           )}
         </LayerCard>
@@ -271,8 +314,8 @@ export function SecurityEnhanced({ data }) {
                   ))}
                 </div>
               )}
-              <DataRow label="Forms missing CSRF" value={html.forms_without_csrf > 0 ? html.forms_without_csrf : 'None'} />
-              <DataRow label="Mixed content" value={html.mixed_content_urls?.length > 0 ? `${html.mixed_content_urls.length} found` : 'Clean'} />
+              <DataRow label="Forms missing CSRF" value={!isNum(html.forms_without_csrf) ? NM : html.forms_without_csrf > 0 ? html.forms_without_csrf : 'None'} />
+              <DataRow label="Mixed content" value={!Array.isArray(html.mixed_content_urls) ? NM : html.mixed_content_urls.length > 0 ? `${html.mixed_content_urls.length} found` : 'Clean'} />
               <DataRow label="Inline scripts" value={html.inline_script_count} />
               {html.generator_disclosure && (
                 <DataRow label="Generator tag" value={html.generator_disclosure} />
@@ -318,8 +361,8 @@ export function SecurityEnhanced({ data }) {
               {paths.db_panels_exposed?.length > 0 && (
                 <DataRow label="DB panels" value={paths.db_panels_exposed.join(', ')} />
               )}
-              <DataRow label="Directory listing" value={paths.directory_listing_confirmed ? 'Enabled' : 'Disabled'} />
-              <DataRow label="Error disclosure" value={paths.error_page_discloses_stack ? 'Detected' : 'Clean'} />
+              <DataRow label="Directory listing" value={yesNo(paths.directory_listing_confirmed, 'Enabled', 'Disabled')} />
+              <DataRow label="Error disclosure" value={yesNo(paths.error_page_discloses_stack, 'Detected', 'Clean')} />
               {paths.api_paths_exposed?.length > 0 && (
                 <DataRow label="Open API paths" value={paths.api_paths_exposed.join(', ')} />
               )}
@@ -329,7 +372,7 @@ export function SecurityEnhanced({ data }) {
                 ...( paths.source_maps_exposed || []),
                 ...( paths.cms_panels_exposed || []),
                 ...( paths.db_panels_exposed || []),
-              ].length === 0 && !paths.directory_listing_confirmed && !paths.error_page_discloses_stack && (
+              ].length === 0 && paths.directory_listing_confirmed === false && paths.error_page_discloses_stack === false && (
                 <div style={{ fontSize: '12px', color: '#2A7A5E' }}>No sensitive paths exposed</div>
               )}
             </>
@@ -346,7 +389,7 @@ export function SecurityEnhanced({ data }) {
                   display: 'inline-block', padding: '1px 8px', borderRadius: '3px', fontSize: '11px', fontWeight: '700',
                   background: repStatusColor + '22', color: repStatusColor, border: `1px solid ${repStatusColor}44`,
                   textTransform: 'uppercase', letterSpacing: '0.06em',
-                }}>{reputation.status}</span>
+                }}>{reputation.status ?? NM}</span>
               </div>
               <DataRow label="Google Safe Browsing"
                 value={reputation.safe_browsing?.checked
@@ -355,7 +398,9 @@ export function SecurityEnhanced({ data }) {
               <DataRow label="Blacklists"
                 value={reputation.blacklists?.listed_on?.length > 0
                   ? reputation.blacklists.listed_on.join(', ')
-                  : `Clean (${reputation.blacklists?.services_checked ?? 0} checked)`} />
+                  : Array.isArray(reputation.blacklists?.listed_on) && reputation.blacklists.services_checked > 0
+                    ? `Clean (${reputation.blacklists.services_checked} checked)`
+                    : NM} />
               {reputation.reasons?.length > 0 && (
                 <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>{reputation.reasons.join('; ')}</div>
               )}
@@ -369,13 +414,15 @@ export function SecurityEnhanced({ data }) {
           {footprint && (
             <>
               <DataRow label="External resources w/o SRI"
-                value={(footprint.sri?.scripts_missing_sri + footprint.sri?.stylesheets_missing_sri) > 0
-                  ? `${footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri} missing`
-                  : 'All hashed'} />
+                value={!(isNum(footprint.sri?.scripts_missing_sri) && isNum(footprint.sri?.stylesheets_missing_sri)) ? NM
+                  : (footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri) > 0
+                    ? `${footprint.sri.scripts_missing_sri + footprint.sri.stylesheets_missing_sri} missing`
+                    : 'All hashed'} />
               <DataRow label="Cookie flags"
-                value={(footprint.cookies?.missing_secure + footprint.cookies?.missing_httponly) > 0
-                  ? `${footprint.cookies.missing_secure} no Secure, ${footprint.cookies.missing_httponly} no HttpOnly`
-                  : (footprint.cookies?.total > 0 ? 'Secure + HttpOnly set' : 'No cookies')} />
+                value={!(isNum(footprint.cookies?.missing_secure) && isNum(footprint.cookies?.missing_httponly) && isNum(footprint.cookies?.total)) ? NM
+                  : (footprint.cookies.missing_secure + footprint.cookies.missing_httponly) > 0
+                    ? `${footprint.cookies.missing_secure} no Secure, ${footprint.cookies.missing_httponly} no HttpOnly`
+                    : (footprint.cookies.total > 0 ? 'Secure + HttpOnly set' : 'No cookies')} />
               <DataRow label="TLS ciphers supported" value={footprint.tls_ciphers?.supported?.length} />
               {footprint.tls_ciphers?.weak_supported?.length > 0 && (
                 <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>
@@ -405,14 +452,15 @@ export function SecurityEnhanced({ data }) {
                 {policyBadge(domain_email.spf?.all_qualifier === 'fail' ? 'reject'
                   : domain_email.spf?.all_qualifier === 'softfail' ? 'softfail'
                   : domain_email.spf?.all_qualifier === 'pass' ? 'pass_all'
-                  : domain_email.spf?.present ? 'weak' : 'absent')}
+                  : domain_email.spf?.present === true ? 'weak'
+                  : domain_email.spf?.present === false ? 'absent' : null, NM)}
                 <span style={{ fontSize: '11px', color: '#888', marginLeft: '6px' }}>DMARC:</span>
-                {policyBadge(domain_email.dmarc?.policy)}
+                {policyBadge(domain_email.dmarc?.policy, NM)}
               </div>
               {domain_email.spf?.all_strength && (
                 <DataRow label="SPF enforcement" value={domain_email.spf.all_strength} />
               )}
-              <DataRow label="Registrar lock" value={domain_email.registrar?.registrar_locked ? 'Locked' : 'Unlocked'} />
+              <DataRow label="Registrar lock" value={domain_email.registrar?.checked === false ? NM : yesNo(domain_email.registrar?.registrar_locked, 'Locked', 'Unlocked')} />
               {domain_email.registrar?.days_until_expiration !== null && domain_email.registrar?.days_until_expiration !== undefined && (
                 <DataRow label="Expires in" value={`${domain_email.registrar.days_until_expiration} days`} />
               )}
@@ -439,7 +487,7 @@ export function SecurityEnhanced({ data }) {
                   <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '700', marginBottom: '4px' }}>
                     {sensitive_files.accessible_count} CRITICAL exposure(s):
                   </div>
-                  {sensitive_files.findings.map((f, i) => (
+                  {(sensitive_files.findings || []).map((f, i) => (
                     <div key={i} style={{ marginBottom: '6px' }}>
                       <div style={{ fontSize: '11px', color: '#E69B8F', fontFamily: "'JetBrains Mono','SF Mono',monospace" }}>{f.path}</div>
                       <div style={{ fontSize: '10px', color: '#888' }}>{f.reason}</div>
@@ -449,7 +497,7 @@ export function SecurityEnhanced({ data }) {
                 </div>
               ) : (
                 <div style={{ fontSize: '12px', color: '#2A7A5E' }}>
-                  No sensitive files exposed ({sensitive_files.paths_checked} paths checked)
+                  No sensitive files exposed{isNum(sensitive_files.paths_checked) ? ` (${sensitive_files.paths_checked} paths checked)` : ''}
                 </div>
               )}
             </>
@@ -469,7 +517,7 @@ export function SecurityEnhanced({ data }) {
                   <div style={{ fontSize: '11px', color: '#C24B3A', fontWeight: '700', marginBottom: '4px' }}>
                     {supabase_exposure.accessible_count} anon-readable table(s):
                   </div>
-                  {supabase_exposure.accessible_tables.map((tbl, i) => (
+                  {(supabase_exposure.accessible_tables || []).map((tbl, i) => (
                     <div key={i} style={{ fontSize: '11px', color: '#E69B8F', fontFamily: "'JetBrains Mono','SF Mono',monospace" }}>{tbl}</div>
                   ))}
                   <MitreRow mitre={supabase_exposure.mitre} />

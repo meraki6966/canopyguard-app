@@ -227,7 +227,10 @@ const isFalse=v=>typeof v==="boolean"?!v:null;
 
 // ── PDF (compact) ──
 // ── PDF (compact) ──
-function generatePDF(r, email, t) {
+// Exported for the PDF tests; the page reaches it through downloadPDF. The cost
+// is dev-only: edits to this file full-reload instead of hot-refreshing.
+// eslint-disable-next-line react-refresh/only-export-components
+export function generatePDF(r, email, t) {
   const scores = computeScores(r);
   const sc = p => p >= 70 ? "#43A047" : p >= 40 ? "#F9A825" : "#E53935";
   const sec = r?.security_roots;

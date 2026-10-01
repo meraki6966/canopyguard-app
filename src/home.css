@@ -102,6 +102,7 @@ html{scroll-behavior:smooth}
 .cat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:26px 22px;position:relative}
 .cat-score{font-family:'Space Mono',monospace;font-size:2.6rem;font-weight:700;line-height:1;margin-bottom:4px}
 .cat-score.good{color:var(--good)}.cat-score.warn{color:var(--warn)}.cat-score.crit{color:var(--crit)}
+.cat-score-bar{display:inline-block;width:0.6em;height:0.1em;background:currentColor;vertical-align:middle}
 .cat-label{font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--mid);margin-bottom:14px}
 .cat-name{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--forest);margin-bottom:8px}
 .cat-desc{font-size:0.8rem;color:#5A7A62;line-height:1.55;margin-bottom:14px}

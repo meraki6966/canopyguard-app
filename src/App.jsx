@@ -59,14 +59,14 @@ function headerFixTabs(header,value){
     {label:"Vercel",code:`// vercel.json\n{\n  "headers": [{\n    "source": "/(.*)",\n    "headers": [{\n      "key": "${header}",\n      "value": "${jsonValue}"\n    }]\n  }]\n}`},
     {label:"Cloudflare",code:`# _headers file\n/*\n  ${header}: ${value}`},
     {label:"Apache",code:`# .htaccess\nHeader always set ${header} "${value}"`},
-    {label:"Express",code:`// Option A — helmet (recommended)\nimport helmet from "helmet";\napp.use(helmet());\n\n// Option B — set it directly\napp.use((req, res, next) => {\n  res.setHeader("${header}", "${jsonValue}");\n  next();\n});`},
+    {label:"Express",code:`// Option A: helmet (recommended)\nimport helmet from "helmet";\napp.use(helmet());\n\n// Option B: set it directly\napp.use((req, res, next) => {\n  res.setHeader("${header}", "${jsonValue}");\n  next();\n});`},
   ];
 }
 
 // header name → { snippet key, desc, value, note } — mirrors HEADER_FIXES and
 // HEADER_NOTES in the engine's fixGenerator.
 const HEADER_FIX_SPECS={
-  "Content-Security-Policy":{key:"csp",desc:"Add this header:",value:"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https:;",note:"This starter policy keeps 'unsafe-inline' so existing inline scripts and styles keep working. Once you have moved inline code into files, drop 'unsafe-inline' — that is what makes CSP actually stop XSS."},
+  "Content-Security-Policy":{key:"csp",desc:"Add this header:",value:"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https:;",note:"This starter policy keeps 'unsafe-inline' so existing inline scripts and styles keep working. Once you have moved inline code into files, drop 'unsafe-inline'. That is what makes CSP actually stop XSS."},
   "Strict-Transport-Security":{key:"hsts",desc:"Force HTTPS:",value:"max-age=31536000; includeSubDomains",note:"includeSubDomains applies to every subdomain, so confirm all of them serve HTTPS before publishing. HSTS is cached by browsers for the full max-age and cannot be undone quickly."},
   "X-Frame-Options":{key:"xframe",desc:"Prevent iframe embedding:",value:"DENY",note:"DENY blocks all framing. If a partner or payment provider legitimately embeds your page, use SAMEORIGIN or a CSP frame-ancestors directive naming them instead."},
   "X-Content-Type-Options":{key:"xcontent",desc:"Prevent MIME sniffing:",value:"nosniff"},
@@ -86,7 +86,7 @@ const CONTENT_FIX_SNIPPETS={
   faq_schema:{title:"FAQ Schema",desc:"Add to your page <head>:",code:`<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "FAQPage",\n  "mainEntity": [\n    {\n      "@type": "Question",\n      "name": "Your question?",\n      "acceptedAnswer": {\n        "@type": "Answer",\n        "text": "Your answer."\n      }\n    }\n  ]\n}\n</script>`,confidence:"template"},
   org_schema:{title:"Organization Schema",desc:"Add to your page <head>:",code:`<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "Your Business",\n  "url": "https://yourdomain.com",\n  "description": "What you do."\n}\n</script>`,confidence:"template"},
   meta_desc:{title:"Meta Description",desc:"Add inside <head>:",code:`<meta name="description" content="Your description in 150-160 characters.">`,confidence:"template"},
-  h1:{title:"Add an H1 heading",desc:"Give the page one H1 that says what it is about:",code:`<h1>What this page is about</h1>`,note:"A suggestion to review, not a replacement to paste in unread — an H1 carries real on-page SEO weight and should read in your own voice. Scan again on the current engine to get wording derived from this page's own title and headings.",confidence:"template"},
+  h1:{title:"Add an H1 heading",desc:"Give the page one H1 that says what it is about:",code:`<h1>What this page is about</h1>`,note:"A suggestion to review, not a replacement to paste in unread. An H1 carries real on-page SEO weight and should read in your own voice. Scan again on the current engine to get wording derived from this page's own title and headings.",confidence:"template"},
   canonical:{title:"Canonical URL",desc:"Add inside <head>:",code:`<link rel="canonical" href="https://yourdomain.com/">`,confidence:"template"},
   robots_ai:{title:"AI-Aware robots.txt",desc:"Replace your robots.txt:",code:`User-agent: *\nAllow: /\n\nUser-agent: GPTBot\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nSitemap: https://yourdomain.com/sitemap.xml`,confidence:"template"},
 };
@@ -300,7 +300,7 @@ export function generatePDF(r, email, t) {
       seRow("CSP quality", nm(http.csp_quality)),
       http.server_disclosure ? `<div class="se-row"><span class="se-row-label">Server header</span><span class="se-row-val">${esc(http.server_header_value)}<span class="mitre-tag">ATT&amp;CK ${MITRE_TECHNIQUES.server_disclosure.id} · ${esc(MITRE_TECHNIQUES.server_disclosure.tactic)}</span></span></div>` : "",
       http.powered_by_disclosure ? seRow("X-Powered-By", "disclosed") : "",
-      http.cors_wildcard ? seRow("CORS wildcard", http.cors_credentialed_wildcard ? "with credentials — critical" : "detected") : "",
+      http.cors_wildcard ? seRow("CORS wildcard", http.cors_credentialed_wildcard ? "with credentials (critical)" : "detected") : "",
       http.dangerous_methods?.length > 0 ? seRow("Dangerous methods", http.dangerous_methods.join(", ")) : "",
       seRow("security.txt", yesNo(http.security_txt_present, "Present", "Absent")),
     ]);
@@ -360,7 +360,7 @@ export function generatePDF(r, email, t) {
       domain_email.spf?.all_strength ? seRow("SPF enforcement", domain_email.spf.all_strength) : "",
       seRow("DMARC policy", domain_email.dmarc ? (domain_email.dmarc.policy || "absent") : NM),
       seRow("Registrar lock", domain_email.registrar?.checked === false ? NM : yesNo(domain_email.registrar?.registrar_locked, "Locked", "Unlocked")),
-      num(domain_email.registrar?.days_until_expiration) ? seRow("Expires in", `${domain_email.registrar.days_until_expiration} days${domain_email.registrar.hijacking_risk ? " — hijacking risk" : ""}`) : "",
+      num(domain_email.registrar?.days_until_expiration) ? seRow("Expires in", `${domain_email.registrar.days_until_expiration} days${domain_email.registrar.hijacking_risk ? " (hijacking risk)" : ""}`) : "",
     ]);
     const filesMeasured = sensitive_files && sensitive_files.probes_answered !== 0 && num(sensitive_files.accessible_count);
     layer("Sensitive Files", filesMeasured ? sensitive_files : null, sensitive_files => [
@@ -374,15 +374,15 @@ export function generatePDF(r, email, t) {
         : supabase_exposure.accessible_count > 0
           ? seRow("CRITICAL", `anon-readable: ${(supabase_exposure.accessible_tables || []).join(", ")}`)
           : supabase_exposure.applicable
-            ? seRow("Status", `RLS enforced — ${supabase_exposure.tables_checked} common tables blocked`)
-            : seRow("Status", "Project detected, no anon key found — not testable"),
+            ? seRow("Status", `RLS enforced: ${supabase_exposure.tables_checked} common tables blocked`)
+            : seRow("Status", "Project detected, no anon key found (not testable)"),
     ]);
   }
 
   const seCrossRefs = se?.cross_reference || [];
   const seXrefHtml = seCrossRefs.map(f => {
     const sev = ["critical", "high", "medium"].includes(f.severity) ? f.severity : "medium";
-    return `<div class="se-xref ${sev}"><span class="se-xref-sev">Cross-Reference Finding — ${esc(f.severity)}</span><div class="se-xref-msg">${esc(f.message)}</div></div>`;
+    return `<div class="se-xref ${sev}"><span class="se-xref-sev">Cross-Reference Finding: ${esc(f.severity)}</span><div class="se-xref-msg">${esc(f.message)}</div></div>`;
   }).join("");
 
   const domainHtml = esc(r?.target_domain);
@@ -410,7 +410,7 @@ export function generatePDF(r, email, t) {
   <div><div class="logo">CANOPY <span>GUARD</span></div><div style="font-size:12px;font-weight:700;color:#555;margin-top:4px">${domainHtml} · ${t("pdf.title")}</div></div>
   <div class="meta">${t("ui.security_posture", "Security Posture")} · ${shortId}</div>
 </div>
-<h2>${t("ui.security_posture_5layer", "Security Posture — 10 Layer Analysis")}</h2>
+<h2>${t("ui.security_posture_5layer", "Security Posture: 10 Layer Analysis")}</h2>
 ${seXrefHtml}
 <div class="se-grid">${seLayers.join("")}</div>
 ` : "";
@@ -663,7 +663,7 @@ function MethodologyPage({onBack}){
   <S><H>SEO Score (0 to 100) · 14 Signals</H><P>Measures how well search engines can crawl, index, and rank your site. Scoring 100 requires fast response, 1500+ words, 20+ internal links, perfect meta tags, and a sitemap.</P><W label="Crawlable" val="0.10"/><W label="Exactly 1 H1 (multiple penalized)" val="0.10"/><W label="Meta description + ideal length (120-160)" val="0.10"/><W label="Title tag + ideal length (30-60)" val="0.10"/><W label="Canonical URL match" val="0.08"/><W label="Viewport meta tag" val="0.05"/><W label="HTML lang attribute" val="0.03"/><W label="Image alt text coverage" val="0.08"/><W label="Word count (gradient: 200/500/1500+)" val="0.10"/><W label="Internal links (gradient: 5/10/20+)" val="0.10"/><W label="Sitemap.xml exists" val="0.06"/><W label="Response time (under 1s/3s/3s+)" val="0.05"/><W label="H2 heading structure" val="0.05"/></S>
   <S><H>AEO Score (0 to 100) · 10 Signals</H><P>Measures how well AI answer engines can extract and cite your content. Requires multiple schema types, 5+ FAQ items, and strong Q&A density for full marks.</P><W label="Any JSON-LD present" val="0.10"/><W label="Organization schema" val="0.12"/><W label="FAQ schema" val="0.10"/><W label="FAQ item count (1/3/5+)" val="0.12"/><W label="LocalBusiness schema" val="0.08"/><W label="Breadcrumb schema" val="0.06"/><W label="Schema type diversity (1/2/4+)" val="0.10"/><W label="Zero validation errors" val="0.10"/><W label="Q&A density" val="0.12"/><W label="JSON-LD block count (1/2/3+)" val="0.10"/></S>
   <S><H>GEO Score (0 to 100) · 8 Signals</H><P>Measures how generative AI models chunk, retrieve, and cite your pages. Based on how RAG systems process content.</P><W label="Chunking efficiency" val="0.25"/><W label="Citation precision" val="0.20"/><W label="llms.txt present + length bonus" val="0.23"/><W label="Content depth by word count" val="0.10"/><W label="Lists present" val="0.05"/><W label="Tables present" val="0.04"/><W label="Heading-to-content ratio" val="0.08"/><W label="Baseline reachability" val="0.05"/></S>
-  <S><H>Security Score (0 to 100) · 73 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.3 blends in additional checks across ten enhanced layers — TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, path/exposure probing, malware &amp; reputation (Google Safe Browsing + blacklists), expanded footprint (Subresource Integrity, cookie flags, full TLS cipher enumeration, certificate transparency), DNS &amp; email depth (SPF mechanisms, DMARC policy, registrar lock + expiration), sensitive-file exposure, and Supabase anonymous exposure (anonymous PostgREST reads against a Supabase anon key shipped in the site's own code) — for 73 security signals in total. Each finding identifies the exposure condition associated with a MITRE ATT&amp;CK technique.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
+  <S><H>Security Score (0 to 100) · 73 Signals</H><P>External security posture. Individual headers weighted by protective scope. Scoring 100 requires all headers, HSTS 1yr+, HTTPS redirect, balanced AI policy, and secure cookies. The 15 weighted signals below form the base posture score; v3.3 blends in additional checks across ten enhanced layers: TLS certificate depth, DNS security quality, HTTP response analysis, HTML source parsing, path/exposure probing, malware &amp; reputation (Google Safe Browsing + blacklists), expanded footprint (Subresource Integrity, cookie flags, full TLS cipher enumeration, certificate transparency), DNS &amp; email depth (SPF mechanisms, DMARC policy, registrar lock + expiration), sensitive-file exposure, and Supabase anonymous exposure (anonymous PostgREST reads against a Supabase anon key shipped in the site's own code). That brings the total to 73 security signals. Each finding identifies the exposure condition associated with a MITRE ATT&amp;CK technique.</P><W label="TLS valid" val="0.10"/><W label="HSTS + max-age bonus" val="0.08"/><W label="HTTPS redirect" val="0.08"/><W label="Content-Security-Policy" val="0.08"/><W label="Strict-Transport-Security" val="0.06"/><W label="X-Frame-Options" val="0.05"/><W label="X-Content-Type-Options" val="0.04"/><W label="Referrer-Policy" val="0.04"/><W label="Permissions-Policy" val="0.04"/><W label="Cookie security flags" val="0.06"/><W label="AI crawl policy" val="0.08"/><W label="Bot awareness" val="0.06"/><W label="Rate limiting" val="0.04"/><W label="No exposed endpoints" val="0.08"/><W label="Data provenance" val="0.04"/></S>
   <S style={{borderColor:C.goldBorder}}><H>Open Methodology</H><P>This scoring system is published so anyone can verify how their score was calculated. If you believe a weight is wrong or a signal is missing, reach out. The methodology improves from real-world feedback.</P><P>Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™</P></S>
   </div></div>}
 

@@ -20,7 +20,7 @@ External security posture visible from a public URL, across 23 modules and ten a
 
 - Malware and reputation scanning: checks the domain against the Google Safe Browsing API and common blacklist services, reporting a status of Clean, Flagged, or Blacklisted with the specific reason when flagged.
 - Expanded footprint analysis: Subresource Integrity (SRI) on every external script and link tag, Secure and HttpOnly flags on cookies, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence.
-- Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (not just present or absent), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration — domains expiring within 60 days are flagged as a hijacking risk.
+- Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (not just present or absent), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration. Domains expiring within 60 days are flagged as a hijacking risk.
 - Exposed sensitive file detection: passive checks for public accessibility of common sensitive paths including /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin (without authentication challenge); any accessible path is reported as Critical.
 - Supabase anonymous exposure detection: when a site ships a Supabase project URL and public anon key in its own client code, Canopy Guard replays that public key read-only against common table names (users, profiles, customers, leads, accounts, orders, subscriptions, payments). Any table that returns live rows to an anonymous request is reported as Critical, indicating Row Level Security is disabled or misconfigured. Identifies the exposure condition associated with T1552 (Unsecured Credentials) and T1213 (Data from Information Repositories).
 
@@ -59,7 +59,7 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 
 ## Built By
 
-- Adam McClarin — CISSP, Microsoft Azure AI Engineer, dual master's degrees in cybersecurity, 20 years across IT, security, and AI
+- Adam McClarin: CISSP, Microsoft Azure AI Engineer, dual master's degrees in cybersecurity, 20 years across IT, security, and AI
 - Meraki is Love, LLC (Soulful Tech)
 - Friendswood, Texas
 - Studio: https://merakislove.com

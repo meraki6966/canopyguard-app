@@ -176,7 +176,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                     <path d="M12 7v5M12 12l-5.5 5.5M12 12l5.5 5.5" />
                   </svg>
                 </div>
-                <div className="geo-card-title" style={{ color: "var(--gold)" }}>GEO — The new frontier</div>
+                <div className="geo-card-title" style={{ color: "var(--gold)" }}>GEO: The new frontier</div>
                 <div className="geo-card-body" style={{ color: "var(--tod)" }}>Generative Engine Optimization. Are ChatGPT, Gemini, and Perplexity finding and citing your site? This is the newest and most overlooked visibility gap.</div>
               </div>
               <div className="geo-card">
@@ -219,7 +219,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             <div className="cat-card">
               <div className="cat-label">Category 01</div>
               <div className="cat-name">SEO</div>
-              <div className="cat-score warn">—</div>
+              <div className="cat-score warn" aria-hidden="true"><span className="cat-score-bar" /></div>
               <div className="cat-desc">The foundation. Technical signals that help Google find, crawl, and rank your site. Most small business sites have fixable issues here costing them traffic every day.</div>
               <ul className="cat-checks">
                 <li>Title tags and meta descriptions</li>
@@ -232,7 +232,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             <div className="cat-card">
               <div className="cat-label">Category 02</div>
               <div className="cat-name">AEO</div>
-              <div className="cat-score warn">—</div>
+              <div className="cat-score warn" aria-hidden="true"><span className="cat-score-bar" /></div>
               <div className="cat-desc">Answer Engine Optimization. Is your content structured to answer direct questions? Voice search, AI answer boxes, and featured snippets favor sites built for this.</div>
               <ul className="cat-checks">
                 <li>FAQ schema and Q&A structure</li>
@@ -247,7 +247,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="our-edge">OUR EDGE</div>
               <div className="cat-label">Category 03</div>
               <div className="cat-name">GEO</div>
-              <div className="cat-score good">—</div>
+              <div className="cat-score good" aria-hidden="true"><span className="cat-score-bar" /></div>
               <div className="cat-desc">Generative Engine Optimization. The newest and most overlooked category. Are ChatGPT, Gemini, Claude, and Perplexity finding and citing your site in their answers?</div>
               <ul className="cat-checks">
                 <li>AI citation readiness</li>
@@ -260,7 +260,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             <div className="cat-card">
               <div className="cat-label">Category 04</div>
               <div className="cat-name">Security</div>
-              <div className="cat-score crit">—</div>
+              <div className="cat-score crit" aria-hidden="true"><span className="cat-score-bar" /></div>
               <div className="cat-desc">MITRE ATT&CK-aligned security findings. Security gaps do not just put your site at risk. They erode trust signals that directly affect your rankings.</div>
               <ul className="cat-checks">
                 <li>HTTPS and valid SSL certificate</li>
@@ -282,21 +282,21 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <p className="section-sub">Direct answers to the four questions every audit raises. Built so AI assistants can quote them cleanly.</p>
           <dl style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18, margin: 0 }}>
             <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
-              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>SEO — Search Engine Optimization</dt>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>SEO: Search Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>SEO is how well search engines like Google can crawl, understand, and rank your website.</p>
                 <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard scores your title tags, meta descriptions, heading structure, canonical tags, and schema markup. Strong SEO is the foundation that makes every other visibility channel work. Most small business sites quietly lose traffic to fixable technical issues here.</p>
               </dd>
             </div>
             <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
-              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>AEO — Answer Engine Optimization</dt>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>AEO: Answer Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>AEO is how well your content is structured to be selected as the direct answer to a question.</p>
                 <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It powers voice search, Google AI Overviews, and featured snippets. Canopy Guard checks your FAQ schema, question-and-answer density, and entity clarity. Sites built for AEO get quoted in the answer box; sites that are not get skipped entirely.</p>
               </dd>
             </div>
             <div style={{ background: "var(--white)", border: "1px solid var(--gold)", borderRadius: "var(--r-lg)", padding: 24 }}>
-              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-dim)", marginBottom: 10 }}>GEO — Generative Engine Optimization</dt>
+              <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-dim)", marginBottom: 10 }}>GEO: Generative Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>GEO is how reliably generative AI assistants like ChatGPT, Gemini, and Perplexity can find and cite your site.</p>
                 <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It depends on clean content chunking, citation-ready facts, and an llms.txt file. Canopy Guard scores chunking efficiency, citation precision, and AI-crawler access. It is the newest and most overlooked visibility gap in 2026.</p>
@@ -481,7 +481,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">What does the security scan actually check?</div>
-              <div className="faq-a">Across ten security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus five expanded checks: <strong>malware and reputation</strong> (Google Safe Browsing and common blacklists, reported as Clean, Flagged, or Blacklisted); an <strong>expanded footprint</strong> (Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence); <strong>DNS and email depth</strong> (exact SPF mechanisms and qualifier strength, DMARC policy of none, quarantine, or reject, and registrar lock with days until expiration — domains expiring within 60 days are flagged as a hijacking risk); <strong>exposed sensitive file detection</strong> for paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, where any publicly accessible path is reported as Critical; and <strong>Supabase anonymous exposure detection</strong>, which replays a Supabase anon key shipped in the site's own client code, read-only, against common table names and reports any table that returns live rows to an anonymous request as Critical (Row Level Security disabled or misconfigured). Every check is passive and read-only.</div>
+              <div className="faq-a">Across ten security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus five expanded checks: <strong>malware and reputation</strong> (Google Safe Browsing and common blacklists, reported as Clean, Flagged, or Blacklisted); an <strong>expanded footprint</strong> (Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence); <strong>DNS and email depth</strong> (exact SPF mechanisms and qualifier strength, DMARC policy of none, quarantine, or reject, and registrar lock with days until expiration, with domains expiring within 60 days flagged as a hijacking risk); <strong>exposed sensitive file detection</strong> for paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, where any publicly accessible path is reported as Critical; and <strong>Supabase anonymous exposure detection</strong>, which replays a Supabase anon key shipped in the site's own client code, read-only, against common table names and reports any table that returns live rows to an anonymous request as Critical (Row Level Security disabled or misconfigured). Every check is passive and read-only.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">My score is low. What do I do next?</div>

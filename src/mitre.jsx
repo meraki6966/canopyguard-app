@@ -29,7 +29,7 @@ export function MitreBadge({ technique, style }) {
   if (!technique) return null;
   return (
     <span
-      title={`MITRE ATT&CK ${technique.id} — ${technique.name} (${technique.tactic})`}
+      title={`MITRE ATT&CK ${technique.id}: ${technique.name} (${technique.tactic})`}
       style={{
         display: "inline-flex",
         alignItems: "center",

@@ -215,18 +215,18 @@
     "fix_confidence": {
       "derived": "DERIVED",
       "template": "TEMPLATE",
-      "derived_hint": "Built from this domain's own records, certificate or headers — safe to apply as written.",
-      "template_hint": "A starter you must fill in — we do not know your providers, so this needs your own values first.",
-      "template_callout": "Starter template — a starting point, not a finished fix. Check it against your own setup before publishing.",
+      "derived_hint": "Built from this domain's own records, certificate or headers. Safe to apply as written.",
+      "template_hint": "A starter you must fill in. We do not know your providers, so this needs your own values first.",
+      "template_callout": "Starter template: a starting point, not a finished fix. Check it against your own setup before publishing.",
       "generated": "GENERATED",
-      "generated_hint": "Written by a language model from this page's own text, then checked for valid structure — not for accuracy. Read it before publishing.",
-      "generated_callout": "Model-generated — validated for structure, not for truth. Read every line against your live page before publishing: schema that claims something the page does not say is a structured-data violation."
+      "generated_hint": "Written by a language model from this page's own text, then checked for valid structure, not for accuracy. Read it before publishing.",
+      "generated_callout": "Model-generated. Validated for structure, not for truth. Read every line against your live page before publishing: schema that claims something the page does not say is a structured-data violation."
     },
     "email_dns_fixes": "Email, DNS & Cookie Fixes",
     "email_dns_fixes_desc": "Generated from this domain's own SPF and DMARC records, certificate issuer and cookies.",
     "aeo_gen": {
       "title": "GENERATE FAQ SCHEMA & META DESCRIPTION",
-      "desc": "Written from this page's own content, then validated. Runs only when you ask — it is the one part of this audit that is not automatic.",
+      "desc": "Written from this page's own content, then validated. Runs only when you ask. It is the one part of this audit that is not automatic.",
       "cta": "Generate these now",
       "loading": "Reading your page and writing the fixes…",
       "done": "Generated. They are in the FAQ Schema and Meta Description rows above.",
@@ -253,7 +253,7 @@
       "exposed_endpoints_title": "Open Door for Scrapers & Botnets",
       "exposed_endpoints_desc": "Critical ports, database endpoints, or server paths are exposed to the public web with weak rate limits. This invites aggressive scraper bots and botnets to exploit logic gaps, scrape proprietary data, and degrade server performance.",
       "foundation_crack_title": "The Foundation Crack",
-      "foundation_crack_desc": "Basic security configurations are missing—specifically critical HTTP response headers (like CSP, HSTS, X-Frame-Options) and basic TLS verification. This leaves your site vulnerable to iframe hijacking, XSS, and SEO-damaging warnings."
+      "foundation_crack_desc": "Basic security configurations are missing, specifically critical HTTP response headers (like CSP, HSTS, X-Frame-Options) and basic TLS verification. This leaves your site vulnerable to iframe hijacking, XSS, and SEO-damaging warnings."
     },
     "status": {
       "critical": "Critical Risk",

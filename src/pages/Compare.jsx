@@ -18,7 +18,7 @@ const COLORS = {
 
 const TOOLS = [
   { id: 'canopy',   label: 'Canopy Guard',         sub: 'Free',          highlight: true  },
-  { id: 'seo',      label: 'Ahrefs / SEMrush',     sub: '$99–$499/mo',   highlight: false },
+  { id: 'seo',      label: 'Ahrefs / SEMrush',     sub: '$99 to $499/mo',   highlight: false },
   { id: 'gsc',      label: 'Google Search Console', sub: 'Free',         highlight: false },
   { id: 'mozilla',  label: 'Mozilla Observatory',   sub: 'Free',         highlight: false },
   { id: 'ssllabs',  label: 'SSL Labs',              sub: 'Free',         highlight: false },
@@ -30,13 +30,13 @@ const FEATURE_GROUPS = [
     label: 'Visibility',
     features: [
       { name: 'SEO Analysis',                    values: { canopy:'y', seo:'y', gsc:'p', mozilla:'n', ssllabs:'n', hubspot:'p' } },
-      { name: 'AEO — Answer Engine Optimization', values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'How AI tools like ChatGPT cite your content' },
-      { name: 'GEO — Generative Engine Optimization', values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'How AI models chunk and retrieve your pages' },
+      { name: 'AEO: Answer Engine Optimization', values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'How AI tools like ChatGPT cite your content' },
+      { name: 'GEO: Generative Engine Optimization', values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'How AI models chunk and retrieve your pages' },
       { name: 'llms.txt Detection',              values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true },
     ],
   },
   {
-    label: 'Security — Headers',
+    label: 'Security: Headers',
     features: [
       { name: 'Security Header Presence',        values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'p', hubspot:'p' } },
       { name: 'CSP Directive Quality Scoring',   values: { canopy:'y', seo:'n', gsc:'n', mozilla:'p', ssllabs:'n', hubspot:'n' }, desc: 'Scores what the directives actually say, not just presence' },
@@ -45,7 +45,7 @@ const FEATURE_GROUPS = [
     ],
   },
   {
-    label: 'Security — TLS',
+    label: 'Security: TLS',
     features: [
       { name: 'Certificate Expiry Countdown',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'y', hubspot:'n' }, desc: 'Days remaining, not just valid/invalid' },
       { name: 'Cipher Suite Quality',            values: { canopy:'y', seo:'n', gsc:'n', mozilla:'p', ssllabs:'y', hubspot:'n' }, desc: 'Detects RC4, 3DES, EXPORT, NULL ciphers' },
@@ -54,16 +54,16 @@ const FEATURE_GROUPS = [
     ],
   },
   {
-    label: 'Security — DNS',
+    label: 'Security: DNS',
     features: [
-      { name: 'SPF Policy Quality Scoring',      values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: '-all vs ~all vs +all — not just presence' },
+      { name: 'SPF Policy Quality Scoring',      values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: '-all vs ~all vs +all, not just presence' },
       { name: 'DMARC Policy Level',              values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'n', hubspot:'n' }, desc: 'reject vs quarantine vs none' },
       { name: 'CAA Record Detection',            values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'y', hubspot:'n' } },
       { name: 'Subdomain Takeover Detection',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true },
     ],
   },
   {
-    label: 'Security — HTML & Paths',
+    label: 'Security: HTML & Paths',
     features: [
       { name: 'HTML Source Security Parsing',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'CSRF tokens, mixed content, inline scripts, comment disclosures' },
       { name: 'Vulnerable Library Detection',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'Fingerprints CDN URLs against known CVE versions' },
@@ -108,7 +108,7 @@ export default function Compare() {
       {/* Hero */}
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '72px 24px 48px', textAlign: 'center' }}>
         <div style={{ display:'inline-block', padding:'3px 12px', background:'rgba(200,169,110,0.12)', border:`1px solid ${COLORS.goldDim}`, borderRadius:'4px', fontSize:'11px', fontWeight:'700', letterSpacing:'0.1em', textTransform:'uppercase', color:COLORS.gold, marginBottom:'20px' }}>
-          v3.3.0 — 105 Signals
+          v3.3.0 · 105 Signals
         </div>
         <h1 style={{ fontSize:'clamp(28px, 5vw, 50px)', fontWeight:'800', lineHeight:'1.1', margin:'0 0 18px', color:COLORS.white }}>
           One scan.<br /><span style={{ color: COLORS.gold }}>Nothing else comes close.</span>
@@ -183,7 +183,7 @@ export default function Compare() {
           Run Your Free Audit
         </a>
         <div style={{ marginTop:'14px', fontSize:'11px', color:'rgba(248,248,248,0.3)' }}>
-          Built by Adam McClarin, CISSP — Meraki is Love / Soulful Tech
+          Built by Adam McClarin, CISSP · Meraki is Love / Soulful Tech
         </div>
       </div>
 

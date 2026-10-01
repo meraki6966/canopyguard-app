@@ -178,7 +178,7 @@ export function SecurityEnhanced({ data }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
         <span style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C8A96E', whiteSpace: 'nowrap' }}>
-          Security Posture — 10 Layer Analysis
+          Security Posture: 10 Layer Analysis
         </span>
         <div style={{ flex: 1, height: '1px', background: 'rgba(200,169,110,0.2)' }} />
       </div>
@@ -202,7 +202,7 @@ export function SecurityEnhanced({ data }) {
                 <span style={{ fontSize: '14px', marginTop: '1px' }}>⚠</span>
                 <div>
                   <div style={{ fontSize: '11px', fontWeight: '800', color: colors.badge, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '3px' }}>
-                    Cross-Reference Finding — {finding.severity}
+                    Cross-Reference Finding: {finding.severity}
                   </div>
                   <div style={{ fontSize: '13px', color: colors.text, lineHeight: '1.5' }}>
                     {finding.message}
@@ -285,7 +285,7 @@ export function SecurityEnhanced({ data }) {
               )}
               {http.cors_wildcard && (
                 <div style={{ fontSize: '11px', color: http.cors_credentialed_wildcard ? '#C24B3A' : '#C8A96E', marginBottom: '4px' }}>
-                  CORS wildcard{http.cors_credentialed_wildcard ? ' with credentials — critical' : ' detected'}
+                  CORS wildcard{http.cors_credentialed_wildcard ? ' with credentials (critical)' : ' detected'}
                 </div>
               )}
               {http.dangerous_methods?.length > 0 && (
@@ -309,7 +309,7 @@ export function SecurityEnhanced({ data }) {
                   </div>
                   {html.vulnerable_libraries.map((lib, i) => (
                     <div key={i} style={{ fontSize: '11px', color: '#888', marginBottom: '2px' }}>
-                      {lib.lib} {lib.version} — {lib.cve}
+                      {lib.lib} {lib.version}: {lib.cve}
                     </div>
                   ))}
                 </div>
@@ -467,10 +467,10 @@ export function SecurityEnhanced({ data }) {
               {domain_email.registrar?.hijacking_risk && (
                 <div style={{ fontSize: '11px', color: '#C24B3A', marginTop: '4px' }}>
                   {domain_email.registrar.days_until_expiration < 0
-                    ? 'Domain expired — hijacking risk'
+                    ? 'Domain expired (hijacking risk)'
                     : domain_email.registrar.expiring_soon
-                      ? 'Expires within 60 days — hijacking risk'
-                      : 'Transfer lock missing — hijacking risk'}
+                      ? 'Expires within 60 days (hijacking risk)'
+                      : 'Transfer lock missing (hijacking risk)'}
                 </div>
               )}
               <MitreRow mitre={domain_email.mitre} />
@@ -524,11 +524,11 @@ export function SecurityEnhanced({ data }) {
                 </div>
               ) : supabase_exposure.applicable ? (
                 <div style={{ fontSize: '12px', color: '#2A7A5E' }}>
-                  RLS enforced — {supabase_exposure.tables_checked} common tables all blocked
+                  RLS enforced: {supabase_exposure.tables_checked} common tables all blocked
                 </div>
               ) : (
                 <div style={{ fontSize: '12px', color: '#888' }}>
-                  Project detected, no anon key in shipped code — not testable
+                  Project detected, no anon key in shipped code (not testable)
                 </div>
               )}
             </>

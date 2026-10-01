@@ -7,3 +7,7 @@ a { color: inherit; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #0A0A0A; }
 ::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
+
+/* No italics anywhere: emphasis comes from color or weight. Covers em, i and
+   cite in blog posts and any copy added later. */
+em, i, cite, address, dfn { font-style: normal; }

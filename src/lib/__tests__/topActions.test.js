@@ -138,3 +138,45 @@ describe("action strings", () => {
     for (const text of [...Object.values(ACTION_TITLES), ...Object.values(ACTION_DESCS)]) expect(text).not.toContain("—");
   });
 });
+
+// A scan of a page path (example.com/services): domain findings name the
+// host, page findings name the page. Found 10/1/2026 when a scan of
+// merakislove.com/demos/keelhouse said "merakislove.com/demos/keelhouse has
+// no CAA record".
+describe("host and page in action text", () => {
+  const render = (a) => (a.desc || "").replace(/\{\{(\w+)\}\}/g, (_, k) => a.params[k]);
+  const pathScan = () => {
+    const r = everythingBroken();
+    r.target_domain = "example.com/services";
+    r.security_enhanced.dns.caa_present = false;
+    return r;
+  };
+
+  it("names the host on a domain finding", () => {
+    const caa = rankActions(pathScan()).find((a) => a.key === "caa");
+    expect(caa).toBeTruthy();
+    expect(render(caa)).toBe("example.com has no CAA record, so any certificate authority can issue a certificate for it.");
+  });
+
+  it("names the page on a page finding", () => {
+    const h1 = rankActions(pathScan()).find((a) => a.key === "h1");
+    expect(h1).toBeTruthy();
+    expect(render(h1)).toContain("example.com/services has no H1 heading");
+  });
+
+  it("reads the same as before for a bare domain", () => {
+    const r = everythingBroken();
+    r.target_domain = "example.com";
+    const h1 = rankActions(r).find((a) => a.key === "h1");
+    expect([h1.params.domain, h1.params.page]).toEqual(["example.com", "example.com"]);
+  });
+
+  it("uses the same placeholders in the English locale as in the defaults", () => {
+    for (const [k, v] of Object.entries(ACTION_DESCS)) {
+      const loc = en.dashboard.actions[`${k}_desc`];
+      if (loc === undefined) continue;
+      const ph = (s) => [...s.matchAll(/\{\{(\w+)\}\}/g)].map((m) => m[1]).sort();
+      expect([k, ph(loc)]).toEqual([k, ph(v)]);
+    }
+  });
+});

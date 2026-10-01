@@ -55,9 +55,9 @@ const DESCS = {
   cert_expiring_one: "The TLS certificate for {{domain}} expires in 1 day, and browsers will block the site once it lapses.",
   cert_expiring_today: "The TLS certificate for {{domain}} expires today, and browsers will block the site once it lapses.",
   cert_expired: "The TLS certificate for {{domain}} has expired, so browsers block the site behind a security warning.",
-  homepage_error_http: "Your homepage at {{domain}} returned HTTP {{status}} to our scanner, so visitors and search engines may see an error instead of your site.",
-  homepage_error_http_nostatus: "Your homepage at {{domain}} returned an HTTP error to our scanner, so visitors and search engines may see an error instead of your site.",
-  homepage_error_hosting: "Your homepage at {{domain}} shows a hosting provider's placeholder or error page instead of your site.",
+  homepage_error_http: "Your homepage at {{page}} returned HTTP {{status}} to our scanner, so visitors and search engines may see an error instead of your site.",
+  homepage_error_http_nostatus: "Your homepage at {{page}} returned an HTTP error to our scanner, so visitors and search engines may see an error instead of your site.",
+  homepage_error_hosting: "Your homepage at {{page}} shows a hosting provider's placeholder or error page instead of your site.",
   blocklisted_lists: "{{domain}} is listed on {{lists}}, so mail servers and browsers may treat it as unsafe.",
   blocklisted_flagged: "A malware or reputation check flagged {{domain}}, so browsers and mail servers may treat it as unsafe.",
   exposed_files: "{{n}} sensitive files on {{domain}} can be downloaded by anyone, including {{example}}.",
@@ -67,27 +67,27 @@ const DESCS = {
   database_readable_one: "1 database table behind {{domain}} returns live rows to anyone without logging in.",
   subdomain_takeover: "{{n}} subdomains of {{domain}} point at services that no longer exist, so someone else could claim them, starting with {{example}}.",
   subdomain_takeover_one: "The subdomain {{example}} points at a service that no longer exists, so someone else could claim it.",
-  vulnerable_library: "{{domain}} loads {{lib}} {{version}}, which has a known vulnerability ({{cve}}).",
-  vulnerable_library_nocve: "{{domain}} loads {{lib}} {{version}}, which has a known vulnerability.",
+  vulnerable_library: "{{page}} loads {{lib}} {{version}}, which has a known vulnerability ({{cve}}).",
+  vulnerable_library_nocve: "{{page}} loads {{lib}} {{version}}, which has a known vulnerability.",
   dmarc: "No DMARC record for {{domain}}, so anyone can send email that looks like it came from you.",
   spf_missing: "No SPF record for {{domain}}, so mail servers cannot tell your real email from forgeries.",
   spf_pass_all: "The SPF record for {{domain}} ends in +all, which lets any server on the internet send email as you.",
-  h1: "The homepage of {{domain}} has no H1 heading, so search engines have to guess what the page is about.",
-  title: "The homepage of {{domain}} has no title tag, so search results show whatever text the search engine picks.",
-  meta_desc: "The homepage of {{domain}} has no usable meta description, so search results show a snippet you did not choose.",
-  canonical: "The canonical tag on {{domain}} is missing or points to another address, so search engines may index the wrong URL.",
+  h1: "The homepage of {{page}} has no H1 heading, so search engines have to guess what the page is about.",
+  title: "The homepage of {{page}} has no title tag, so search results show whatever text the search engine picks.",
+  meta_desc: "The homepage of {{page}} has no usable meta description, so search results show a snippet you did not choose.",
+  canonical: "The canonical tag on {{page}} is missing or points to another address, so search engines may index the wrong URL.",
   admin_panel: "An admin login page on {{domain}} is open to the internet at {{example}}, so anyone can try passwords against it.",
   incomplete_chain: "The server for {{domain}} does not send its full certificate chain, so some phones, crawlers, and API clients refuse to connect.",
   llms_txt_missing: "{{domain}} has no llms.txt file, so AI engines get no guidance on how to cite your content.",
   llms_txt_malformed: "The llms.txt file on {{domain}} is too short to tell AI engines how to cite your content.",
-  csp: "{{domain}} sends no Content-Security-Policy header, so an injected script would run with nothing to stop it.",
-  faq_schema: "The homepage of {{domain}} has no FAQ schema, so answer engines have no marked-up questions to quote.",
-  hsts: "{{domain}} sends no Strict-Transport-Security header, so a browser can still be steered onto an insecure connection.",
-  org_schema: "The homepage of {{domain}} has no Organization schema, so AI engines cannot confirm who runs the site.",
+  csp: "{{page}} sends no Content-Security-Policy header, so an injected script would run with nothing to stop it.",
+  faq_schema: "The homepage of {{page}} has no FAQ schema, so answer engines have no marked-up questions to quote.",
+  hsts: "{{page}} sends no Strict-Transport-Security header, so a browser can still be steered onto an insecure connection.",
+  org_schema: "The homepage of {{page}} has no Organization schema, so AI engines cannot confirm who runs the site.",
   caa: "{{domain}} has no CAA record, so any certificate authority can issue a certificate for it.",
   image_alt: "{{missing}} of {{total}} images on the homepage have no alt text, so search engines and screen readers cannot describe them.",
   image_alt_one: "1 of {{total}} images on the homepage has no alt text, so search engines and screen readers cannot describe it.",
-  version_disclosed: "{{domain}} announces its software version ({{version}}), which tells attackers which known exploits to try.",
+  version_disclosed: "{{page}} announces its software version ({{version}}), which tells attackers which known exploits to try.",
 };
 
 const say = (desc, params = {}) => ({ desc, params });
@@ -251,7 +251,12 @@ export function rankActions(report, scores = computeScores(report)) {
     sv: scores.unmeasured.includes("aeo") ? null : vc?.aeo_branch?.schema_validation,
     fired: new Set(),
   };
-  const domain = report?.target_domain || "your site";
+  // target_domain is the host plus any page path the visitor typed. Findings
+  // about the domain (DNS, email, TLS, certificates, files at the root) name
+  // the host; findings about the page that was read name the page. For a bare
+  // domain the two are the same.
+  const page = report?.target_domain || "your site";
+  const domain = report?.target_domain ? report.target_domain.split("/")[0] : "your site";
   const out = [];
   for (const c of CANDIDATES) {
     if (c.category !== "security" && scores.unmeasured.includes(c.category)) continue;
@@ -267,7 +272,7 @@ export function rankActions(report, scores = computeScores(report)) {
       title: TITLES[c.key],
       descKey: `dashboard.actions.${hit.desc}_desc`,
       desc: DESCS[hit.desc],
-      params: { domain, ...hit.params },
+      params: { domain, page, ...hit.params },
     });
   }
   // CANDIDATES is already in tier order; the stable sort keeps it honest if

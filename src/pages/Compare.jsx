@@ -39,7 +39,7 @@ const FEATURE_GROUPS = [
     label: 'Security: Headers',
     features: [
       { name: 'Security Header Presence',        values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'p', hubspot:'p' } },
-      { name: 'CSP Directive Quality Scoring',   values: { canopy:'y', seo:'n', gsc:'n', mozilla:'p', ssllabs:'n', hubspot:'n' }, desc: 'Scores what the directives actually say, not just presence' },
+      { name: 'CSP Directive Quality Scoring',   values: { canopy:'y', seo:'n', gsc:'n', mozilla:'p', ssllabs:'n', hubspot:'n' }, desc: 'Scores what the directives say as well as whether the header is present' },
       { name: 'CORS Misconfiguration Detection', values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true },
       { name: 'Dangerous HTTP Methods',          values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true },
     ],
@@ -47,7 +47,7 @@ const FEATURE_GROUPS = [
   {
     label: 'Security: TLS',
     features: [
-      { name: 'Certificate Expiry Countdown',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'y', hubspot:'n' }, desc: 'Days remaining, not just valid/invalid' },
+      { name: 'Certificate Expiry Countdown',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'y', hubspot:'n' }, desc: 'Days remaining as well as valid or invalid' },
       { name: 'Cipher Suite Quality',            values: { canopy:'y', seo:'n', gsc:'n', mozilla:'p', ssllabs:'y', hubspot:'n' }, desc: 'Detects RC4, 3DES, EXPORT, NULL ciphers' },
       { name: 'TLS Version Enforcement',         values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'y', hubspot:'n' }, desc: 'Flags TLS 1.0 / 1.1 acceptance' },
       { name: 'Self-Signed Certificate Check',   values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'y', hubspot:'n' } },
@@ -56,7 +56,7 @@ const FEATURE_GROUPS = [
   {
     label: 'Security: DNS',
     features: [
-      { name: 'SPF Policy Quality Scoring',      values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: '-all vs ~all vs +all, not just presence' },
+      { name: 'SPF Policy Quality Scoring',      values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true, desc: 'Grades -all, ~all and +all differently' },
       { name: 'DMARC Policy Level',              values: { canopy:'y', seo:'n', gsc:'n', mozilla:'y', ssllabs:'n', hubspot:'n' }, desc: 'reject vs quarantine vs none' },
       { name: 'CAA Record Detection',            values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'y', hubspot:'n' } },
       { name: 'Subdomain Takeover Detection',    values: { canopy:'y', seo:'n', gsc:'n', mozilla:'n', ssllabs:'n', hubspot:'n' }, exclusive: true },
@@ -111,11 +111,11 @@ export default function Compare() {
           v3.3.0 · 105 Signals
         </div>
         <h1 style={{ fontSize:'clamp(28px, 5vw, 50px)', fontWeight:'800', lineHeight:'1.1', margin:'0 0 18px', color:COLORS.white }}>
-          One scan.<br /><span style={{ color: COLORS.gold }}>Nothing else comes close.</span>
+          One scan,<br /><span style={{ color: COLORS.gold }}>four kinds of findings.</span>
         </h1>
         <p style={{ fontSize:'17px', lineHeight:'1.65', color:'rgba(248,248,248,0.65)', maxWidth:'580px', margin:'0 auto 40px' }}>
-          Most tools do one thing. Ahrefs does SEO. SSL Labs does TLS. Mozilla Observatory does headers.
-          Canopy Guard does all of it in 15 seconds, then cross-references the results to surface gaps no other tool catches.
+          Most audit tools cover one area: Ahrefs covers SEO, SSL Labs covers TLS, and Mozilla Observatory covers headers.
+          Canopy Guard covers all of them in about 30 seconds, then cross-references the results to find gaps that only show up when two areas are read together.
         </p>
         <div style={{ display:'flex', justifyContent:'center', gap:'36px', flexWrap:'wrap', marginBottom:'48px' }}>
           {[['105','Total signals'],['73','Security signals'],[exclusiveCount,'Features no other free tool has'],['15s','Scan time']].map(([val, label]) => (
@@ -178,7 +178,7 @@ export default function Compare() {
       {/* CTA */}
       <div style={{ textAlign:'center', padding:'64px 24px', background: COLORS.grayBg }}>
         <h2 style={{ fontSize:'clamp(22px, 4vw, 36px)', fontWeight:'800', marginBottom:'14px' }}>See it for yourself.</h2>
-        <p style={{ fontSize:'16px', color:'rgba(248,248,248,0.55)', marginBottom:'32px' }}>One URL. 105 signals. 15 seconds. No account required.</p>
+        <p style={{ fontSize:'16px', color:'rgba(248,248,248,0.55)', marginBottom:'32px' }}>One URL and 105 signals, with no account required.</p>
         <a href="/" style={{ display:'inline-block', padding:'14px 36px', background:COLORS.gold, color:COLORS.purple, fontWeight:'800', fontSize:'15px', borderRadius:'6px', textDecoration:'none' }}>
           Run Your Free Audit
         </a>

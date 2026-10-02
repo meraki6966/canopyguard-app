@@ -56,8 +56,8 @@ export const POSTS = [
   },
   {
     "slug": "mitre-attack-technique-ids-explained",
-    "title": "What T1557 Actually Means: MITRE ATT&CK for Non-Security People",
-    "description": "T1557, T1584.001, T1592.002. What the MITRE ATT&CK technique IDs on a Canopy Guard finding actually mean, why a free audit tool includes them, and why some findings deliberately carry none.",
+    "title": "What T1557 Means: MITRE ATT&CK for Non-Security People",
+    "description": "T1557, T1584.001, T1592.002. What the MITRE ATT&CK technique IDs on a Canopy Guard finding mean, why a free audit tool includes them, and why some findings deliberately carry none.",
     "readingTime": "4 min read",
     "date": "2026-09-09",
     "sections": [
@@ -108,8 +108,8 @@ export const POSTS = [
   },
   {
     "slug": "robots-txt-blocking-ai-crawlers",
-    "title": "How robots.txt Is Quietly Blocking the AI Crawlers You Actually Want",
-    "description": "One old robots.txt rule can quietly block GPTBot, ClaudeBot, or Google-Extended without anyone noticing. A quick audit of common blocking patterns and how to fix them.",
+    "title": "How robots.txt Blocks the AI Crawlers You Want",
+    "description": "One old robots.txt rule can block GPTBot, ClaudeBot, or Google-Extended without anyone noticing. A quick audit of common blocking patterns and how to fix them.",
     "readingTime": "5 min read",
     "date": "2026-07-17",
     "sections": [
@@ -395,7 +395,7 @@ export const POSTS = [
   },
   {
     "slug": "security-headers-hurt-your-seo",
-    "title": "How Missing Security Headers Are Quietly Hurting Your Search Rankings",
+    "title": "How Missing Security Headers Hurt Your Search Rankings",
     "description": "Missing HSTS, CSP, and X-Frame-Options headers erode the trust signals search engines and AI models use to rank and cite your site. Here is the fix.",
     "readingTime": "4 min read",
     "date": "2026-06-29",
@@ -817,7 +817,7 @@ export const POSTS = [
     "readingTime": "5 min read",
     "sections": [
       {
-        "h2": "What GEO Actually Means",
+        "h2": "What GEO Means",
         "paragraphs": [
           "GEO stands for Generative Engine Optimization. It is the practice of structuring your website so AI assistants can find it, understand it, and quote it when someone asks a question your business can answer.",
           "Think of it as SEO's younger sibling. SEO aimed to rank you in a list of blue links. GEO aims to get you named inside the answer itself, the one paragraph the AI hands back to a buyer who never scrolls a results page.",
@@ -880,7 +880,7 @@ export const POSTS = [
     "readingTime": "4 min read",
     "sections": [
       {
-        "h2": "What answer engine optimization actually means",
+        "h2": "What answer engine optimization means",
         "paragraphs": [
           "Type a question into Google today and you rarely scroll. An answer appears at the top, pulled from a page that earned that spot. Answer Engine Optimization, or AEO, is the practice of structuring your content so machines can lift a clean, correct answer straight from your site.",
           "Search used to be a list of links. Now it is a conversation. People ask Google, Siri, and Alexa full questions, and they expect one direct response. AEO is how you make sure that response comes from you and not your competitor down the street.",
@@ -1001,7 +1001,7 @@ export const POSTS = [
         "h2": "You Locked the Door on the Robots You Want",
         "paragraphs": [
           "More buyers now ask an AI assistant before they ever touch Google. If ChatGPT, Gemini, and Perplexity cannot read your site, you do not exist in that conversation. Your competitor gets named instead.",
-          "The first thing to check is your robots.txt file. Plenty of sites quietly block the exact crawlers that feed these models: GPTBot, ClaudeBot, Google-Extended, PerplexityBot, and others. A default setting or a cautious developer can shut them all out without you ever knowing.",
+          "The first thing to check is your robots.txt file. Plenty of sites block the exact crawlers that feed these models: GPTBot, ClaudeBot, Google-Extended, PerplexityBot, and others. A default setting or a cautious developer can shut them all out without you ever knowing.",
           "Open yoursite.com/robots.txt in a browser. If you see Disallow lines tied to those user agents, that is your problem. Remove the blocks for the assistants you want to be cited by, and you have opened the door in five minutes."
         ]
       },
@@ -1079,7 +1079,7 @@ export const POSTS = [
       {
         "h2": "Step two, check what you are blocking",
         "paragraphs": [
-          "Many sites quietly block the AI crawlers without knowing it. Open your site and add slash robots.txt to the end of your address, like yoursite.com/robots.txt. Read what is there.",
+          "Many sites block the AI crawlers without knowing it. Open your site and add slash robots.txt to the end of your address, like yoursite.com/robots.txt. Read what is there.",
           "Look for lines that disallow GPTBot, Google-Extended, ClaudeBot, or PerplexityBot. If you see those bots blocked, the AI tools cannot read your pages, learn what you do, or cite you. That is a setting, not a verdict, and it can be fixed.",
           "While you are looking at files, check for an llms.txt file at yoursite.com/llms.txt. This is a simple plain text guide that tells AI tools what your site offers and where the important pages live. Most sites do not have one yet, which means having one puts you ahead."
         ]

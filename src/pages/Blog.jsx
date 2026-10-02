@@ -51,7 +51,7 @@ export default function Blog() {
       {/* CTA */}
       <section className="cta-section" style={{ padding: "80px 48px" }}>
         <h2 className="cta-headline">Stop guessing. Get your scores.</h2>
-        <p className="cta-sub">Free audit across SEO, AEO, GEO, and security. Real findings in 30 seconds. No account required.</p>
+        <p className="cta-sub">A free audit across SEO, AEO, GEO, and security, with findings in about 30 seconds and no account required.</p>
         <div className="cta-buttons">
           <Link to="/" className="btn-gold" style={{ padding: "16px 36px", fontSize: "1rem" }}>Run your free scan</Link>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: "16px 36px", fontSize: "1rem" }}>Book a call with Adam</a>

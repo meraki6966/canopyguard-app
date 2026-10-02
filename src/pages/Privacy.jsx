@@ -47,7 +47,7 @@ export default function Privacy() {
             <h3>Communication</h3>
             <p>If you download a report, you may receive a follow-up from Adam regarding your findings or available services. You can opt out at any time by replying to any email with "unsubscribe."</p>
             <h3>Security</h3>
-            <p>We take reasonable precautions to protect the information we collect. Given Adam's CISSP background, this is not a checkbox. It is a standard we hold ourselves to.</p>
+            <p>We take reasonable precautions to protect the information we collect. Adam holds a CISSP, and the same standard he applies to client systems applies to this data.</p>
             <h3>Contact</h3>
             <p>Questions about this policy? Email <strong>hello@merakislove.com</strong> or <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={{ color: "var(--mid)" }}>book a call</a>.</p>
             <div className="privacy-date">Last updated: June 2026 · Meraki is Love, LLC · Friendswood, Texas</div>

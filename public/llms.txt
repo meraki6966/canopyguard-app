@@ -2,7 +2,7 @@
 # Free Website Visibility + Security Audit Tool
 # Version 3.3.0
 
-> Canopy Guard is a free website audit tool that scans any domain in approximately 15 seconds across 105 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Every check is passive and read-only. No signup is required.
+> Canopy Guard is a free website audit tool that scans any domain in about 30 seconds across 105 signals covering SEO, AEO (Answer Engine Optimization), GEO (Generative Engine Optimization), and security. It cross-references visibility findings against security findings to surface gaps that no other tool catches independently. Every check is passive and read-only. No signup is required.
 
 ## The Four Scoring Categories
 
@@ -20,7 +20,7 @@ External security posture visible from a public URL, across 23 modules and ten a
 
 - Malware and reputation scanning: checks the domain against the Google Safe Browsing API and common blacklist services, reporting a status of Clean, Flagged, or Blacklisted with the specific reason when flagged.
 - Expanded footprint analysis: Subresource Integrity (SRI) on every external script and link tag, Secure and HttpOnly flags on cookies, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence.
-- Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (not just present or absent), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration. Domains expiring within 60 days are flagged as a hijacking risk.
+- Expanded DNS and email security depth: SPF parsed into exact mechanisms and qualifier strength (graded by strength as well as presence), DMARC policy reported as none, quarantine, or reject, and registrar lock status with days until expiration. Domains expiring within 60 days are flagged as a hijacking risk.
 - Exposed sensitive file detection: passive checks for public accessibility of common sensitive paths including /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin (without authentication challenge); any accessible path is reported as Critical.
 - Supabase anonymous exposure detection: when a site ships a Supabase project URL and public anon key in its own client code, Canopy Guard replays that public key read-only against common table names (users, profiles, customers, leads, accounts, orders, subscriptions, payments). Any table that returns live rows to an anonymous request is reported as Critical, indicating Row Level Security is disabled or misconfigured. Identifies the exposure condition associated with T1552 (Unsecured Credentials) and T1213 (Data from Information Repositories).
 
@@ -30,7 +30,7 @@ For every security finding, Canopy Guard identifies the exposure condition assoc
 
 - SEO (Search Engine Optimization): SEO is how well search engines like Google can crawl, understand, and rank your website. Canopy Guard scores title tags, meta descriptions, heading structure, canonical tags, and schema markup. It is the foundation that makes every other visibility channel work.
 - AEO (Answer Engine Optimization): AEO is how well your content is structured to be selected as the direct answer to a question. It powers voice search, Google AI Overviews, and featured snippets through FAQ schema, Q&A density, and entity clarity. Sites built for AEO get quoted; sites that are not get skipped.
-- GEO (Generative Engine Optimization): GEO is how reliably generative AI assistants like ChatGPT, Gemini, Claude, and Perplexity can find and cite your site. It depends on clean content chunking, citation-ready facts, and an llms.txt file. It is the newest and most overlooked visibility gap in 2026.
+- GEO (Generative Engine Optimization): GEO is how reliably generative AI assistants like ChatGPT, Gemini, Claude, and Perplexity can find and cite your site. It depends on clean content chunking, citation-ready facts, and an llms.txt file. Few audit tools measure it yet.
 - Security Posture: Security posture is the set of externally visible protections that signal your site is safe and trustworthy. Canopy Guard checks HTTPS, security headers, mixed content, server exposure, malware and blacklist reputation, Subresource Integrity, cookie flags, TLS ciphers, certificate transparency, SPF and DMARC, registrar lock and expiration, and exposed sensitive files, then identifies the exposure condition associated with the relevant MITRE ATT&CK technique for each gap. Weak security erodes the trust signals that affect search rankings.
 
 ## Cross-Reference Intelligence
@@ -48,7 +48,7 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 
 ## Tool Details
 
-- Scan time: approximately 15 seconds
+- Scan time: about 30 seconds
 - Total signals: 105
 - Security signals: 73 across ten analysis layers
 - Modules: 23
@@ -69,7 +69,7 @@ The unique differentiator. Canopy Guard maps visibility findings against securit
 ## Frequently Asked Questions
 
 Q: What is GEO and why does it matter?
-A: GEO stands for Generative Engine Optimization. It is the practice of making your site visible to AI assistants like ChatGPT, Gemini, Claude, and Perplexity, where a growing share of people now search for services. If your site is not structured for GEO, you are invisible to that traffic. Most audit tools do not score for this. Canopy Guard does.
+A: GEO stands for Generative Engine Optimization. It is the practice of making your site visible to AI assistants like ChatGPT, Gemini, Claude, and Perplexity, where a growing share of people now search for services. If your site is not structured for GEO, those assistants are unlikely to cite it. Most audit tools do not score for this. Canopy Guard does.
 
 Q: What is AEO?
 A: Answer Engine Optimization is the practice of structuring content to directly answer questions. Voice search, Google AI Overviews, and featured snippets favor sites built for AEO. It overlaps with GEO but focuses on traditional answer engines and search-result features rather than generative AI specifically.
@@ -78,7 +78,7 @@ Q: Does scanning my site affect its performance or SEO?
 A: No. Canopy Guard reads only publicly available information, the same data any search engine crawler sees. It does not touch your server, database, or code, and running a scan has zero impact on performance or rankings.
 
 Q: What does MITRE ATT&CK mean for my website?
-A: MITRE ATT&CK is a globally recognized framework for how attackers operate. For each security finding, Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique, so you get context for what each gap exposes you to, not just a number. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
+A: MITRE ATT&CK is a globally recognized framework for how attackers operate. For each security finding, Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique, so you see what each gap exposes you to along with the score. This comes from Adam McClarin's CISSP background and 20 years in cybersecurity.
 
 Q: What does the security scan check for?
 A: Across ten security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus five expanded capabilities. Malware and reputation scanning checks Google Safe Browsing and common blacklists and reports Clean, Flagged, or Blacklisted. Expanded footprint analysis checks Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence. Expanded DNS and email depth parses the exact SPF mechanisms and qualifier strength, reports the DMARC policy as none, quarantine, or reject, and checks registrar lock and days until expiration (domains expiring within 60 days are flagged as a hijacking risk). Exposed sensitive file detection checks public accessibility of paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, reporting any accessible path as Critical. Supabase anonymous exposure detection replays a Supabase anon key shipped in the site's own client code, read-only, against common table names and reports any table that returns live rows to an anonymous request as Critical, meaning Row Level Security is disabled or misconfigured. Every check is passive and read-only.
@@ -96,10 +96,10 @@ Q: Do I need an account to get my full report?
 A: No account is required to run the scan. When you download the full report, basic contact information is collected to follow up on questions. That information is handled securely and never sold or shared with third parties.
 
 Q: How does Canopy Guard compare to hiring an SEO agency?
-A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
+A: An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard scores SEO, AEO, GEO, and security for free in about 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly. No retainer, no account managers.
 
 Q: What does a good overall score look like, and what should I do if mine is low?
-A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score is a roadmap, not a verdict. The report ranks fixes by impact, and you can book a call if you want help working through them.
+A: Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing visibility or trust now. A low score tells you where to start. The report ranks fixes by impact, and you can book a call if you want help working through them.
 
 Q: How often should I re-scan my site?
 A: Re-scan after any meaningful change, such as a redesign, new pages, a migration, or after applying fixes. For an active site, a monthly scan catches regressions before they cost traffic. The scan is free and takes 30 seconds, so there is no reason to wait.

@@ -1,8 +1,8 @@
 {
   "risks": {
-    "traffic_leak_title": "The AI Traffic Leak",
+    "traffic_leak_title": "AI use without citation",
     "traffic_leak_desc": "Robots.txt is permissive with no llms.txt. AI scrapers can ingest your content without citation guidance.",
-    "blind_assistants_title": "Blind to AI Assistants",
+    "blind_assistants_title": "Hard for AI assistants to cite",
     "blind_assistants_desc": "No llms.txt found. Your content may be summarized by AI engines but never cited.",
     "exposed_endpoints_title": "Exposed Endpoints",
     "exposed_endpoints_desc_suffix": "path(s) accessible:",
@@ -87,8 +87,8 @@
       "meta_desc_title": "Add a meta description",
       "meta_desc_desc": "The homepage of {{page}} has no usable meta description, so search results show a snippet you did not choose.",
       "noindex_title": "Remove the noindex directive, unless it is on purpose",
-      "noindex_meta_desc": "A robots meta tag on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the tag.",
-      "noindex_header_desc": "The X-Robots-Tag response header on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the header.",
+      "noindex_meta_desc": "A robots meta tag on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. The SEO score is capped at 50 while it is in place. On a staging or demo page that is the right setting. On a page you want found, remove the tag.",
+      "noindex_header_desc": "The X-Robots-Tag response header on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. The SEO score is capped at 50 while it is in place. On a staging or demo page that is the right setting. On a page you want found, remove the header.",
       "canonical_title": "Fix your canonical URL",
       "canonical_desc": "The canonical tag on {{page}} is missing or points to another address, so search engines may index the wrong URL.",
       "admin_panel_title": "Restrict your admin login page",
@@ -193,7 +193,7 @@
       "download_desc": "Download a PDF with your complete audit, top actions, and compliance check.",
       "btn_get_report": "GET YOUR REPORT",
       "delivered_to": "Report delivered to",
-      "resolve_desc": "Every finding is something we resolve for clients every week. Book a free walkthrough.",
+      "resolve_desc": "I fix findings like these for clients every week. Book a free walkthrough.",
       "btn_walkthrough": "BOOK A FREE WALKTHROUGH",
       "download_again": "Download PDF again",
       "author": "Adam McClarin, CISSP · Meraki is Love Digital | Soulful Tech™"
@@ -210,7 +210,7 @@
       "email_placeholder": "you@company.com",
       "btn_download": "DOWNLOAD REPORT",
       "btn_processing": "PROCESSING...",
-      "spam_notice": "No spam. Email used only for this report.",
+      "spam_notice": "Your email is used only for this report.",
       "title_fixes": "fixes",
       "desc_aeo": "Your email, once. It unlocks the generated FAQ schema and meta description for this domain, and your full report.",
       "btn_generate": "Generate my fixes"
@@ -221,10 +221,10 @@
       "template": "TEMPLATE",
       "derived_hint": "Built from this domain's own records, certificate or headers. Safe to apply as written.",
       "template_hint": "A starter you must fill in. We do not know your providers, so this needs your own values first.",
-      "template_callout": "Starter template: a starting point, not a finished fix. Check it against your own setup before publishing.",
+      "template_callout": "Starter template. It needs your own values before it is a finished fix. Check it against your own setup before publishing.",
       "generated": "GENERATED",
-      "generated_hint": "Written by a language model from this page's own text, then checked for valid structure, not for accuracy. Read it before publishing.",
-      "generated_callout": "Model-generated. Validated for structure, not for truth. Read every line against your live page before publishing: schema that claims something the page does not say is a structured-data violation."
+      "generated_hint": "Written by a language model from this page's own text. Its structure was validated, and its accuracy is yours to check. Read it before publishing.",
+      "generated_callout": "Model-generated. The structure was validated. The facts were left for you to check. Read every line against your live page before publishing: schema that claims something the page does not say is a structured-data violation."
     },
     "email_dns_fixes": "Email, DNS & Cookie Fixes",
     "email_dns_fixes_desc": "Generated from this domain's own SPF and DMARC records, certificate issuer and cookies.",
@@ -250,14 +250,14 @@
     "top_actions": "Top Actions to Resolve",
     "risks_summary_title": "Executive Summary: Business Risks",
     "risks": {
-      "traffic_leak_title": "The AI Traffic Leak",
-      "traffic_leak_desc": "Your site allows AI crawlers to scrape and synthesize your content without an llms.txt file or balanced robots.txt. This lets AI models train on or answer questions using your data without ever citing or linking back to you, leading to direct traffic theft.",
-      "blind_assistants_title": "Blind to AI Assistants",
-      "blind_assistants_desc": "A complete lack of structured FAQ schema or semantic JSON-LD markup prevents ChatGPT and other search agents from parsing and serving your pages in rich responses. You are invisible to users relying on voice and chat AI engines.",
-      "exposed_endpoints_title": "Open Door for Scrapers & Botnets",
-      "exposed_endpoints_desc": "Critical ports, database endpoints, or server paths are exposed to the public web with weak rate limits. This invites aggressive scraper bots and botnets to exploit logic gaps, scrape proprietary data, and degrade server performance.",
-      "foundation_crack_title": "The Foundation Crack",
-      "foundation_crack_desc": "Basic security configurations are missing, specifically critical HTTP response headers (like CSP, HSTS, X-Frame-Options) and basic TLS verification. This leaves your site vulnerable to iframe hijacking, XSS, and SEO-damaging warnings."
+      "traffic_leak_title": "AI use without citation",
+      "traffic_leak_desc": "Your site lets AI crawlers read your content and has no llms.txt file or balanced robots.txt to guide them. AI models can train on your pages or answer from them without citing or linking back to you, which costs you traffic.",
+      "blind_assistants_title": "Hard for AI assistants to cite",
+      "blind_assistants_desc": "The site has no FAQ schema or JSON-LD markup, so ChatGPT and other AI search tools have little structured content to quote. People who search by voice or chat are unlikely to see your pages.",
+      "exposed_endpoints_title": "Exposed paths and weak rate limits",
+      "exposed_endpoints_desc": "Ports, database endpoints, or server paths are reachable from the public web with weak rate limits. Scraper bots and botnets can use them to pull data and slow the server.",
+      "foundation_crack_title": "Missing basic protections",
+      "foundation_crack_desc": "Basic security settings are missing, including HTTP response headers such as CSP, HSTS and X-Frame-Options, or TLS validation. That leaves the site open to clickjacking and cross-site scripting, and browsers may show warnings that hurt search rankings."
     },
     "status": {
       "critical": "Critical Risk",
@@ -265,7 +265,7 @@
       "secured": "Secured"
     },
     "cta_title": "Need these resolved?",
-    "cta_desc": "Every risk identified in this report is something we fix for clients every week. Book a free 30-minute consultation to secure and optimize your site.",
+    "cta_desc": "I fix the risks in this report for clients every week. Book a free 30-minute call to go through yours.",
     "cta_btn": "BOOK A FREE WALKTHROUGH",
     "footer": "Canopy Guard · Built by Soulful Tech™ · merakislove.com · CISSP Certified Audit"
   }

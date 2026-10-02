@@ -48,7 +48,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="hero-left">
           <div className="eyebrow">SEO <span className="eyebrow-dot"></span> AEO <span className="eyebrow-dot"></span> GEO <span className="eyebrow-dot"></span> Security</div>
           <h1>Know exactly where your site <em>stands.</em></h1>
-          <p className="hero-sub">Free site audit across SEO, AI discoverability, and security. Real findings in 30 seconds. If you need the work done, I am one call away.</p>
+          <p className="hero-sub">A free site audit across SEO, AI search, and security, with findings in about 30 seconds. If you want the work done, book a call with me.</p>
           <div className="scan-form">
             <div className="scan-row">
               <input
@@ -62,7 +62,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               />
               <button className="btn-scan" onClick={() => startScan()}>Scan My Site</button>
             </div>
-            <span className="scan-note">Free scan. No account. No credit card. Download your full report instantly.</span>
+            <span className="scan-note">The scan is free and needs no account or credit card. You can download the full report when it finishes.</span>
             {scanError && <span className="scan-error">{scanError}</span>}
           </div>
           <div className="trust-badges">
@@ -137,12 +137,12 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="section-inner">
           <div className="geo-grid">
             <div className="geo-left">
-              <div className="section-eyebrow" style={{ color: "var(--gold)" }}>Why GEO changes everything</div>
+              <div className="section-eyebrow" style={{ color: "var(--gold)" }}>Why GEO matters</div>
               <h1 className="section-headline" style={{ color: "var(--tod)" }}>Your customers are now searching with AI. Is your site showing up?</h1>
-              <p className="section-sub" style={{ color: "var(--todm)" }}>Google is no longer the only search engine that matters. ChatGPT, Gemini, Claude, and Perplexity answer millions of questions every day. GEO, Generative Engine Optimization, is how you get cited in those answers.</p>
-              <p style={{ fontSize: "1rem", color: "var(--todm)", lineHeight: 1.65, marginBottom: 0 }}>Most audit tools do not score for this. Canopy Guard does. It is the fastest-growing gap between sites that get found and sites that do not.</p>
+              <p className="section-sub" style={{ color: "var(--todm)" }}>People now ask ChatGPT, Gemini, Claude, and Perplexity the questions they used to type into Google. GEO, Generative Engine Optimization, is the work of getting your site cited in those answers.</p>
+              <p style={{ fontSize: "1rem", color: "var(--todm)", lineHeight: 1.65, marginBottom: 0 }}>Most audit tools do not score for GEO. Canopy Guard does, because a site can rank well on Google and still be missing from AI answers.</p>
               <div className="geo-highlight">
-                <div className="geo-highlight-text">Canopy Guard is one of the only free tools that scores your site for <strong>GEO, AEO, SEO, and security in a single audit.</strong> You see the full picture before you spend a dollar.</div>
+                <div className="geo-highlight-text">Canopy Guard is one of the few free tools that scores your site for <strong>GEO, AEO, SEO, and security in a single audit</strong>, so you can see all four before you spend a dollar.</div>
               </div>
             </div>
             <div className="geo-right">
@@ -155,7 +155,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                   </svg>
                 </div>
                 <div className="geo-card-title">Traditional SEO</div>
-                <div className="geo-card-body">Google, Bing, and search engine ranking. Still essential. Canopy Guard scores this fully across technical and content signals.</div>
+                <div className="geo-card-body">How Google and Bing find and rank your pages. Canopy Guard scores the technical and content signals behind it.</div>
               </div>
               <div className="geo-card">
                 <div className="geo-card-icon">
@@ -176,8 +176,8 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                     <path d="M12 7v5M12 12l-5.5 5.5M12 12l5.5 5.5" />
                   </svg>
                 </div>
-                <div className="geo-card-title" style={{ color: "var(--gold)" }}>GEO: The new frontier</div>
-                <div className="geo-card-body" style={{ color: "var(--tod)" }}>Generative Engine Optimization. Are ChatGPT, Gemini, and Perplexity finding and citing your site? This is the newest and most overlooked visibility gap.</div>
+                <div className="geo-card-title" style={{ color: "var(--gold)" }}>GEO: AI assistants</div>
+                <div className="geo-card-body" style={{ color: "var(--tod)" }}>Generative Engine Optimization. Are ChatGPT, Gemini, and Perplexity finding and citing your site? Few sites have been checked for this yet.</div>
               </div>
               <div className="geo-card">
                 <div className="geo-card-icon">
@@ -187,7 +187,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                   </svg>
                 </div>
                 <div className="geo-card-title">Security</div>
-                <div className="geo-card-body">MITRE ATT&CK-aligned security findings. Security gaps hurt your search trust signals. We score and surface them both.</div>
+                <div className="geo-card-body">Security findings mapped to MITRE ATT&CK. Browsers and search engines both treat an insecure site as less trustworthy, so the audit scores security alongside visibility.</div>
               </div>
             </div>
           </div>
@@ -199,11 +199,11 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="section-inner">
           <div className="section-eyebrow">How it works</div>
           <h2 className="section-headline">From URL to answers in four steps</h2>
-          <p className="section-sub">No setup. No account. Paste your domain and see exactly what is holding your site back.</p>
+          <p className="section-sub">There is nothing to set up and no account to create. Paste your domain and see what is holding your site back.</p>
           <div className="steps">
-            <div className="step"><div className="step-num">01</div><div className="step-title">Enter your URL</div><div className="step-body">Paste any domain. No login, no credit card. Takes three seconds.</div></div>
-            <div className="step"><div className="step-num">02</div><div className="step-title">Get your scores</div><div className="step-body">Your site is scored across SEO, AEO, GEO, and security. Results in 30 seconds.</div></div>
-            <div className="step"><div className="step-num">03</div><div className="step-title">Download your report</div><div className="step-body">Get the full findings with prioritized recommendations. Know what to fix first.</div></div>
+            <div className="step"><div className="step-num">01</div><div className="step-title">Enter your URL</div><div className="step-body">Paste any domain. You do not need a login or a credit card.</div></div>
+            <div className="step"><div className="step-num">02</div><div className="step-title">Get your scores</div><div className="step-body">Your site is scored across SEO, AEO, GEO, and security. Results arrive in about 30 seconds.</div></div>
+            <div className="step"><div className="step-num">03</div><div className="step-title">Download your report</div><div className="step-body">The report lists every finding in priority order, so you know what to fix first.</div></div>
             <div className="step"><div className="step-num">04</div><div className="step-title">Need the work done?</div><div className="step-body">If you need help fixing what the audit finds, book a call with Adam to talk through next steps.</div></div>
           </div>
         </div>
@@ -213,14 +213,14 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       <section id="methodology" className="categories-section">
         <div className="section-inner">
           <div className="section-eyebrow">What we measure</div>
-          <h2 className="section-headline">Four categories. One complete picture.</h2>
-          <p className="section-sub">Every audit scores across four dimensions. Together they show exactly where your visibility is strong and where it is costing you business.</p>
+          <h2 className="section-headline">Four categories in one audit</h2>
+          <p className="section-sub">Every audit scores four categories. Together they show where your site is strong and where it is losing you business.</p>
           <div className="cat-grid">
             <div className="cat-card">
               <div className="cat-label">Category 01</div>
               <div className="cat-name">SEO</div>
               <div className="cat-score warn" aria-hidden="true"><span className="cat-score-bar" /></div>
-              <div className="cat-desc">The foundation. Technical signals that help Google find, crawl, and rank your site. Most small business sites have fixable issues here costing them traffic every day.</div>
+              <div className="cat-desc">The technical signals that help Google find, crawl, and rank your site. Most small business sites have fixable issues here that cost them traffic.</div>
               <ul className="cat-checks">
                 <li>Title tags and meta descriptions</li>
                 <li>Heading structure and hierarchy</li>
@@ -248,7 +248,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="cat-label">Category 03</div>
               <div className="cat-name">GEO</div>
               <div className="cat-score good" aria-hidden="true"><span className="cat-score-bar" /></div>
-              <div className="cat-desc">Generative Engine Optimization. The newest and most overlooked category. Are ChatGPT, Gemini, Claude, and Perplexity finding and citing your site in their answers?</div>
+              <div className="cat-desc">Generative Engine Optimization. Are ChatGPT, Gemini, Claude, and Perplexity finding and citing your site in their answers? This is the category most audits leave out.</div>
               <ul className="cat-checks">
                 <li>AI citation readiness</li>
                 <li>Buyer-intent prompt coverage</li>
@@ -261,7 +261,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="cat-label">Category 04</div>
               <div className="cat-name">Security</div>
               <div className="cat-score crit" aria-hidden="true"><span className="cat-score-bar" /></div>
-              <div className="cat-desc">MITRE ATT&CK-aligned security findings. Security gaps do not just put your site at risk. They erode trust signals that directly affect your rankings.</div>
+              <div className="cat-desc">Security findings mapped to MITRE ATT&CK. A security gap puts your site at risk, and it also weakens the trust signals that affect your rankings.</div>
               <ul className="cat-checks">
                 <li>HTTPS and valid SSL certificate</li>
                 <li>CSP and HSTS headers</li>
@@ -278,35 +278,35 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       <section id="definitions" className="how-section">
         <div className="section-inner">
           <div className="section-eyebrow">Definitions</div>
-          <h2 className="section-headline">What each score actually means</h2>
-          <p className="section-sub">Direct answers to the four questions every audit raises. Built so AI assistants can quote them cleanly.</p>
+          <h2 className="section-headline">What each score means</h2>
+          <p className="section-sub">Plain definitions of the four scores, written so AI assistants can quote them.</p>
           <dl style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18, margin: 0 }}>
             <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
               <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>SEO: Search Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>SEO is how well search engines like Google can crawl, understand, and rank your website.</p>
-                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard scores your title tags, meta descriptions, heading structure, canonical tags, and schema markup. Strong SEO is the foundation that makes every other visibility channel work. Most small business sites quietly lose traffic to fixable technical issues here.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard scores your title tags, meta descriptions, heading structure, canonical tags, and schema markup. The other three categories build on it. Most small business sites lose traffic to technical issues here that are simple to fix.</p>
               </dd>
             </div>
             <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
               <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>AEO: Answer Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>AEO is how well your content is structured to be selected as the direct answer to a question.</p>
-                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It powers voice search, Google AI Overviews, and featured snippets. Canopy Guard checks your FAQ schema, question-and-answer density, and entity clarity. Sites built for AEO get quoted in the answer box; sites that are not get skipped entirely.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It powers voice search, Google AI Overviews, and featured snippets. Canopy Guard checks your FAQ schema, question-and-answer density, and entity clarity. Sites built for AEO get quoted in the answer box, and sites without that structure get skipped.</p>
               </dd>
             </div>
             <div style={{ background: "var(--white)", border: "1px solid var(--gold)", borderRadius: "var(--r-lg)", padding: 24 }}>
               <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-dim)", marginBottom: 10 }}>GEO: Generative Engine Optimization</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>GEO is how reliably generative AI assistants like ChatGPT, Gemini, and Perplexity can find and cite your site.</p>
-                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It depends on clean content chunking, citation-ready facts, and an llms.txt file. Canopy Guard scores chunking efficiency, citation precision, and AI-crawler access. It is the newest and most overlooked visibility gap in 2026.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>It depends on clean content chunking, citation-ready facts, and an llms.txt file. Canopy Guard scores chunking efficiency, citation precision, and AI-crawler access. Few audit tools measure it yet.</p>
               </dd>
             </div>
             <div style={{ background: "var(--white)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: 24 }}>
               <dt style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--mid)", marginBottom: 10 }}>Security Posture</dt>
               <dd style={{ margin: 0 }}>
                 <p style={{ fontWeight: 700, color: "var(--forest)", fontSize: "0.98rem", marginBottom: 8 }}>Security posture is the set of externally visible protections that signal your site is safe and trustworthy.</p>
-                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard checks HTTPS, security headers, mixed content, and server exposure. Each finding identifies the exposure condition associated with a MITRE ATT&CK technique. Weak security does not just invite attackers; it erodes the trust signals that directly affect your search rankings.</p>
+                <p style={{ color: "#4A6B54", fontSize: "0.86rem", lineHeight: 1.6 }}>Canopy Guard checks HTTPS, security headers, mixed content, and server exposure. Each finding identifies the exposure condition associated with a MITRE ATT&CK technique. Weak security invites attackers, and it also weakens the trust signals that affect your search rankings.</p>
               </dd>
             </div>
           </dl>
@@ -316,9 +316,9 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       {/* RESULTS / CASES */}
       <section id="results" className="cases-section">
         <div className="section-inner">
-          <div className="section-eyebrow">Real results</div>
+          <div className="section-eyebrow">Client results</div>
           <h2 className="section-headline">What happens after the audit</h2>
-          <p className="section-sub">Real sites. Real numbers. Canopy Guard found the gaps. The work changed their businesses.</p>
+          <p className="section-sub">Three client sites, with their scores before and after. Canopy Guard found the gaps, and the work that followed closed them.</p>
           <div className="cases-grid">
             <div className="case-card">
               <div className="case-header">
@@ -357,7 +357,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                   <div className="case-score"><div className="case-score-label">GEO</div><div className="before-after"><span className="score-before">Low</span><span className="score-arrow">→</span><span className="score-after">High</span></div></div>
                 </div>
                 <div className="case-result">"The week after Adam improved our AEO, SEO, and GEO scores, we received 4 inbound calls from people who said they found us through online search."</div>
-                <div className="case-tag">AEO + GEO + SEO transformation</div>
+                <div className="case-tag">AEO + GEO + SEO work</div>
               </div>
             </div>
             <div className="case-card">
@@ -386,13 +386,13 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <div className="adam-grid">
             <div className="adam-left">
               <div className="section-eyebrow">Who built this</div>
-              <h2 className="section-headline">Not a SaaS company.<br />A practitioner with 20 years behind him.</h2>
-              <p style={{ fontSize: "1rem", color: "#4A6B54", lineHeight: 1.7, marginBottom: 28 }}>Canopy Guard was built by someone who has spent two decades in cybersecurity, AI engineering, and software development. Every scoring category reflects real experience, not templates or guesswork.</p>
+              <h2 className="section-headline">Built by one practitioner<br />with 20 years in the field.</h2>
+              <p style={{ fontSize: "1rem", color: "#4A6B54", lineHeight: 1.7, marginBottom: 28 }}>Canopy Guard was built by someone who has spent two decades in cybersecurity, AI engineering, and software development. Every scoring category comes from audits Adam ran by hand for clients.</p>
               <div className="adam-cred-grid">
                 <div className="cred-card"><div className="cred-title">CISSP</div><div className="cred-body">Certified Information Systems Security Professional. One of the most rigorous credentials in cybersecurity. This is where the MITRE ATT&CK security scoring comes from.</div></div>
-                <div className="cred-card"><div className="cred-title">Azure AI Engineer</div><div className="cred-body">Microsoft-certified. Designing and implementing AI solutions is not an afterthought here. It is how the GEO and AEO scoring was built.</div></div>
+                <div className="cred-card"><div className="cred-title">Azure AI Engineer</div><div className="cred-body">Microsoft certified in designing and implementing AI solutions. That training is behind the GEO and AEO scoring.</div></div>
                 <div className="cred-card"><div className="cred-title">Dual MS, Cybersecurity</div><div className="cred-body">Graduate-level security training. The depth behind the security score reflects years of academic and applied security work.</div></div>
-                <div className="cred-card"><div className="cred-title">20+ Years in Tech</div><div className="cred-body">Software development, security services, AI engineering, and product building. Canopy Guard is the intersection of all of it.</div></div>
+                <div className="cred-card"><div className="cred-title">20+ Years in Tech</div><div className="cred-body">Software development, security services, AI engineering, and product building. Canopy Guard draws on all four.</div></div>
               </div>
               <img
                 src="/practitioner-desk.webp"
@@ -407,7 +407,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               <div className="adam-name">Adam McClarin</div>
               <div className="adam-title-text">Founder, Meraki is Love (Soulful Tech™)<br />CISSP · Azure AI Engineer · Dual MS Cybersecurity</div>
               <div className="adam-quote">"I built Canopy Guard because I kept running audits for clients manually and finding the same gaps. The tool exists so you can see what I see, for free. If you need someone to fix it, I am here."</div>
-              <div className="adam-bio">Adam works with small businesses, coaches, service providers, and healthcare platforms to improve their digital visibility and security. His approach starts with Canopy Guard because honest data makes honest conversations.</div>
+              <div className="adam-bio">Adam works with small businesses, coaches, service providers, and healthcare platforms to improve their digital visibility and security. He starts every engagement with a Canopy Guard scan, so the first conversation is about what the site shows.</div>
               <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-green">Book a call with Adam</a>
             </div>
           </div>
@@ -418,14 +418,14 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
       <section id="pricing" className="pricing-section">
         <div className="section-inner">
           <div className="section-eyebrow" style={{ color: "var(--gold)" }}>Pricing</div>
-          <h2 className="section-headline" style={{ color: "var(--tod)" }}>The audit is free.<br />The expertise is available.</h2>
-          <p className="section-sub" style={{ color: "var(--todm)", marginBottom: 40 }}>See the full picture at no cost. If you want the work done, that is what I am here for.</p>
+          <h2 className="section-headline" style={{ color: "var(--tod)" }}>The audit is free.<br />Help is available when you want it.</h2>
+          <p className="section-sub" style={{ color: "var(--todm)", marginBottom: 40 }}>Run the audit at no cost. If you want the work done, book a call with me.</p>
           <div className="pricing-grid">
             <div className="pricing-card">
               <div className="pricing-badge">ALWAYS FREE</div>
               <div className="pricing-name">Site Audit</div>
               <div className="pricing-price">$0</div>
-              <div className="pricing-period">No account. No limit. No catch.</div>
+              <div className="pricing-period">No account and no scan limit.</div>
               <ul className="pricing-features">
                 <li>Full SEO score with specific findings</li>
                 <li>AEO and GEO readiness scores</li>
@@ -450,7 +450,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <li>Ongoing monitoring and rescans</li>
               </ul>
               <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-green" style={{ display: "block", textAlign: "center", padding: 14, borderRadius: "var(--r-sm)" }}>Book a call</a>
-              <div className="next-step-note">Bring your audit to the call so we can work from what it actually found.</div>
+              <div className="next-step-note">Bring your audit to the call so we can work from what it found.</div>
             </div>
           </div>
         </div>
@@ -461,11 +461,11 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
         <div className="section-inner">
           <div className="section-eyebrow">FAQ</div>
           <h2 className="section-headline">Questions we hear most</h2>
-          <p className="section-sub" style={{ marginBottom: 36 }}>Straight answers. No filler.</p>
+          <p className="section-sub" style={{ marginBottom: 36 }}>Short answers to what people ask before and after a scan.</p>
           <div className="faq-grid">
             <div className="faq-item">
               <div className="faq-q">What is GEO and why does it matter?</div>
-              <div className="faq-a">GEO stands for Generative Engine Optimization. It is the practice of making your site visible to AI assistants like ChatGPT, Gemini, Claude, and Perplexity. These are where a growing share of people now search for services. <strong>If your site is not structured for GEO, you are invisible to that traffic.</strong> Most audit tools do not score for this. Canopy Guard does.</div>
+              <div className="faq-a">GEO stands for Generative Engine Optimization. It is the practice of making your site visible to AI assistants like ChatGPT, Gemini, Claude, and Perplexity. These are where a growing share of people now search for services. <strong>If your site is not structured for GEO, those assistants are unlikely to cite it.</strong> Most audit tools do not score for this. Canopy Guard does.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">What is AEO?</div>
@@ -477,19 +477,19 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">What does MITRE ATT&CK mean for my website?</div>
-              <div className="faq-a">MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. For each security finding, <strong>Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique</strong>, so you get context for what the gap actually exposes you to, not just a number. This comes from Adam's CISSP background and 20 years in cybersecurity.</div>
+              <div className="faq-a">MITRE ATT&CK is a globally recognized framework for understanding how attackers operate. For each security finding, <strong>Canopy Guard identifies the exposure condition associated with the relevant MITRE ATT&CK technique</strong>, so you see what the gap exposes you to along with the score. This comes from Adam's CISSP background and 20 years in cybersecurity.</div>
             </div>
             <div className="faq-item">
-              <div className="faq-q">What does the security scan actually check?</div>
+              <div className="faq-q">What does the security scan check?</div>
               <div className="faq-a">Across ten security layers it covers TLS, DNS, HTTP headers, HTML vulnerabilities, and exposed paths, plus five expanded checks: <strong>malware and reputation</strong> (Google Safe Browsing and common blacklists, reported as Clean, Flagged, or Blacklisted); an <strong>expanded footprint</strong> (Subresource Integrity on scripts and stylesheets, Secure and HttpOnly cookie flags, full TLS cipher-suite enumeration with weak-cipher warnings, and certificate transparency log presence); <strong>DNS and email depth</strong> (exact SPF mechanisms and qualifier strength, DMARC policy of none, quarantine, or reject, and registrar lock with days until expiration, with domains expiring within 60 days flagged as a hijacking risk); <strong>exposed sensitive file detection</strong> for paths like /.env, /.git/config, /wp-config.php.bak, /.aws/credentials, and /admin, where any publicly accessible path is reported as Critical; and <strong>Supabase anonymous exposure detection</strong>, which replays a Supabase anon key shipped in the site's own client code, read-only, against common table names and reports any table that returns live rows to an anonymous request as Critical (Row Level Security disabled or misconfigured). Every check is passive and read-only.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">My score is low. What do I do next?</div>
-              <div className="faq-a">Your full report includes prioritized findings so you know exactly what to fix first. If you want to implement the recommendations yourself, the report gives you enough to work from. If you want it done for you, <a href={CALENDLY} target="_blank" rel="noopener noreferrer">book a call with Adam</a> to talk through next steps.</div>
+              <div className="faq-a">Your full report includes prioritized findings so you know what to fix first. If you want to implement the recommendations yourself, the report gives you enough to work from. If you want it done for you, <a href={CALENDLY} target="_blank" rel="noopener noreferrer">book a call with Adam</a> to talk through next steps.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">How is this different from other SEO tools?</div>
-              <div className="faq-a">Three things. First, GEO scoring is rare at this price point, which is free. Second, each security finding identifies the exposure condition associated with a MITRE ATT&CK technique, rather than being flagged generically. Third, there is a real human behind this tool who can implement everything the audit finds. <strong>Most tools give you data. This one connects you to someone who fixes it.</strong></div>
+              <div className="faq-a">In three ways. First, few free tools score GEO. Second, each security finding identifies the exposure condition associated with a MITRE ATT&CK technique, rather than being flagged generically. Third, the person who built the tool can implement what the audit finds. <strong>You get the data, and you can hire the person who fixes it.</strong></div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Is my site data private?</div>
@@ -501,15 +501,15 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">How does Canopy Guard compare to hiring an SEO agency?</div>
-              <div className="faq-a">An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard gives you the full picture for free across SEO, AEO, GEO, and security in 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly. No retainer, no account managers, just the practitioner who built the tool.</div>
+              <div className="faq-a">An agency charges a monthly retainer and often reports only on traditional SEO. Canopy Guard scores SEO, AEO, GEO, and security for free in about 30 seconds, with each finding identifying the exposure condition associated with a MITRE ATT&CK technique. When you want the work implemented, you hire Adam directly, with no retainer and no account manager in between.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">What does a good overall score look like, and what should I do if mine is low?</div>
-              <div className="faq-a">Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing you visibility or trust right now. A low score is not a verdict, it is a roadmap. Your report ranks findings by impact so you fix what matters first, and you can book a call if you want help working through them.</div>
+              <div className="faq-a">Above 80 is strong, 50 to 80 means clear fixable gaps, and below 50 signals problems costing you visibility or trust right now. A low score tells you where to start. Your report ranks findings by impact so you fix what matters first, and you can book a call if you want help working through them.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">How often should I re-scan my site?</div>
-              <div className="faq-a">Re-scan after any meaningful change: a redesign, new pages, a platform migration, or after applying fixes from a previous report. For an active site, a monthly scan catches regressions before they cost you traffic. Because the scan is free and takes 30 seconds, there is no reason to wait for a problem to show up in your analytics first.</div>
+              <div className="faq-a">Re-scan after any meaningful change: a redesign, new pages, a platform migration, or after applying fixes from a previous report. For an active site, a monthly scan catches regressions before they cost you traffic. The scan is free and takes about 30 seconds, so you can run it before a problem shows up in your analytics.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Which search engines and AI assistants does Canopy Guard check for?</div>
@@ -521,8 +521,8 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
 
       {/* CTA */}
       <section className="cta-section">
-        <h2 className="cta-headline">Your site has gaps you do not know about yet.</h2>
-        <p className="cta-sub">Free audit. Real findings. No account required. And if you need the work done, one call away.</p>
+        <h2 className="cta-headline">See what your site is missing.</h2>
+        <p className="cta-sub">The audit is free and needs no account. If you want the work done, book a call with me.</p>
         <div className="cta-buttons">
           <button className="btn-gold" style={{ padding: "16px 36px", fontSize: "1rem" }} onClick={scanOrFocus}>Scan My Site Free</button>
           <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: "16px 36px", fontSize: "1rem" }}>Book a call with Adam</a>
@@ -556,7 +556,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
           <div className="footer-top">
             <div>
               <div className="footer-logo">Canopy <span>Guard</span></div>
-              <div className="footer-tagline">Free site audit across SEO, AEO, GEO, and security. Built by a practitioner. Powered by 20 years of real work.</div>
+              <div className="footer-tagline">Free site audit across SEO, AEO, GEO, and security, built by a practitioner with 20 years in the field.</div>
               <div className="footer-powered">A Meraki is Love product · Soulful Tech™</div>
             </div>
             <div>

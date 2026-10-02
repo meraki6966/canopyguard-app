@@ -35,7 +35,7 @@ describe("generatePDF", () => {
     expect(scoreVals(doc).slice(1, 4)).toEqual(["N/A", "N/A", "N/A"]);
     expect(doc.querySelector(".measured-line").textContent).toContain("Not measured: SEO, AEO, GEO");
     // Content risk boxes cannot be claimed secured or critical without the page.
-    const blind = [...doc.querySelectorAll(".risk-box")].find((b) => b.textContent.includes("Blind to AI Assistants"));
+    const blind = [...doc.querySelectorAll(".risk-box")].find((b) => b.textContent.includes("Hard for AI assistants to cite"));
     expect(blind.className).toContain("unmeasured");
     expect(actionTitles(doc).every((title) => !/H1|meta description|llms\.txt|FAQ|Organization/i.test(title))).toBe(true);
   });

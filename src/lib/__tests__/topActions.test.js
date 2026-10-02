@@ -180,3 +180,36 @@ describe("host and page in action text", () => {
     }
   });
 });
+
+describe("the noindex action", () => {
+  const noindex = (source, directive = "noindex") => {
+    const r = structuredClone(measured);
+    r.target_domain = "example.com/demos/pikewell";
+    Object.assign(r.visibility_canopy.seo_branch.html_structure, { indexable: false, noindex_source: source, robots_directive: directive });
+    return r;
+  };
+  const action = (report) => rankActions(report).find((a) => a.key === "noindex");
+
+  it("does not fire on a report with no indexable field, or on an indexable page", () => {
+    expect(action(measured)).toBeUndefined();
+    const r = structuredClone(measured);
+    r.visibility_canopy.seo_branch.html_structure.indexable = true;
+    expect(action(r)).toBeUndefined();
+  });
+
+  it("names the meta tag, the page and the directive it found", () => {
+    const a = action(noindex("meta", "noindex, nofollow"));
+    expect(a.descKey).toBe("dashboard.actions.noindex_meta_desc");
+    expect(a.params).toMatchObject({ page: "example.com/demos/pikewell", directive: "noindex, nofollow" });
+  });
+
+  it("names the response header when that is where it came from", () => {
+    expect(action(noindex("header")).descKey).toBe("dashboard.actions.noindex_header_desc");
+  });
+
+  it("does not fire when the page was not read", () => {
+    const r = structuredClone(newUnmeasured);
+    r.visibility_canopy.seo_branch.html_structure = { ...(r.visibility_canopy.seo_branch.html_structure || {}), indexable: false };
+    expect(action(r)).toBeUndefined();
+  });
+});

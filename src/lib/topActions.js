@@ -30,6 +30,7 @@ const TITLES = {
   vulnerable_library: "Update a vulnerable JavaScript library",
   dmarc: "Publish a DMARC record",
   spf: "Fix your SPF record",
+  noindex: "Remove the noindex directive, unless it is on purpose",
   h1: "Add an H1 heading",
   title: "Add a page title",
   meta_desc: "Add a meta description",
@@ -72,6 +73,8 @@ const DESCS = {
   dmarc: "No DMARC record for {{domain}}, so anyone can send email that looks like it came from you.",
   spf_missing: "No SPF record for {{domain}}, so mail servers cannot tell your real email from forgeries.",
   spf_pass_all: "The SPF record for {{domain}} ends in +all, which lets any server on the internet send email as you.",
+  noindex_meta: "A robots meta tag on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the tag.",
+  noindex_header: "The X-Robots-Tag response header on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the header.",
   h1: "The homepage of {{page}} has no H1 heading, so search engines have to guess what the page is about.",
   title: "The homepage of {{page}} has no title tag, so search results show whatever text the search engine picks.",
   meta_desc: "The homepage of {{page}} has no usable meta description, so search results show a snippet you did not choose.",
@@ -188,6 +191,10 @@ const CANDIDATES = [
       if (policy === "absent") return say("spf_missing");
       return policy === "pass_all" ? say("spf_pass_all") : null;
     } },
+  { key: "noindex", tier: 2, category: "seo", fix: null,
+    fire: ({ hs }) => (hs?.indexable === false
+      ? say(hs.noindex_source === "header" ? "noindex_header" : "noindex_meta", { directive: typeof hs.robots_directive === "string" ? hs.robots_directive : "noindex" })
+      : null) },
   { key: "h1", tier: 2, category: "seo", fix: "h1",
     fire: ({ hs }) => (hs?.h1_count === 0 ? say("h1") : null) },
   { key: "title", tier: 2, category: "seo", fix: null,

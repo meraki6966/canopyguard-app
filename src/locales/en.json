@@ -86,6 +86,9 @@
       "title_desc": "The homepage of {{page}} has no title tag, so search results show whatever text the search engine picks.",
       "meta_desc_title": "Add a meta description",
       "meta_desc_desc": "The homepage of {{page}} has no usable meta description, so search results show a snippet you did not choose.",
+      "noindex_title": "Remove the noindex directive, unless it is on purpose",
+      "noindex_meta_desc": "A robots meta tag on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the tag.",
+      "noindex_header_desc": "The X-Robots-Tag response header on {{page}} says \"{{directive}}\", so search engines will leave the page out of their results. On a staging or demo page that is the right setting. On a page you want found, remove the header.",
       "canonical_title": "Fix your canonical URL",
       "canonical_desc": "The canonical tag on {{page}} is missing or points to another address, so search engines may index the wrong URL.",
       "admin_panel_title": "Restrict your admin login page",
@@ -159,6 +162,7 @@
     },
     "rows": {
       "crawlable": "Crawlable",
+      "indexable": "Indexable",
       "h1_tags": "H1 Tags",
       "meta_desc": "Meta Descriptions",
       "canonical_match": "Canonical Match",

@@ -66,3 +66,58 @@ describe("getComplianceChecks privacy policy", () => {
     expect(privacy(legacyUnmeasured)).toBeNull();
   });
 });
+
+describe("the Indexable row", () => {
+  const row = (report) => getRows(report).find((r) => r.key === "indexable");
+  const withField = (value) => {
+    const r = structuredClone(measured);
+    r.visibility_canopy.seo_branch.html_structure.indexable = value;
+    return r;
+  };
+
+  it("has no row on a report from an engine that never checked", () => {
+    expect("indexable" in measured.visibility_canopy.seo_branch.html_structure).toBe(false);
+    expect(row(measured)).toBeUndefined();
+  });
+
+  it("passes on an indexable page", () => {
+    expect(row(withField(true)).pass).toBe(true);
+  });
+
+  it("fails on a noindex page, and the Gaps card counts it", () => {
+    expect(row(withField(false)).pass).toBe(false);
+    const before = summarizeGaps(getChecks(withField(true)));
+    const after = summarizeGaps(getChecks(withField(false)));
+    expect(after.failing).toBe(before.failing + 1);
+    expect(after.byCategory.seo).toBe((before.byCategory.seo ?? 0) + 1);
+    expect(after.total).toBe(before.total);
+  });
+
+  it("is not measured, never failed, when the engine could not read the page", () => {
+    expect(row(withField(null)).pass).toBeNull();
+  });
+
+  it("leaves Crawlable alone: a noindex page was still read", () => {
+    expect(getRows(withField(false)).find((r) => r.key === "crawlable").pass).toBe(true);
+  });
+});
+
+describe("the Page Title row", () => {
+  const title = (text) => {
+    const r = structuredClone(measured);
+    r.visibility_canopy.seo_branch.html_structure.title = text;
+    return getRows(r).find((x) => x.key === "page_title")?.value;
+  };
+
+  it("shows a 53 character title whole", () => {
+    const t = "Pikewell Real Estate | Denver Homes and Neighborhoods";
+    expect(t.length).toBe(53);
+    expect(title(t)).toBe(t);
+  });
+
+  it("cuts a title past 70 characters with a visible ellipsis", () => {
+    const shown = title("a".repeat(90));
+    expect(shown.length).toBe(70);
+    expect(shown.endsWith("…")).toBe(true);
+  });
+});

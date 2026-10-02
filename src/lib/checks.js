@@ -29,10 +29,17 @@ function buildRows(r) {
   const meta = bool(hs?.missing_meta_descriptions);
   const spoof = bool(crawl?.spoofed_agent_vulnerability);
   const llms = typeof geo?.llms_txt_status === "string" ? geo.llms_txt_status : null;
-  const title = typeof hs?.title === "string" && hs.title.trim() ? hs.title.slice(0, 40) : null;
+  // The whole title up to 70 characters, a little past the 60 a search result
+  // shows. A longer one is cut with an ellipsis so the cut is visible.
+  const rawTitle = typeof hs?.title === "string" ? hs.title.trim() : "";
+  const title = rawTitle ? (rawTitle.length > 70 ? `${rawTitle.slice(0, 69).trimEnd()}…` : rawTitle) : null;
 
   return [
     check("seo", "crawlable", "Crawlable", bool(seo?.crawlability)),
+    // Engine 3.4.3 and later report whether the page carries a noindex
+    // directive. A report from an older engine has no such field, and gets no
+    // row, since nothing was checked.
+    ...(hs && "indexable" in hs ? [check("seo", "indexable", "Indexable", bool(hs.indexable))] : []),
     check("seo", "h1_tags", "H1 Tags", h1 === null ? null : h1 === 1, "h1"),
     check("seo", "meta_desc", "Meta Descriptions", meta === null ? null : !meta, "meta_desc"),
     check("seo", "canonical_match", "Canonical Match", bool(hs?.canonical_match), "canonical"),

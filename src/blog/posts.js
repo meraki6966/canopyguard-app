@@ -11,29 +11,29 @@ export const POSTS = [
         "h2": "Where most audits stop being useful",
         "paragraphs": [
           "A failing FAQ Schema finding used to mean the same thing every audit tool tells you: here's what's wrong, now go fix it yourself. That gap between “here's the problem” and “here's the actual fix” is where most audits stop being useful.",
-          "Canopy Guard now closes part of that gap. When a scan finds your FAQ Schema or meta description missing, there's a button next to that finding. Click it, and the tool reads your page's real content and writes a working FAQ schema and an optimized meta description for you, specific to your actual business, not a generic template.",
+          "Canopy Guard now closes part of that gap. When a scan finds your FAQ Schema or meta description missing, there's a button next to that finding. Click it, and the tool reads your page's real content and writes a working FAQ schema and an optimized meta description for you, specific to your business.",
           "We tested it against a law firm's site with no FAQ schema at all. The result included questions like “What areas does the firm serve?” with an answer citing the actual counties from the page, and “What types of legal services does the firm offer?” pulling the real practice areas listed on their site. Nothing templated could produce that. It came from reading the page."
         ]
       },
       {
-        "h2": "What it actually does, and what it doesn't",
+        "h2": "What it does, and what it doesn't",
         "paragraphs": [
-          "The generation reads your page's real content, title, headings, body text, and produces two things: a valid FAQPage schema block with real questions and answers grounded in what your page says, and a meta description sized to the range search engines actually display.",
-          "Every output is validated twice before it ever reaches you. It has to parse as real JSON. It has to structurally match what schema.org's FAQPage type actually requires. If either check fails, you get a plain “unable to generate right now” message, never a broken result dressed up as a working one.",
-          "Here's the part worth being honest about. This is AI-written content. It's grounded in your real page, not invented, but it hasn't read your mind about nuance, tone, or anything that lives outside the text it was given. Every generated fix carries a clear label and a note: read every line against your actual page before you publish it. Schema that contradicts what a visitor actually sees on your site is a real structured-data violation, not just a minor mismatch, so this isn't a box to skip."
+          "The generation reads your page's real content, title, headings, body text, and produces two things: a valid FAQPage schema block with real questions and answers grounded in what your page says, and a meta description sized to the range search engines display.",
+          "Every output is validated twice before it ever reaches you. It has to parse as real JSON. It has to structurally match what schema.org's FAQPage type requires. If either check fails, you get a plain “unable to generate right now” message, never a broken result dressed up as a working one.",
+          "One caution matters here. This is AI-written content. It's grounded in what your page says, but it hasn't read your mind about nuance, tone, or anything that lives outside the text it was given. Every generated fix carries a clear label and a note: read every line against your actual page before you publish it. Schema that contradicts what a visitor sees on your site is a structured-data violation, so this isn't a box to skip."
         ]
       },
       {
         "h2": "Why we built it this way",
         "paragraphs": [
-          "A tool that hands you AI-written content and calls it “safe to apply as written” the same way it treats a header configuration pulled straight from your own DNS records would be lying to you a little. A missing security header has one correct fix. A missing FAQ schema has an infinite number of reasonable ones, and only you know which facts about your business actually matter to lead with.",
+          "A tool that hands you AI-written content and calls it “safe to apply as written” the same way it treats a header configuration pulled straight from your own DNS records would be lying to you a little. A missing security header has one correct fix. A missing FAQ schema has an infinite number of reasonable ones, and only you know which facts about your business matter to lead with.",
           "So the two kinds of fixes look different on purpose. Header and DNS fixes, derived directly from your own domain's records, get one treatment. AI-generated content gets its own label, its own color, and its own explicit instruction to review before you use it. Different confidence, different presentation, no pretending they're the same thing."
         ]
       },
       {
         "h2": "Where it shows up",
         "paragraphs": [
-          "Run a free scan. If your FAQ Schema or meta description comes back failing, you'll see the option right there next to the finding. No account required to run the scan itself, same as always. Generating a fix asks for an email the first time, the same gate that already covers the full report download, not a second ask.",
+          "Run a free scan. If your FAQ Schema or meta description comes back failing, you'll see the option right there next to the finding. No account required to run the scan itself, same as always. Generating a fix asks for an email the first time, the same gate that already covers the full report download. You are asked once.",
           "It costs nothing to try. If your page doesn't have enough real content to generate something specific and useful from, the tool tells you that plainly instead of forcing out generic filler, and skips the generation entirely rather than charging you for nothing.",
           "Free audit at thecanopyguard.com. If FAQ Schema shows up failing, that's the button worth clicking."
         ]
@@ -42,11 +42,11 @@ export const POSTS = [
     "faqs": [
       {
         "q": "What does Canopy Guard generate when FAQ schema is missing?",
-        "a": "It reads the page's real content, title, headings, and body text, then produces a valid FAQPage schema block with questions and answers grounded in what the page actually says, plus a meta description sized to the range search engines display."
+        "a": "It reads the page's real content, title, headings, and body text, then produces a valid FAQPage schema block with questions and answers grounded in what the page says, plus a meta description sized to the range search engines display."
       },
       {
         "q": "Is the generated FAQ schema safe to publish as written?",
-        "a": "Review it against your page first. The output is AI-written and grounded in your real page rather than invented, but it has not read your mind about nuance or tone. Schema that contradicts what a visitor actually sees on your site is a real structured-data violation, so read every line before you publish it."
+        "a": "Review it against your page first. The output is AI-written and grounded in your real page rather than invented, but it has not read your mind about nuance or tone. Schema that contradicts what a visitor sees on your site is a structured-data violation, so read every line before you publish it."
       },
       {
         "q": "Does generating a fix cost anything or require an account?",
@@ -62,23 +62,23 @@ export const POSTS = [
     "date": "2026-09-09",
     "sections": [
       {
-        "h2": "What those technique codes actually are",
+        "h2": "What those technique codes are",
         "paragraphs": [
           "Run a Canopy Guard scan and you'll see technique codes next to some findings. T1557. T1584.001. T1592.002. If you don't work in security, these look like error codes from a system that's already decided you won't understand the real answer.",
-          "Here's what they actually are, and why a free audit tool bothers including them at all."
+          "Here's what they are, and why a free audit tool bothers including them at all."
         ]
       },
       {
         "h2": "It's not our framework. That's the point.",
         "paragraphs": [
-          "MITRE ATT&CK is a public, continuously updated knowledge base of how real attacks actually happen, tactics and techniques, documented from real incident data. Security teams at companies far bigger than any small business use the exact same reference. It's not a scoring system one vendor invented to sound impressive. It's the same taxonomy a SOC analyst reaches for when something goes wrong.",
-          "When Canopy Guard tags a finding with a technique ID, it's saying: this specific gap on your site corresponds to a documented, real-world attack pattern, not a made-up severity label. A weak cipher suite maps to T1557, Adversary-in-the-Middle, because a weak cipher is quite literally what makes that kind of interception possible. A domain expiring soon maps to T1584.001, Compromise Infrastructure, because an expired domain is exactly what attackers scoop up to impersonate the business that used to own it."
+          "MITRE ATT&CK is a public, continuously updated knowledge base of how real attacks happen, tactics and techniques, documented from real incident data. Security teams at companies far bigger than any small business use the exact same reference. It's not a scoring system one vendor invented to sound impressive. It's the same taxonomy a SOC analyst reaches for when something goes wrong.",
+          "When Canopy Guard tags a finding with a technique ID, it's saying: this specific gap on your site corresponds to a documented, real-world attack pattern. A weak cipher suite maps to T1557, Adversary-in-the-Middle, because a weak cipher is quite literally what makes that kind of interception possible. A domain expiring soon maps to T1584.001, Compromise Infrastructure, because an expired domain is exactly what attackers scoop up to impersonate the business that used to own it."
         ]
       },
       {
         "h2": "What we mean, and what we don't",
         "paragraphs": [
-          "We're careful about the claim here on purpose. Canopy Guard doesn't run active attacks against your site, and it doesn't map every finding to a technique, only the ones where a real, documented correspondence exists. For each one, it identifies the exposure condition associated with the relevant technique. That's a specific claim: here's what this gap actually exposes you to, described the same way a security professional would describe it, not a badge slapped on a header check to make the report look more serious than it is.",
+          "We're careful about the claim here on purpose. Canopy Guard doesn't run active attacks against your site, and it doesn't map every finding to a technique, only the ones where a real, documented correspondence exists. For each one, it identifies the exposure condition associated with the relevant technique. That's a specific claim: here's what this gap exposes you to, described the same way a security professional would describe it.",
           "If a finding doesn't have a clean mapping to a real technique, it doesn't get one invented for it. That restraint is the whole reason the labels that do appear mean something."
         ]
       },
@@ -86,7 +86,7 @@ export const POSTS = [
         "h2": "Why this matters if you're not a security person",
         "paragraphs": [
           "You don't need to memorize technique IDs. What matters is the plain-language note attached to each one, written specifically so you don't have to. “Weak cipher suites can be downgraded or decrypted, exposing traffic to interception” tells you what you need to know without requiring a CISSP to parse it.",
-          "The technique ID underneath is there for anyone who wants to go deeper, hand the finding to an IT contractor, cross-reference it against a compliance requirement, or just verify for themselves that this isn't marketing language dressed up as expertise. It's a receipt, not a decoration.",
+          "The technique ID underneath is there for anyone who wants to go deeper, hand the finding to an IT contractor, cross-reference it against a compliance requirement, or just verify for themselves that this isn't marketing language dressed up as expertise. Each ID is a receipt you can check against the public framework.",
           "Run a free scan at thecanopyguard.com and you'll see exactly which findings carry a technique mapping and which don't. The distinction is deliberate both ways."
         ]
       }
@@ -136,7 +136,7 @@ export const POSTS = [
         "paragraphs": [
           "Pull up yourdomain.com/robots.txt directly in a browser and read every line. Look for User-agent: * blocks and check what falls under them.",
           "Search for GPTBot, ClaudeBot, and Google-Extended by name. If they are not mentioned at all, that usually means they are allowed by default, which is good. If they are listed under a Disallow, that is the fix.",
-          "Run the domain through an audit tool that checks crawler access specifically, not just traditional SEO signals. That is the piece most general purpose SEO tools skip entirely."
+          "Run the domain through an audit tool that checks crawler access as well as traditional SEO signals. That is the piece most general purpose SEO tools skip entirely."
         ]
       }
     ],
@@ -172,11 +172,11 @@ export const POSTS = [
         ]
       },
       {
-        "h2": "Where the traffic actually went",
+        "h2": "Where the traffic went",
         "capsule": "Impressions inside a third party listing are not the same as a click on your own domain.",
         "paragraphs": [
           "Most of our visibility was coming through a platform listing, not the domain itself. AI engines were finding us, citing us, surfacing us in answers. But the path stopped at someone else's page instead of continuing to ours.",
-          "That is the gap most audits never show you. SEO tools check whether you rank. AEO and GEO checks whether an AI model can find and cite you. Neither one checks whether the visibility actually converts into a person landing on your site."
+          "That is the gap most audits never show you. SEO tools check whether you rank. AEO and GEO checks whether an AI model can find and cite you. Neither one checks whether the visibility converts into a person landing on your site."
         ]
       },
       {
@@ -216,7 +216,7 @@ export const POSTS = [
   {
     "slug": "ai-citations-not-from-page-one",
     "title": "Only 17 Percent of AI Citations Come From Page One Rankings",
-    "description": "Only 17 percent of AI Overview citations rank in the organic top 10. Why small businesses can win citations on comprehensiveness, not domain authority.",
+    "description": "Only 17 percent of AI Overview citations rank in the organic top 10. Why small businesses can win citations on comprehensiveness without domain authority.",
     "readingTime": "4 min read",
     "date": "2026-06-29",
     "sections": [
@@ -224,7 +224,7 @@ export const POSTS = [
         "h2": "Does ranking number one still get you cited by AI?",
         "capsule": "Research shows only 17 percent of sources cited in Google AI Overviews simultaneously rank in the organic top 10 for the same query. That means most cited pages were not winning the classic search race. AI retrieval pulls from a far wider pool, and your page can qualify without a top ranking.",
         "paragraphs": [
-          "For years you were told the same thing. Rank in the top 10 or stay invisible. Small businesses heard that, looked at the law firms and national franchises sitting above them, and quietly gave up. The math felt impossible against sites with thousands of backlinks and decades of domain authority behind them.",
+          "For years you were told the same thing. Rank in the top 10 or stay invisible. Small businesses heard that, looked at the law firms and national franchises sitting above them, and gave up. The math felt impossible against sites with thousands of backlinks and decades of domain authority behind them.",
           "AI Overviews broke that math. The model does not simply copy the top blue links. It retrieves passages that answer the question well, then cites them. A page sitting on result twenty can get pulled into the answer if it explains the topic clearly. The ranking gate you could never crack is no longer the only door into the conversation."
         ]
       },
@@ -232,23 +232,23 @@ export const POSTS = [
         "h2": "Why does the AI pick smaller sites over big brands?",
         "capsule": "AI Overview retrieval rewards topical comprehensiveness and clean structure over raw domain authority. The model wants a passage that fully answers the question, formatted so it can extract it. A focused page from a small business often beats a sprawling corporate page that buries the answer under layers of marketing.",
         "paragraphs": [
-          "Think about what the model is actually doing. It reads your page, decides whether a section directly answers the prompt, and judges how confidently it can lift that section out. A narrow, well organized page about one service is easier to trust than a bloated homepage trying to rank for everything at once.",
+          "Think about what the model is doing. It reads your page, decides whether a section directly answers the prompt, and judges how confidently it can lift that section out. A narrow, well organized page about one service is easier to trust than a bloated homepage trying to rank for everything at once.",
           "This is the opening you did not have under classic SEO. You cannot out spend a national brand on backlinks. You can out explain them on a single question. Depth on one specific topic, plus formatting that the machine can parse without guessing, is something a focused operator delivers better than a committee ever will."
         ]
       },
       {
-        "h2": "What do you actually get for being cited?",
+        "h2": "What do you get for being cited?",
         "capsule": "Citations are not vanity. Pages cited in AI Overviews receive a 120 percent increase in clicks compared to uncited competitors sitting beneath the module. Being named as a source puts you above the fold of the answer itself, where attention concentrates, instead of buried in links almost nobody scrolls down to reach.",
         "paragraphs": [
-          "The AI Overview now sits at the very top of the page. Traditional results got pushed down. If you are not in the answer, you are below a block that satisfies many searchers before they ever scroll. The old position three you fought so hard for matters far less than the citation slot you can actually win today.",
-          "That 120 percent lift is the difference between a page that earns traffic and one that watches the answer steal it. For a small business, a handful of cited pages can outperform a competitor with ten times your link profile, because the citation, not the ranking, is now what drives the click."
+          "The AI Overview now sits at the very top of the page. Traditional results got pushed down. If you are not in the answer, you are below a block that satisfies many searchers before they ever scroll. The old position three you fought so hard for matters far less than the citation slot you can win today.",
+          "That 120 percent lift is the difference between a page that earns traffic and one that watches the answer steal it. For a small business, a handful of cited pages can outperform a competitor with ten times your link profile, because the citation now drives the click more than the ranking does."
         ]
       },
       {
         "h2": "How do you know if your pages are built to be cited?",
-        "capsule": "You measure the signals AI retrieval actually uses. Canopy Guard scores two of them directly. Its AEO score grades how well your page answers questions, and its GEO score grades the structure and formatting that generative engines need to extract and cite you. Together they show exactly where you stand.",
+        "capsule": "You measure the signals AI retrieval uses. Canopy Guard scores two of them directly. Its AEO score grades how well your page answers questions, and its GEO score grades the structure and formatting that generative engines need to extract and cite you. Together they show exactly where you stand.",
         "paragraphs": [
-          "Canopy Guard is a free website audit tool built by Adam McClarin, who holds the CISSP, works as a Microsoft Azure AI Engineer, carries dual master's degrees in cybersecurity, and has spent 20 years across IT, security, and AI. The tool reflects how retrieval systems read pages now, not guesswork about old ranking factors.",
+          "Canopy Guard is a free website audit tool built by Adam McClarin, who holds the CISSP, works as a Microsoft Azure AI Engineer, carries dual master's degrees in cybersecurity, and has spent 20 years across IT, security, and AI. The tool reflects how retrieval systems read pages now.",
           "Run your site and you see concrete gaps. Maybe your answer is buried three scrolls down. Maybe your headings do not map to real questions people ask. Maybe your markup gives the model nothing to anchor on. Fix those, and you start competing for citations on comprehensiveness and clarity, the two things you fully control."
         ]
       }
@@ -296,7 +296,7 @@ export const POSTS = [
         "capsule": "Yes, and it is one of the most common causes. Generative engine optimization, or GEO, measures how well AI systems can find and quote your pages. A site can look perfect to visitors and still score low because the crawler saw a blank page.",
         "paragraphs": [
           "This is the trap. You test your site in a browser, everything renders, and you assume crawlers see the same thing. They do not. The gap between what you see and what a crawler reads is invisible until you measure it.",
-          "Canopy Guard, the free audit tool built by Adam McClarin, fetches your page the way an AI crawler does and scores what actually comes back. A low GEO score with thin extracted text is a strong signal that JavaScript is hiding your content."
+          "Canopy Guard, the free audit tool built by Adam McClarin, fetches your page the way an AI crawler does and scores what comes back. A low GEO score with thin extracted text is a strong signal that JavaScript is hiding your content."
         ]
       },
       {
@@ -308,10 +308,10 @@ export const POSTS = [
         ]
       },
       {
-        "h2": "How do you know if this is actually your problem?",
-        "capsule": "Run one quick test. Right-click your page and choose View Source, not Inspect. View Source shows the raw HTML the crawler receives. If your headlines and body copy are missing there but appear on screen, JavaScript is rendering content the crawler will never see.",
+        "h2": "How do you know if this is your problem?",
+        "capsule": "Run one quick test. Right-click your page and choose View Source instead of Inspect. View Source shows the raw HTML the crawler receives. If your headlines and body copy are missing there but appear on screen, JavaScript is rendering content the crawler will never see.",
         "paragraphs": [
-          "Inspect shows the live DOM after scripts run, which is why it always looks complete and fools people. View Source is the honest view. It is the closest free approximation of what a non-rendering crawler actually pulls from your server.",
+          "Inspect shows the live DOM after scripts run, which is why it always looks complete and fools people. View Source is the honest view. It is the closest free approximation of what a non-rendering crawler pulls from your server.",
           "Adam McClarin brings a CISSP, a Microsoft Azure AI Engineer certification, dual master's degrees in cybersecurity, and 20 years in the field to how Canopy Guard scores these gaps. The tool turns this manual check into a measured score you can act on."
         ]
       }
@@ -350,7 +350,7 @@ export const POSTS = [
         "h2": "Why do 95 percent of AI sub-queries have zero search volume?",
         "capsule": "Traditional keyword tools count what humans type into a search box. Query fan-out generates machine-written sub-queries that no human ever types. That is why 95 percent of these sub-queries show zero volume in tools like the ones marketers have trusted for a decade. You are optimizing for an invisible map.",
         "paragraphs": [
-          "Keyword research was built on a simple premise: find the phrases people search, then write pages targeting those phrases. That premise breaks under fan-out. The sub-queries an AI generates are phrased like internal reasoning steps, not search bar entries. They are longer, more specific, and often conversational.",
+          "Keyword research was built on a simple premise: find the phrases people search, then write pages targeting those phrases. That premise breaks under fan-out. The sub-queries an AI generates are phrased like internal reasoning steps more than search bar entries. They are longer, more specific, and often conversational.",
           "So when 95 percent of those sub-queries show zero recorded volume, it does not mean nobody cares about the topic. It means the demand exists in a layer your tools cannot see. Chasing high-volume head terms now leaves you absent from the exact micro-intents that decide whether an AI cites you or your competitor."
         ]
       },
@@ -363,16 +363,16 @@ export const POSTS = [
         ]
       },
       {
-        "h2": "How do you measure whether AI actually cites you?",
+        "h2": "How do you measure whether AI cites you?",
         "capsule": "You cannot improve what you cannot measure. Canopy Guard's GEO citation precision score audits how reliably AI systems surface and cite your brand across fragmented queries. It is a free check that shows where your Entity Hub has gaps and which micro-intents your competitors currently own.",
         "paragraphs": [
           "Generative engine optimization, or GEO, is the discipline of being cited inside AI answers rather than ranked below them. The GEO citation precision score measures that directly. It tests how your content holds up when a prompt fans out, scoring whether you appear, how accurately you are represented, and where you vanish.",
-          "Run the free audit, read the gaps, and build clusters to fill them. That is the practical loop. As an Azure AI engineer with dual master's degrees in cybersecurity, I built Canopy Guard to give you the same visibility I expect from any system I trust: evidence, not guesswork."
+          "Run the free audit, read the gaps, and build clusters to fill them. That is the practical loop. As an Azure AI engineer with dual master's degrees in cybersecurity, I built Canopy Guard to give you the same visibility I expect from any system I trust: evidence you can check."
         ]
       },
       {
         "h2": "How do you start optimizing for query fan-out today?",
-        "capsule": "Start by mapping the micro-intents around your category, not the keywords. List the questions a buyer's prompt would fan into, audit your coverage with the GEO citation precision score, then build an Entity Hub to close the gaps. Measure, publish, re-scan, and repeat until you appear across every fragment.",
+        "capsule": "Start by mapping the micro-intents around your category before you list keywords. List the questions a buyer's prompt would fan into, audit your coverage with the GEO citation precision score, then build an Entity Hub to close the gaps. Measure, publish, re-scan, and repeat until you appear across every fragment.",
         "paragraphs": [
           "Stop thinking in head terms and start thinking in coverage. Write the definition pages, the comparison pages, and the objection-handling pages that a fragmented query demands. Interlink them so the relationship between topics is explicit. Language models reward structure they can parse and entities they can verify across multiple, consistent sources."
         ]
@@ -381,7 +381,7 @@ export const POSTS = [
     "faqs": [
       {
         "q": "Does query fan-out mean keyword research is dead?",
-        "a": "Not dead, but demoted. Head-term research still frames your category. The bigger win now is mapping the micro-intents fan-out generates and covering them with an Entity Hub, because those sub-queries are where AI systems actually decide whether they cite your brand or a competitor instead."
+        "a": "Not dead, but demoted. Head-term research still frames your category. The bigger win now is mapping the micro-intents fan-out generates and covering them with an Entity Hub, because those sub-queries are where AI systems decide whether they cite your brand or a competitor instead."
       },
       {
         "q": "What makes an Entity Hub different from a normal blog?",
@@ -428,13 +428,13 @@ export const POSTS = [
         "h2": "What does a missing X-Frame-Options header reveal about your site's safety?",
         "capsule": "Without X-Frame-Options, attackers can embed your site inside a hidden frame and trick users into clicking things they never intended. Canopy Guard identifies the exposure condition associated with MITRE ATT&CK technique T1185, Browser Session Hijacking. A page that can be silently framed looks careless, and careless reads as untrustworthy.",
         "paragraphs": [
-          "Clickjacking, the attack T1185 describes, overlays your real interface under a deceptive one. Your user thinks they are clicking a harmless button while actually authorizing a transfer or changing a setting. X-Frame-Options shuts this down by forbidding other domains from framing your pages.",
-          "This is the connection no other free audit tool draws. Canopy Guard does not just flag a header as absent; it identifies the exposure condition associated with the relevant MITRE ATT&CK technique and explains how that exposure undermines the trust signals search engines and AI models depend on. You get the threat and the ranking consequence in one view."
+          "Clickjacking, the attack T1185 describes, overlays your real interface under a deceptive one. Your user thinks they are clicking a harmless button while authorizing a transfer or changing a setting. X-Frame-Options shuts this down by forbidding other domains from framing your pages.",
+          "This is the connection no other free audit tool draws. Canopy Guard flags a header as absent, then identifies the exposure condition associated with the relevant MITRE ATT&CK technique and explains how that exposure undermines the trust signals search engines and AI models depend on. You get the threat and the ranking consequence in one view."
         ]
       },
       {
         "h2": "What should you do once you know your headers are missing?",
-        "capsule": "Run your site through Canopy Guard, note which of the three headers are missing, and add them at your web server or CDN. HSTS, CSP, and X-Frame-Options are configuration changes, not code rewrites. You can close all three gaps in an afternoon and start rebuilding trust immediately.",
+        "capsule": "Run your site through Canopy Guard, note which of the three headers are missing, and add them at your web server or CDN. HSTS, CSP, and X-Frame-Options are configuration changes. None of them needs a code rewrite. You can close all three gaps in an afternoon and start rebuilding trust immediately.",
         "paragraphs": [
           "Start with X-Frame-Options and HSTS, because they are nearly impossible to get wrong. CSP takes more care, since an overly strict policy can break legitimate scripts. Deploy it in report-only mode first, watch what it would block, then tighten it until only your trusted sources remain.",
           "Then scan again. Security and visibility are not separate projects; the same hardening that protects your users tells search engines and AI models you are a safe place to send people. Fix the headers once, and you improve both your defense and your discoverability at the same time."
@@ -473,15 +473,15 @@ export const POSTS = [
       },
       {
         "h2": "Does clearing the cliff guarantee you get cited?",
-        "capsule": "No. Crossing the authority threshold only gets you into the room. Once a site clears the cliff, citation selection becomes almost entirely about content structure and factual density rather than link equity. The model stops asking who trusts you and starts asking whether your page actually answers the question.",
+        "capsule": "No. Crossing the authority threshold only gets you into the room. Once a site clears the cliff, citation selection becomes almost entirely about content structure and factual density rather than link equity. The model stops asking who trusts you and starts asking whether your page answers the question.",
         "paragraphs": [
           "This is the part that should encourage you. The cliff is not a wall with nothing behind it. Above the threshold, the playing field flattens. Two sites with similar authority compete on how cleanly each one answers a real question, how dense the facts are, and how fast the answer arrives.",
-          "That flattening is your opening. You may never out link a national competitor, but you can out structure them. A tightly organized page from a small firm can beat a sprawling, vague page from a larger one, because the model is selecting passages, not whole websites. That is a winnable contest, and it rewards craft over budget."
+          "That flattening is your opening. You may never out link a national competitor, but you can out structure them. A tightly organized page from a small firm can beat a sprawling, vague page from a larger one, because the model is selecting passages and ignores the size of the website around them. That is a winnable contest, and it rewards craft over budget."
         ]
       },
       {
-        "h2": "Where on the page do citations actually come from?",
-        "capsule": "From the top, overwhelmingly. Forty four percent of ChatGPT citations come from the first third of a page. The model rewards answers that arrive early, before a reader or a crawler has to dig. Burying your best sentence under three paragraphs of throat clearing quietly costs you the citation.",
+        "h2": "Where on the page do citations come from?",
+        "capsule": "From the top, overwhelmingly. Forty four percent of ChatGPT citations come from the first third of a page. The model rewards answers that arrive early, before a reader or a crawler has to dig. Burying your best sentence under three paragraphs of throat clearing costs you the citation.",
         "paragraphs": [
           "I call this the first third rule, and it changes how you write. Put the direct answer to the question in the opening lines, in plain declarative sentences. State the fact, the number, or the definition first, then explain. This is the technical register doing real work, lead with the outcome and support it after.",
           "On Habitat for Humanity builds I learned that the order of operations decides whether the work holds. The same is true on a page. Front load the answer, group your supporting points in clear sections, and let each heading ask the exact question a person would type. Order is not decoration, it is how the answer survives the cut."
@@ -522,7 +522,7 @@ export const POSTS = [
         "h2": "Why does ChatGPT recommend local businesses so rarely?",
         "capsule": "Look at the numbers. Google Gemini recommends local businesses about 11 percent of the time, Perplexity 7.4 percent, and ChatGPT only 1.2 percent. If you own a local business, the most used AI assistant almost never names you. That gap is not random, and it is fixable.",
         "paragraphs": [
-          "I have spent twenty years in security and engineering, and the pattern here is familiar. ChatGPT is brilliant at language and weak at place. It was built to predict words, not to know which roofer sits three miles from the person asking. So when someone types find a good electrician near me, the model reaches for what it learned in training, and most local businesses were never well represented there.",
+          "I have spent twenty years in security and engineering, and the pattern here is familiar. ChatGPT is brilliant at language and weak at place. It was built to predict words. It was never built to know which roofer sits three miles from the person asking. So when someone types find a good electrician near me, the model reaches for what it learned in training, and most local businesses were never well represented there.",
           "The other assistants close part of this gap with live retrieval and stronger location signals. ChatGPT is catching up, but for now the floor is low. The good news is simple. When the model does have clean, structured, machine readable information about you, your odds climb fast."
         ]
       },
@@ -538,12 +538,12 @@ export const POSTS = [
         "h2": "How does schema markup change what AI sees?",
         "capsule": "Schema is the language machines trust. LocalBusiness schema stacked with PostalAddress, Review, and FAQ schema turns your website into a clean record an AI can read without guessing. It states your name, your location, your reputation, and your common answers in a format built for retrieval rather than for human eyes alone.",
         "paragraphs": [
-          "Think of it like a label on a sealed box. A person can shake the box and guess what is inside. A machine reads the label and knows. LocalBusiness schema is that label. PostalAddress pins you to a real place. Review schema carries your ratings as data, not decoration. FAQ schema feeds the exact question and answer pairs these assistants love to quote.",
-          "Stacked together, these four work as one signal. They tell ChatGPT, Gemini, and Perplexity who you are, where you are, what people think of you, and what you actually do. That is the difference between being a fragment in the training data and being a confident answer the model is willing to give."
+          "Think of it like a label on a sealed box. A person can shake the box and guess what is inside. A machine reads the label and knows. LocalBusiness schema is that label. PostalAddress pins you to a real place. Review schema carries your ratings as data a machine can read. FAQ schema feeds the exact question and answer pairs these assistants love to quote.",
+          "Stacked together, these four work as one signal. They tell ChatGPT, Gemini, and Perplexity who you are, where you are, what people think of you, and what you do. That is the difference between being a fragment in the training data and being a confident answer the model is willing to give."
         ]
       },
       {
-        "h2": "Does this actually move the needle?",
+        "h2": "Does this move the needle?",
         "capsule": "Yes, and I have the case to show it. A Houston electrician came to Canopy Guard with an AEO score of 6. After implementing structured data and the fixes the scan surfaced, that score reached 91. Local search bookings and calls increased. Same business, same trade, far more visible to the systems that now route demand.",
         "paragraphs": [
           "Nothing about the electrician's skill changed. What changed was how readable the business became to machines. We added LocalBusiness, PostalAddress, Review, and FAQ schema, cleaned the signals the crawler depends on, and gave the assistants something solid to cite. The jump from 6 to 91 was not a trick. It was the model finally being able to see the business clearly.",
@@ -558,7 +558,7 @@ export const POSTS = [
       },
       {
         "q": "Do I need a developer to add schema markup?",
-        "a": "Not always. Many sites support structured data through plugins or built in settings. The harder part is knowing which schema types to stack and how to fill them correctly. Run a free Canopy Guard scan first, so you fix the gaps that actually matter."
+        "a": "Not always. Many sites support structured data through plugins or built in settings. The harder part is knowing which schema types to stack and how to fill them correctly. Run a free Canopy Guard scan first, so you fix the gaps that matter."
       },
       {
         "q": "Will fixing this help me on Google too?",
@@ -575,9 +575,9 @@ export const POSTS = [
     "sections": [
       {
         "h2": "Why are your traffic dashboards lying to you in 2026?",
-        "capsule": "Your analytics still count clicks, but clicks are no longer where the decision happens. When an AI Overview answers the question and the user never visits, your dashboard shows a quiet line going down while your brand may actually be winning or losing inside the model itself.",
+        "capsule": "Your analytics still count clicks, but clicks are no longer where the decision happens. When an AI Overview answers the question and the user never visits, your dashboard shows a quiet line going down while your brand may be winning or losing inside the model itself.",
         "paragraphs": [
-          "I run Canopy Guard, a free website audit tool, and I built it after watching too many strong sites get told they were failing because sessions dropped. The truth is simpler. The click moved. Search engines now resolve the answer on the results page, and generative models resolve it inside the chat. Your reporting was designed for a web that is fading.",
+          "I run Canopy Guard, a free website audit tool, and I built it after watching too many strong sites get told they were failing because sessions dropped. The explanation is simpler. The click moved. Search engines now resolve the answer on the results page, and generative models resolve it inside the chat. Your reporting was designed for a web that is fading.",
           "Here is the number that should change how you plan. Sixty-nine percent of all searches are now zero-click, up from fifty-six percent in 2024. That means roughly seven in ten people get what they need without ever loading your page. Counting only the visitors who slip through that gap tells you almost nothing about your reach."
         ]
       },
@@ -594,7 +594,7 @@ export const POSTS = [
         "capsule": "Stop leading with sessions and start tracking three things: how often you are cited, how often you are recommended, and how accurately you are described. Citation frequency, recommendation rate, and answer accuracy tell you whether the model trusts you, which is the real currency of zero-click search.",
         "paragraphs": [
           "Build a fixed set of transactional prompts, run them across the major models on a schedule, and log every mention. Track citation frequency so you know if you appear at all. Track recommendation rate so you know if you appear as the suggested choice. Track accuracy so you know the model is describing you correctly rather than confusing you with a competitor.",
-          "This is measurable, repeatable, and honest work. It mirrors how I approach security audits, where you test against a controlled set of conditions rather than guessing. Twenty years in the field, a CISSP, and two master's degrees in cybersecurity taught me one thing above all. You measure what actually moves the outcome, not what is easy to chart."
+          "This is measurable, repeatable, and honest work. It mirrors how I approach security audits, where you test against a controlled set of conditions rather than guessing. Twenty years in the field, a CISSP, and two master's degrees in cybersecurity taught me one thing above all. You measure what moves the outcome, even when something else is easier to chart."
         ]
       },
       {
@@ -654,7 +654,7 @@ export const POSTS = [
       },
       {
         "h2": "What content changes turn ghost citations into visible attribution?",
-        "capsule": "Structure makes you quotable and creditable. Lead with a tight, self-contained answer, attach clear attribution cues like author and brand name near key claims, and use clean headings, definitions, and data tables. Machine-readable structure raises the odds an engine surfaces your link, not just your facts.",
+        "capsule": "Structure makes you quotable and creditable. Lead with a tight, self-contained answer, attach clear attribution cues like author and brand name near key claims, and use clean headings, definitions, and data tables. Machine-readable structure raises the odds an engine surfaces your link along with your facts.",
         "paragraphs": [
           "Engines cite what is easy to lift cleanly. Put a complete answer in the first two sentences under each heading, phrase claims so they stand alone, and bind your brand name to the unique data only you publish. When the fact and your name travel together, dropping the citation gets harder.",
           "Add schema markup, name your author, and timestamp your claims. These signals tell the model the content has a clear owner. Original statistics, named methodologies, and proprietary research are the hardest to paraphrase anonymously, so they pull visible attribution more often than generic advice."
@@ -664,7 +664,7 @@ export const POSTS = [
         "h2": "How does Canopy Guard measure your citation precision?",
         "capsule": "Canopy Guard scores this directly. The Citation Precision metric in the GEO category measures how cleanly an AI engine can extract and attribute your content, flagging the structural gaps that produce ghost citations. The free audit shows you where attribution leaks and what to fix first.",
         "paragraphs": [
-          "Canopy Guard was built by Adam McClarin, a CISSP and Microsoft Azure AI Engineer with dual master's degrees in cybersecurity and twenty years in the field. The tool brings that practitioner rigor to generative visibility, treating attribution as something you measure and engineer, not hope for.",
+          "Canopy Guard was built by Adam McClarin, a CISSP and Microsoft Azure AI Engineer with dual master's degrees in cybersecurity and twenty years in the field. The tool brings that practitioner rigor to generative visibility, treating attribution as something you measure and engineer.",
           "Run your site through the free audit and read your Citation Precision score. It pinpoints the headings, claims, and markup that make your content liftable but not creditable, so you can close the gap and turn invisible influence into visible traffic."
         ]
       }
@@ -672,7 +672,7 @@ export const POSTS = [
     "faqs": [
       {
         "q": "Can ghost citations ever help my brand?",
-        "a": "Yes, indirectly. Being repeated by AI builds awareness that shows up as branded search, even without a link. But awareness without attribution is fragile. You want the visible citation so the influence compounds into traffic, trust, and conversions you can actually measure."
+        "a": "Yes, indirectly. Being repeated by AI builds awareness that shows up as branded search, even without a link. But awareness without attribution is fragile. You want the visible citation so the influence compounds into traffic, trust, and conversions you can measure."
       },
       {
         "q": "How is Citation Precision different from a normal SEO score?",
@@ -700,7 +700,7 @@ export const POSTS = [
         ]
       },
       {
-        "h2": "What do SPF, DKIM, and DMARC actually do?",
+        "h2": "What do SPF, DKIM, and DMARC do?",
         "capsule": "Think of these three records as the locks, the seal, and the rulebook for your email. SPF says which servers are allowed to send for you. DKIM adds a tamper-proof signature. DMARC tells receiving servers what to do when a message fails those checks.",
         "paragraphs": [
           "SPF, which stands for Sender Policy Framework, is a public list of the mail servers permitted to send on your behalf. When a receiving server gets a message, it checks that list. If the sending server is not on it, the message looks suspicious.",
@@ -709,7 +709,7 @@ export const POSTS = [
       },
       {
         "h2": "Why does missing DMARC cost you points, and why do AI models care?",
-        "capsule": "Most audit tools, Canopy Guard included, subtract eight points from your security score when DMARC is missing. That number reflects real risk. AI models that summarize and rank businesses also read DMARC as a trust signal, so a missing record can quietly lower how your domain is judged.",
+        "capsule": "Most audit tools, Canopy Guard included, subtract eight points from your security score when DMARC is missing. That number reflects real risk. AI models that summarize and rank businesses also read DMARC as a trust signal, so a missing record can lower how your domain is judged.",
         "paragraphs": [
           "The eight point deduction is not arbitrary. Without DMARC, SPF and DKIM still run, but nothing enforces what happens on failure. An attacker can spoof your domain, and receiving servers are left guessing. The penalty reflects how directly that gap leads to fraud against your customers and your name.",
           "The AI angle is newer and worth understanding. When a language model evaluates a domain for trust, it looks for the same signals a security professional would. A published DMARC record says you operate a maintained, legitimate domain. A missing one is a quiet mark against you, even when nothing else is wrong."
@@ -727,7 +727,7 @@ export const POSTS = [
         "h2": "How does Canopy Guard show you these gaps?",
         "capsule": "Canopy Guard scans your domain and surfaces missing SPF, DKIM, and DMARC records directly in your security score, so you see the exact deductions. It then identifies the exposure condition associated with the relevant MITRE ATT&CK reconnaissance techniques, showing how an attacker would use the gap against you.",
         "paragraphs": [
-          "The score is the starting point, but the value is in the context. Canopy Guard does not just tell you a record is missing. It identifies the exposure condition that gap creates and the MITRE ATT&CK technique associated with it, drawn from the standard framework security teams use to describe attacker behavior, so you understand the technique, not just the symptom.",
+          "The score is the starting point, but the value is in the context. Canopy Guard tells you more than that a record is missing. It identifies the exposure condition that gap creates and the MITRE ATT&CK technique associated with it, drawn from the standard framework security teams use to describe attacker behavior, so you understand the technique behind the symptom.",
           "Missing email authentication maps cleanly to reconnaissance, the stage where attackers gather information and identify ways to impersonate you. Seeing your own exposure named that way changes how seriously you treat it. Run your domain through Canopy Guard, fix the three records, and close one of the most common doors attackers walk through."
         ]
       }
@@ -764,7 +764,7 @@ export const POSTS = [
       },
       {
         "h2": "Why does Google sunsetting open search access matter to you?",
-        "capsule": "Because the plumbing of the old web is being pulled out. Google is sunsetting unrestricted access to its Programmable Search Engine by January 2027. The era of cheaply scraping ten blue links is ending. Machines will reach your content through structured data and direct retrieval, not through a public search box.",
+        "capsule": "Because the plumbing of the old web is being pulled out. Google is sunsetting unrestricted access to its Programmable Search Engine by January 2027. The era of cheaply scraping ten blue links is ending. Machines will reach your content through structured data and direct retrieval more than through a public search box.",
         "paragraphs": [
           "This is not a small policy note. It is a signal. The companies building agents are telling you, plainly, that they will not depend on scraping messy pages forever. They want clean, structured, machine-readable sources. When Google narrows that door, every builder downstream rethinks how their agents find and trust information.",
           "Read the direction of travel. The reward is moving toward sites that publish data agents can consume directly. The penalty falls on sites that hide their meaning inside layout, images, and scripts. You can complain about the change, or you can build for it. One of those choices keeps you visible."
@@ -775,11 +775,11 @@ export const POSTS = [
         "capsule": "Both, but the order has reversed. For twenty years you built for human eyes first and let machines guess at the rest. Now you build for machine consumption first and human reading second. An agent that cannot parse your page will never put it in front of the person you want.",
         "paragraphs": [
           "This sounds cold until you sit with it. The human still matters more than anything. The path to that human now runs through a machine. If the agent cannot understand your pricing, your services, and your proof, it will choose a competitor it can understand. You lose before the person ever sees you.",
-          "My approach has always been to design for the reader you actually have. Today that reader arrives as code before it arrives as a person. So you write clean structure, you label your meaning, and you make every claim legible to a parser. The human experience does not suffer. It gets sharper."
+          "My approach has always been to design for the reader you have. Today that reader arrives as code before it arrives as a person. So you write clean structure, you label your meaning, and you make every claim legible to a parser. The human experience does not suffer. It gets sharper."
         ]
       },
       {
-        "h2": "What does machine-readable infrastructure actually require?",
+        "h2": "What does machine-readable infrastructure require?",
         "capsule": "Four things, and Canopy Guard measures each one. Valid schema markup so agents understand your entities. Security signals so they trust you. Open AI crawler access so they can reach you. Structured answer blocks so they can quote you. Miss any of these, and the agent moves on.",
         "paragraphs": [
           "I built Canopy Guard as a free audit because I kept seeing strong businesses fail the machine test for reasons they could not see. As a CISSP, a Microsoft Azure AI Engineer, and someone holding dual master's degrees in cybersecurity, I wanted one tool that checked the security and the structure together.",
@@ -821,7 +821,7 @@ export const POSTS = [
         "paragraphs": [
           "GEO stands for Generative Engine Optimization. It is the practice of structuring your website so AI assistants can find it, understand it, and quote it when someone asks a question your business can answer.",
           "Think of it as SEO's younger sibling. SEO aimed to rank you in a list of blue links. GEO aims to get you named inside the answer itself, the one paragraph the AI hands back to a buyer who never scrolls a results page.",
-          "The shift is simple but big. People used to search and click. Now a growing share of them ask and read. If the AI does not know you exist, you are invisible to that buyer, no matter how good your service is."
+          "The change is simple but big. People used to search and click. Now a growing share of them ask and read. If the AI does not know you exist, you are invisible to that buyer, no matter how good your service is."
         ]
       },
       {
@@ -845,13 +845,13 @@ export const POSTS = [
         "paragraphs": [
           "Rewrite your top three pages so each one answers a specific question a customer would type or speak. Lead with the answer, then explain. Do not bury it.",
           "Add an FAQ section to your service pages using the exact questions buyers ask. These map almost perfectly to how people prompt an AI, and they give the model clean question-and-answer pairs to pull from.",
-          "Then add schema markup, publish an llms.txt file, and make sure your name, location, and offerings are stated in plain text, not locked inside images. Run Canopy Guard to score your GEO readiness for free, and it will show you which of these gaps is costing you visibility right now."
+          "Then add schema markup, publish an llms.txt file, and make sure your name, location, and offerings are stated in plain text and never only inside images. Run Canopy Guard to score your GEO readiness for free, and it will show you which of these gaps is costing you visibility right now."
         ]
       },
       {
         "h2": "Why 2026 Is the Year to Move",
         "paragraphs": [
-          "Buyer behavior already shifted. A large share of people now open an AI assistant before they open a search engine, especially for research-heavy decisions like hiring a coach, an agency, or a service provider.",
+          "Buyer behavior has already changed. A large share of people now open an AI assistant before they open a search engine, especially for research-heavy decisions like hiring a coach, an agency, or a service provider.",
           "Early movers win an outsized share here. When an AI names two or three providers in an answer, being one of them is worth more than ranking tenth on a page nobody scrolls to.",
           "You do not need a big budget or a developer on retainer. You need clear, factual, well-structured content and a quick audit to find the gaps. Do that now, while most of your competitors still think GEO is a buzzword."
         ]
@@ -892,7 +892,7 @@ export const POSTS = [
         "paragraphs": [
           "SEO is about ranking. You pick keywords, build pages, earn links, and climb the results page. The goal is a high position so people click through to your site.",
           "AEO is about being the answer. The machine reads your page, decides you are the best source, and speaks for you. Sometimes the user never clicks at all, because their question is already answered.",
-          "These two work together, not against each other. Strong SEO still gets you in the room. AEO is what makes the answer engine choose your words over everyone else's."
+          "These two work together. Strong SEO still gets you in the room. AEO is what makes the answer engine choose your words over everyone else's."
         ]
       },
       {
@@ -943,7 +943,7 @@ export const POSTS = [
     "readingTime": "5 min read",
     "sections": [
       {
-        "h2": "What MITRE ATT&CK Actually Is",
+        "h2": "What MITRE ATT&CK Is",
         "paragraphs": [
           "MITRE ATT&CK is a catalog. It is a free, public library that documents how real attackers behave, organized into tactics (what they are trying to do) and techniques (the specific way they do it). Think of it as a field guide to attacker behavior, written down so defenders can study the same playbook the bad guys use.",
           "It was not invented to scare you. It was built from real incidents observed in the wild. Security teams at large companies use it to check their defenses against known moves. The framework is just a shared vocabulary, so when someone says a site is exposed to a certain technique, everyone knows exactly what that means.",
@@ -962,7 +962,7 @@ export const POSTS = [
         "h2": "How Missing Security Headers Map to Techniques",
         "paragraphs": [
           "Security headers are small instructions your server sends to every visitor's browser. When they are missing, attackers get options they should not have, and each gap lines up with a documented technique.",
-          "A missing Content-Security-Policy relates to script execution. Without it, the browser will run almost any script that ends up on your page, which is exactly what an attacker wants if they manage to inject one. A missing HSTS header relates to adversary-in-the-middle. Without it, a visitor can be quietly downgraded to an unencrypted connection where their traffic is read or altered. A revealing Server header relates to reconnaissance. When your site announces its exact software and version, you are handing attackers the first page of their research for free.",
+          "A missing Content-Security-Policy relates to script execution. Without it, the browser will run almost any script that ends up on your page, which is exactly what an attacker wants if they manage to inject one. A missing HSTS header relates to adversary-in-the-middle. Without it, a visitor can be downgraded without warning to an unencrypted connection where their traffic is read or altered. A revealing Server header relates to reconnaissance. When your site announces its exact software and version, you are handing attackers the first page of their research for free.",
           "None of these are exotic. They are common, fixable, and well understood. Mapping each one to a technique simply makes the consequence obvious, so a header is no longer a checkbox but a specific risk you can reason about."
         ]
       },
@@ -982,7 +982,7 @@ export const POSTS = [
       },
       {
         "q": "Does a MITRE ATT&CK technique on my report mean I have been hacked?",
-        "a": "No. It describes external exposure, not a breach. A technique named on your report means an attacker could use that gap, like an unlocked door. It is a prompt to fix the issue, not proof that anyone has walked through it."
+        "a": "No. It describes external exposure. It does not mean a breach has happened. A technique named on your report means an attacker could use that gap, like an unlocked door. It is a prompt to fix the issue. It is no proof that anyone has walked through it."
       },
       {
         "q": "Are missing security headers really a big deal?",
@@ -1024,7 +1024,7 @@ export const POSTS = [
       {
         "h2": "Invisible Code: Structured Data and JavaScript Traps",
         "paragraphs": [
-          "Structured data, also called schema markup, is a hidden layer that tells machines what your content actually is: a local business, a service, an FAQ, a review. Without it, the model is guessing from raw text. With it, you spell out your hours, location, and offerings in a format built to be read.",
+          "Structured data, also called schema markup, is a hidden layer that tells machines what your content is: a local business, a service, an FAQ, a review. Without it, the model is guessing from raw text. With it, you spell out your hours, location, and offerings in a format built to be read.",
           "Add schema for your business type and your FAQs. Most site builders have a plugin or a setting for this, and it takes one afternoon to get right.",
           "The other silent killer is JavaScript-only content. If your text only appears after scripts run, many AI crawlers see a blank page. View your site with JavaScript disabled, or check the raw page source. If your core copy is missing, you need server-rendered or static content so the words are there on first load."
         ]
@@ -1044,7 +1044,7 @@ export const POSTS = [
         "a": "Open yoursite.com/robots.txt in your browser. Look for Disallow lines paired with user agents like GPTBot, ClaudeBot, Google-Extended, or PerplexityBot. If those crawlers are disallowed, the AI assistants cannot read your site. Canopy Guard checks this automatically and flags it for you."
       },
       {
-        "q": "What is llms.txt and do I actually need it?",
+        "q": "What is llms.txt and do I need it?",
         "a": "It is a plain text file at your site root that points AI models to your key pages and explains your business briefly. It is not required, but it gives models a clean map of what matters. Most sites skip it, so adding one is an easy edge over competitors."
       },
       {
@@ -1073,14 +1073,14 @@ export const POSTS = [
         "paragraphs": [
           "Open ChatGPT, Gemini, and Perplexity in three tabs. Ask each one the same three questions. First, ask about your business by name. Second, ask for the best provider in your category and city, the way a real customer would. Third, ask your brand plus your main service, such as your name and bookkeeping.",
           "Watch for one thing. Are you named, are you described correctly, and are you recommended next to your competitors. If the tool invents details or skips you entirely, that is your answer.",
-          "Do this from a logged out or private window when you can. You want the answer a stranger gets, not the one shaped by your own history."
+          "Do this from a logged out or private window when you can. You want the answer a stranger gets, without your own history shaping it."
         ]
       },
       {
         "h2": "Step two, check what you are blocking",
         "paragraphs": [
           "Many sites block the AI crawlers without knowing it. Open your site and add slash robots.txt to the end of your address, like yoursite.com/robots.txt. Read what is there.",
-          "Look for lines that disallow GPTBot, Google-Extended, ClaudeBot, or PerplexityBot. If you see those bots blocked, the AI tools cannot read your pages, learn what you do, or cite you. That is a setting, not a verdict, and it can be fixed.",
+          "Look for lines that disallow GPTBot, Google-Extended, ClaudeBot, or PerplexityBot. If you see those bots blocked, the AI tools cannot read your pages, learn what you do, or cite you. That is a setting, and it can be fixed.",
           "While you are looking at files, check for an llms.txt file at yoursite.com/llms.txt. This is a simple plain text guide that tells AI tools what your site offers and where the important pages live. Most sites do not have one yet, which means having one puts you ahead."
         ]
       },
@@ -1128,7 +1128,7 @@ export const POSTS = [
         "paragraphs": [
           "Let me save you a week of confusing blog posts. SEO, AEO, and GEO are not three names for the same thing. They are three different ways people find you, and each one rewards different work.",
           "SEO is search engine optimization. The goal is to rank in the list of blue links on Google and Bing. You earn that spot with relevant content, fast pages, clean structure, and links from other sites. This is the game most business owners already know.",
-          "AEO is answer engine optimization. The goal is to be the direct answer, not one of ten links. Think voice assistants, featured snippets, and the AI Overview that sits above the normal results. AEO rewards clear questions, clear answers, and structured data the machine can lift in one clean piece.",
+          "AEO is answer engine optimization. The goal is to be the direct answer instead of one of ten links. Think voice assistants, featured snippets, and the AI Overview that sits above the normal results. AEO rewards clear questions, clear answers, and structured data the machine can lift in one clean piece.",
           "GEO is generative engine optimization. The goal is to be the source a generative assistant cites when someone asks it a question. When a buyer asks an AI tool who to hire or what to buy, GEO decides whether your name shows up in that answer."
         ]
       },
@@ -1143,13 +1143,13 @@ export const POSTS = [
       {
         "h2": "Which one matters most for you in 2026",
         "paragraphs": [
-          "The honest answer depends on how your buyers actually search. A local plumber lives and dies by SEO and the map pack, because people still type a service plus a city. A coach or consultant whose clients ask an AI assistant for a recommendation needs GEO, because that conversation never touches a search results page.",
+          "The honest answer depends on how your buyers search. A local plumber lives and dies by SEO and the map pack, because people still type a service plus a city. A coach or consultant whose clients ask an AI assistant for a recommendation needs GEO, because that conversation never touches a search results page.",
           "Most small businesses now sit in the middle. Some clients Google you, some ask Siri, and a growing number ask an AI tool to shortlist three providers and then pick one. That is the real change. You no longer get to pick just one acronym and ignore the others.",
           "My approach has always been to start with the channel your best clients already use, prove it works, then expand outward. But ignoring AEO and GEO in 2026 is like ignoring mobile in 2015. The traffic is moving whether you prepare for it or not."
         ]
       },
       {
-        "h2": "How to know where you actually stand",
+        "h2": "How to know where you stand",
         "paragraphs": [
           "Here is the practical part. You cannot fix what you have not measured, and most owners are guessing. They feel behind on AI without one real number to point at.",
           "This is exactly why I built Canopy Guard. It is a free website audit that scores your SEO, your AEO, and your GEO in a single scan, plus your security on top of all three. One scan, four scores, no sales call.",
@@ -1180,7 +1180,7 @@ export const POSTS = [
     "readingTime": "5 min read",
     "sections": [
       {
-        "h2": "What a security header actually does",
+        "h2": "What a security header does",
         "paragraphs": [
           "You ask a website for a page, and the server sends that page back. Along with the page, it sends a set of quiet instructions called response headers. Most are invisible to you. A handful of them tell the visitor's browser how to behave, what to trust, and what to refuse.",
           "Security headers are those instructions. They do not change how your site looks, they do not slow it down, and your visitors never see them. They sit in the background and tell every browser to reject risky behavior. Set up right, they stop whole classes of attacks before anyone reaches your customers.",
@@ -1191,7 +1191,7 @@ export const POSTS = [
         "h2": "The headers that carry the most weight",
         "paragraphs": [
           "Content-Security-Policy, or CSP, is the heavy hitter. It tells the browser exactly which sources are allowed to load scripts, styles, and images on your page. If an attacker manages to slip a malicious script in, a solid CSP simply refuses to run it. This is your strongest defense against cross-site scripting.",
-          "Strict-Transport-Security, known as HSTS, forces every connection to your site to use HTTPS. Without it, a visitor can be quietly downgraded to an unencrypted connection where someone on the same network can read or change the traffic. With HSTS in place, the browser refuses to connect any other way.",
+          "Strict-Transport-Security, known as HSTS, forces every connection to your site to use HTTPS. Without it, a visitor can be downgraded without warning to an unencrypted connection where someone on the same network can read or change the traffic. With HSTS in place, the browser refuses to connect any other way.",
           "X-Frame-Options stops other sites from loading your pages inside a hidden frame, which is how clickjacking tricks people into clicking things they cannot see. X-Content-Type-Options, set to nosniff, stops the browser from guessing file types, which closes a sneaky path attackers use to run a disguised file as real code."
         ]
       },
@@ -1207,7 +1207,7 @@ export const POSTS = [
         "h2": "Why this is worth an afternoon",
         "paragraphs": [
           "These are some of the cheapest wins in all of security. You are not rebuilding anything and you are not hiring anyone. In most cases you add a few lines in your host or CDN settings, save, and every page on your site is covered. An afternoon of work can protect you for years.",
-          "Trust and rankings ride along too. Search engines and browsers reward sites that serve clean, secure responses, and real visitors notice when a site feels safe. Missing headers can surface as browser warnings that quietly cost you customers before they ever reach your contact page.",
+          "Trust and rankings ride along too. Search engines and browsers reward sites that serve clean, secure responses, and real visitors notice when a site feels safe. Missing headers can surface as browser warnings that cost you customers before they ever reach your contact page.",
           "This is exactly what Canopy Guard checks for free. It scans every one of these headers, tells you in plain English which ones are missing, and identifies the exposure condition associated with a MITRE ATT&CK technique for each gap, so you can see the real technique it leaves open. Run your site, read the report, and fix what matters first."
         ]
       }
@@ -1215,11 +1215,11 @@ export const POSTS = [
     "faqs": [
       {
         "q": "Do security headers slow down my website?",
-        "a": "No. Security headers are tiny instructions sent alongside your page, not extra files or scripts. They add no real weight and have no effect on how fast your pages load. If anything, forcing HTTPS through HSTS can make repeat connections a little quicker."
+        "a": "No. Security headers are tiny instructions sent alongside your page. They add no extra files or scripts. They add no real weight and have no effect on how fast your pages load. If anything, forcing HTTPS through HSTS can make repeat connections a little quicker."
       },
       {
-        "q": "Where do I actually add these headers?",
-        "a": "Almost always at your host or CDN, not in your page code. Platforms like Cloudflare, Netlify, and most managed hosts let you set response headers in a settings panel or a config file. You set them once and they apply across every page automatically."
+        "q": "Where do I add these headers?",
+        "a": "Almost always at your host or CDN, outside your page code. Platforms like Cloudflare, Netlify, and most managed hosts let you set response headers in a settings panel or a config file. You set them once and they apply across every page automatically."
       },
       {
         "q": "Can wrong headers break my site?",
@@ -1244,7 +1244,7 @@ export const POSTS = [
       {
         "h2": "What the audit revealed",
         "paragraphs": [
-          "The free scan is direct about what is missing. For this electrician, three problems stood out. There was no structured schema telling search engines and AI what the business actually was. The content was written for browsing, not for answering. And the site was missing the security headers that protect visitors and signal trust.",
+          "The free scan is direct about what is missing. For this electrician, three problems stood out. There was no structured schema telling search engines and AI what the business was. The content was written for browsing and answered no questions directly. And the site was missing the security headers that protect visitors and signal trust.",
           "Missing schema is the quiet killer. Without FAQ and LocalBusiness markup, a search engine has to guess at your hours, your service area, and what you do. AI assistants guess too, and they often guess wrong.",
           "The answer formatting was the second gap. Pages explained services in long paragraphs, but never answered the plain questions a customer types or speaks. Security was the third. The site was missing headers that browsers and scanners look for, which dragged the score to 34 and left visitors less protected than they should be."
         ]
@@ -1252,7 +1252,7 @@ export const POSTS = [
       {
         "h2": "What we changed",
         "paragraphs": [
-          "We rebuilt the site around what the audit found, not around guesswork. First, we added FAQ schema and LocalBusiness schema so search engines and AI assistants could read the business clearly. Hours, service area, and services became machine readable instead of buried in text.",
+          "We rebuilt the site around what the audit found. First, we added FAQ schema and LocalBusiness schema so search engines and AI assistants could read the business clearly. Hours, service area, and services became machine readable instead of buried in text.",
           "Next, we reformatted the content to answer questions directly. Each common question a Houston homeowner might ask got a clear, short answer near the top of the page. We kept the detail, but we led with the answer. This is what moves an AEO score, and it is what gets a business quoted by an AI assistant.",
           "We then added the missing security headers and published an llms.txt file, a simple file that tells AI crawlers what the site is and how to use it. Small steps, taken in order, with each change tied to a finding in the scan."
         ]

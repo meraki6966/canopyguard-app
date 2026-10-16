@@ -90,7 +90,7 @@ Q: How is Canopy Guard different from other SEO tools?
 A: Three things: GEO scoring is rare and here it is free; each security finding identifies the exposure condition associated with a MITRE ATT&CK technique rather than being flagged generically; and a real practitioner can implement everything the audit finds. Most tools give you data. This one connects you to someone who fixes it.
 
 Q: Is my site data private?
-A: Yes. Canopy Guard only scans publicly available data. It does not store your private content, login credentials, or analytics. See the privacy policy at https://thecanopyguard.com/privacy for full details.
+A: Yes. Canopy Guard only scans publicly available data. It does not store your private content, login credentials, or analytics. It does store your scan results for 90 days so your report link keeps working. The link cannot be guessed, and anyone who has it can view that report. See the privacy policy at https://thecanopyguard.com/privacy for full details.
 
 Q: Do I need an account to get my full report?
 A: No account is required to run the scan. When you download the full report, basic contact information is collected to follow up on questions. That information is handled securely and never sold or shared with third parties.

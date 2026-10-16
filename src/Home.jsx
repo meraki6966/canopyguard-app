@@ -493,7 +493,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">Is my site data private?</div>
-              <div className="faq-a">Yes. Canopy Guard only scans publicly available data, the same information any search engine sees. We do not store your site's private content, login credentials, or analytics. See our <Link to="/privacy">Privacy Policy</Link> for full details.</div>
+              <div className="faq-a">Yes. Canopy Guard only scans publicly available data, the same information any search engine sees. We do not store your site's private content, login credentials, or analytics. We do store your scan results for 90 days so your report link keeps working. The link cannot be guessed, and anyone who has it can view that report. See our <Link to="/privacy">Privacy Policy</Link> for full details.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Do I need an account to get my full report?</div>

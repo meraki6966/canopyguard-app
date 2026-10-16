@@ -30,6 +30,8 @@ export default function Privacy() {
             <p>Canopy Guard is operated by Adam McClarin, founder of Meraki is Love, LLC (Soulful Tech™), based in Friendswood, Texas. This policy explains what data we collect, how we use it, and what we do not do with it.</p>
             <h3>What we scan</h3>
             <p>When you submit a URL, Canopy Guard reads only publicly available information, the same data any search engine crawler would see. We do not access your server files, database, analytics account, or any content behind a login.</p>
+            <h3>Report links</h3>
+            <p>When you run a scan, we store the results for 90 days so the link to your report keeps working. The stored results describe the public website you scanned. Each link contains a long random code that cannot be guessed. Anyone who has the link can view that report, so share it only with people you want to see it. After 90 days the link stops working and the stored results are deleted.</p>
             <h3>What we collect when you download a report</h3>
             <ul>
               <li>Your name and email address</li>
@@ -50,7 +52,7 @@ export default function Privacy() {
             <p>We take reasonable precautions to protect the information we collect. Adam holds a CISSP, and the same standard he applies to client systems applies to this data.</p>
             <h3>Contact</h3>
             <p>Questions about this policy? Email <strong>hello@merakislove.com</strong> or <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={{ color: "var(--mid)" }}>book a call</a>.</p>
-            <div className="privacy-date">Last updated: June 2026 · Meraki is Love, LLC · Friendswood, Texas</div>
+            <div className="privacy-date">Last updated: October 2026 · Meraki is Love, LLC · Friendswood, Texas</div>
           </div>
         </div>
       </section>

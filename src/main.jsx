@@ -8,14 +8,17 @@ import Compare from './pages/Compare.jsx'
 import Privacy from './pages/Privacy.jsx'
 import Blog from './pages/Blog.jsx'
 import BlogPost from './pages/BlogPost.jsx'
+import SharedReport from './pages/SharedReport.jsx'
 import { POSTS } from './blog/posts.js'
+import { redactShareUrl } from './lib/share.js'
 
-// Root layout: renders the matched route plus the analytics beacon.
+// Root layout: renders the matched route plus the analytics beacon. Shared
+// report paths carry their token, so analytics sees /r/[token] instead.
 function RootLayout() {
   return (
     <>
       <Outlet />
-      <Analytics />
+      <Analytics beforeSend={redactShareUrl} />
     </>
   )
 }
@@ -37,6 +40,15 @@ export const routes = [
         element: <BlogPost />,
         entry: 'src/pages/BlogPost.jsx',
         getStaticPaths: () => POSTS.map((p) => `blog/${p.slug}`),
+      },
+      // Shared reports are fetched in the browser. One shell is prerendered
+      // (r/shell.html, in its loading state) and vercel.json rewrites every
+      // /r/:token to it, so the client hydrates matching markup.
+      {
+        path: 'r/:token',
+        element: <SharedReport />,
+        entry: 'src/pages/SharedReport.jsx',
+        getStaticPaths: () => ['r/shell'],
       },
     ],
   },

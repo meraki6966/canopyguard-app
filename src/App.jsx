@@ -8,6 +8,8 @@ import { MITRE_TECHNIQUES, MitreBadge } from "./mitre";
 import { computeScores } from "./lib/scores";
 import { getRows, getChecks, summarizeGaps, getComplianceChecks } from "./lib/checks";
 import { getTopActions, actionText } from "./lib/topActions";
+import { API } from "./lib/api";
+import { readShare, withoutShare, sharePath, shareUrl } from "./lib/share";
 import Home from "./Home";
 
 // Design system — matches the landing (Home.jsx / home.css):
@@ -23,7 +25,6 @@ const C = {
 const mono = "'Space Mono','SF Mono',monospace";
 const heading = "'DM Serif Display',Georgia,serif";
 const body = "'DM Sans','Inter','Helvetica Neue',sans-serif";
-const API = import.meta.env.VITE_API_URL || "https://canopyguard-engine-production.up.railway.app";
 const PHASES = ["Resolving DNS","Checking TLS certificates","Scanning HTTP headers","Analyzing HTML structure","Validating schema markup","Evaluating AEO readiness","Measuring GEO chunking","Checking robots & llms.txt","Detecting exposed endpoints","Scoring security posture","Compiling report"];
 const scoreColor = v => v >= 70 ? C.green : v >= 40 ? C.amber : C.red;
 const scoreBg = v => v >= 70 ? C.greenGlow : v >= 40 ? C.amberGlow : C.redGlow;
@@ -649,6 +650,23 @@ function GapsCard({checks}){
     <div style={{fontSize:11,color:C.gray,lineHeight:1.6}}>{t("dashboard.gaps.note","Counted from the pass and fail rows below. Rows we could not measure are left out.")}</div>
   </div>;
 }
+// Shown only when the scan came back with a share token. The confirmation
+// promises 90 days, which is only true for a link minted just now, so the
+// shared-report route does not render this.
+function CopyLinkButton({token}){
+  const { t } = useTranslation();
+  const[state,setState]=useState("idle");
+  const copy=()=>{
+    const done=ok=>setState(ok?"copied":"failed");
+    try{navigator.clipboard.writeText(shareUrl(token)).then(()=>done(true),()=>done(false))}catch{done(false)}
+  };
+  return<div data-testid="share-link" style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap",marginTop:14}}>
+    <button onClick={copy} style={{background:"transparent",border:`1px solid ${C.goldBorder}`,color:C.gold,padding:"7px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,letterSpacing:1,borderRadius:3}}>{t("share.copy_link")}</button>
+    {state!=="idle"&&<span role="status" style={{fontSize:12,color:state==="copied"?C.green:C.gray}}>{t(state==="copied"?"share.copied":"share.copy_failed")}</span>}
+  </div>;
+}
+// Puts the address bar back on the home page without a navigation.
+function resetUrl(){if(typeof window!=="undefined"&&window.location.pathname!=="/")window.history.replaceState(window.history.state,"","/")}
 function CategoryRows({rows,category}){return rows.filter(r=>r.category===category).map(r=><Row key={r.key} row={r}/>)}
 function EmailGate({onSubmit,onClose,intent="report"}){const isAeo=intent==="aeo";const { t } = useTranslation();const[email,setEmail]=useState("");const[name,setName]=useState("");const[sending,setSending]=useState(false);const ref=useRef(null);useEffect(()=>{ref.current?.focus()},[]);const submit=async()=>{if(!email.includes("@"))return;setSending(true);await onSubmit(email,name);setSending(false)};return<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:20}} onClick={onClose}><motion.div initial={{opacity:0,scale:0.95}} animate={{opacity:1,scale:1}} transition={{duration:0.2}} style={{background:C.blackCard,border:`1px solid ${C.blackBorder}`,padding:40,maxWidth:420,width:"100%",borderRadius:8}} onClick={e=>e.stopPropagation()}><h2 style={{fontSize:22,fontWeight:700,color:C.white,margin:"0 0 6px",fontFamily:heading}}>{t("dashboard.email_gate.title_get")} <span style={{color:C.gold}}>{t(isAeo?"dashboard.email_gate.title_fixes":"dashboard.email_gate.title_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",lineHeight:1.7}}>{t(isAeo?"dashboard.email_gate.desc_aeo":"dashboard.email_gate.desc")}</p><div style={{display:"flex",flexDirection:"column",gap:12}}><input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder={t("dashboard.email_gate.name_placeholder")} style={{background:C.black,border:`1px solid ${C.blackBorder}`,color:C.white,padding:"14px 16px",fontSize:14,outline:"none",borderRadius:4}}/><input ref={ref} type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} placeholder={t("dashboard.email_gate.email_placeholder")} style={{background:C.black,border:`1px solid ${C.blackBorder}`,color:C.white,padding:"14px 16px",fontSize:14,fontFamily:mono,outline:"none",borderRadius:4}}/><button onClick={submit} disabled={sending||!email.includes("@")} style={{background:sending?C.grayDark:C.gold,border:"none",color:C.black,fontWeight:700,fontSize:14,padding:"16px 32px",cursor:sending?"default":"pointer",letterSpacing:1,opacity:!email.includes("@")?0.5:1,borderRadius:4}}>{sending?t("dashboard.email_gate.btn_processing"):t(isAeo?"dashboard.email_gate.btn_generate":"dashboard.email_gate.btn_download")}</button></div><p style={{color:C.grayDark,fontSize:10,marginTop:16,fontFamily:mono}}>{t("dashboard.email_gate.spam_notice")}</p></motion.div></div>}
 
@@ -669,12 +687,14 @@ function MethodologyPage({onBack}){
 
 // ═══ MAIN APP ═══
 // initialReport opens straight onto the report view with a given scan result.
-// The site never passes it; the render tests use it to mount the real report
-// view with a fixture.
-export default function CanopyGuard({initialReport=null}={}){
+// The shared-report route (/r/:token) passes the stored report; the render
+// tests use it to mount the real report view with a fixture. initialNotice
+// shows a message under the scan input on the landing view.
+export default function CanopyGuard({initialReport=null,initialNotice=""}={}){
   const { t } = useTranslation();
   const[domain,setDomain]=useState(initialReport?.target_domain||"");const[phase,setPhase]=useState(initialReport?"report":"landing");const[scanIndex,setScanIndex]=useState(0);
-  const[report,setReport]=useState(initialReport);const[scanError,setScanError]=useState("");
+  const[report,setReport]=useState(initialReport);const[scanError,setScanError]=useState(initialNotice);
+  const[share,setShare]=useState(null);
   const[showGate,setShowGate]=useState(false);const[leadCaptured,setLeadCaptured]=useState(false);const[capturedEmail,setCapturedEmail]=useState("");
   const[showMethodology,setShowMethodology]=useState(false);const ref=useRef(null);
   // AEO generation. leadToken comes back from the same lead capture that gates
@@ -683,8 +703,8 @@ export default function CanopyGuard({initialReport=null}={}){
   const[leadToken,setLeadToken]=useState(null);/* {token,domain} — the engine mints per email+domain */const[gateIntent,setGateIntent]=useState("report");
   const[aeoPhase,setAeoPhase]=useState("idle");const[aeoGen,setAeoGen]=useState(null);const[aeoError,setAeoError]=useState("");const[aeoFixes,setAeoFixes]=useState(null);
 
-  const startScan=async(sd)=>{const cleaned=(sd||domain).replace(/^https?:\/\//,"").replace(/\/+$/,"").trim();if(!cleaned)return;setDomain(cleaned);setPhase("scanning");setScanIndex(0);setScanError("");setAeoPhase("idle");setAeoGen(null);setAeoError("");setAeoFixes(null);let idx=0;const ticker=setInterval(()=>{if(idx<PHASES.length-1){idx++;setScanIndex(idx)}},600);try{const res=await fetch(`${API}/api/scan`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:cleaned})});clearInterval(ticker);if(!res.ok){const err=await res.json();throw new Error(err.error||"Scan failed")}const data=await res.json();setScanIndex(PHASES.length-1);setTimeout(()=>{setReport(data);setPhase("report")},500)}catch(err){clearInterval(ticker);setScanError(err.message||"Scan failed.");setTimeout(()=>setPhase("landing"),3000)}};
-  const reset=()=>{setPhase("landing");setDomain("");setReport(null);setLeadCaptured(false);setCapturedEmail("");setShowGate(false);setScanError("");setLeadToken(null);setGateIntent("report");setAeoPhase("idle");setAeoGen(null);setAeoError("");setAeoFixes(null)};
+  const startScan=async(sd)=>{const cleaned=(sd||domain).replace(/^https?:\/\//,"").replace(/\/+$/,"").trim();if(!cleaned)return;setDomain(cleaned);setPhase("scanning");setScanIndex(0);setScanError("");setShare(null);resetUrl();setAeoPhase("idle");setAeoGen(null);setAeoError("");setAeoFixes(null);let idx=0;const ticker=setInterval(()=>{if(idx<PHASES.length-1){idx++;setScanIndex(idx)}},600);try{const res=await fetch(`${API}/api/scan`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:cleaned})});clearInterval(ticker);if(!res.ok){const err=await res.json();throw new Error(err.error||"Scan failed")}const data=await res.json();const sh=readShare(data);setScanIndex(PHASES.length-1);setTimeout(()=>{setReport(withoutShare(data));setShare(sh);if(sh)window.history.replaceState(window.history.state,"",sharePath(sh.token));setPhase("report")},500)}catch(err){clearInterval(ticker);setScanError(err.message||"Scan failed.");setTimeout(()=>setPhase("landing"),3000)}};
+  const reset=()=>{resetUrl();setShare(null);setPhase("landing");setDomain("");setReport(null);setLeadCaptured(false);setCapturedEmail("");setShowGate(false);setScanError("");setLeadToken(null);setGateIntent("report");setAeoPhase("idle");setAeoGen(null);setAeoError("");setAeoFixes(null)};
   const runAeo=useCallback(async(email,token)=>{
     if(!token){setAeoPhase("error");setAeoError(t("dashboard.aeo_gen.err_no_token"));return}
     setAeoPhase("loading");setAeoError("");
@@ -736,7 +756,7 @@ export default function CanopyGuard({initialReport=null}={}){
   {/* Nav */}
   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 24px",borderBottom:`1px solid ${C.blackBorder}`}}><span style={{fontSize:14,fontWeight:700,fontFamily:heading,cursor:"pointer"}} onClick={reset}>CANOPY <span style={{color:C.gold}}>GUARD</span></span><div style={{display:"flex",gap:8,alignItems:"center"}}>{!leadCaptured?<button onClick={()=>setShowGate(true)} style={{background:C.gold,border:"none",color:C.black,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",letterSpacing:1,borderRadius:3}}>{t("dashboard.get_report")}</button>:<button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:`1px solid ${C.green}`,color:C.green,padding:"6px 14px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:mono,borderRadius:3}}>↓ PDF</button>}<button onClick={()=>setShowMethodology(true)} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.grayDark,padding:"6px 14px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:mono,letterSpacing:1,borderRadius:3}}>{t("dashboard.docs")}</button><button onClick={reset} style={{background:"transparent",border:`1px solid ${C.blackBorder}`,color:C.gray,padding:"6px 14px",fontSize:12,fontWeight:600,cursor:"pointer",borderRadius:3}}>{t("dashboard.new_scan")}</button></div></div>
   <div style={{maxWidth:900,margin:"0 auto",padding:"32px 20px"}}>
-  <div style={{marginBottom:32}}><p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px"}}>{t("dashboard.audit_report")}</p><h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,margin:"0 0 4px",fontFamily:heading,letterSpacing:-1}}>{d.target_domain}</h1>{scanMeta&&<p style={{color:C.grayDark,fontSize:11,fontFamily:mono}}>{scanMeta}</p>}</div>
+  <div style={{marginBottom:32}}><p style={{color:C.grayDark,fontSize:10,fontFamily:mono,letterSpacing:2,margin:"0 0 8px"}}>{t("dashboard.audit_report")}</p><h1 style={{fontSize:"clamp(24px,4vw,36px)",fontWeight:700,margin:"0 0 4px",fontFamily:heading,letterSpacing:-1}}>{d.target_domain}</h1>{scanMeta&&<p style={{color:C.grayDark,fontSize:11,fontFamily:mono}}>{scanMeta}</p>}{share&&<CopyLinkButton token={share.token}/>}</div>
   <UnmeasuredBanner report={d} scores={scores}/>
   {/* Top Actions */}
   {actions.length>0&&<div data-testid="top-actions" style={{marginBottom:24,padding:24,background:C.blackCard,border:`1px solid ${C.goldBorder}`,borderRadius:6}}><h3 style={{fontSize:14,fontWeight:700,color:C.gold,fontFamily:heading,textTransform:"uppercase",letterSpacing:1,margin:"0 0 16px"}}>{t("dashboard.top_actions")}</h3><div style={{display:"flex",flexDirection:"column",gap:14}}>{actions.map((a,i)=><ActionItem key={a.key} action={a} index={i}/>)}</div></div>}

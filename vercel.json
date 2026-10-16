@@ -1,5 +1,11 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/r/:token",
+      "destination": "/r/shell"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -57,6 +63,15 @@
         {
           "key": "Cache-Control",
           "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/r/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }

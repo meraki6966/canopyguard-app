@@ -240,6 +240,16 @@
       "err_no_token": "Could not verify your email for this domain. Re-enter it and try again."
     }
   },
+  "share": {
+    "copy_link": "Copy link to this report",
+    "copied": "Link copied. It stays live for 90 days.",
+    "copy_failed": "We could not copy the link. You can copy it from your address bar.",
+    "loading": "Loading the report.",
+    "not_found": "This report link has expired or does not exist. Run a fresh scan below.",
+    "rate_limited": "Too many requests. Please wait a minute and try again.",
+    "unavailable": "Reports are temporarily unavailable. Please try again shortly.",
+    "back_home": "Go to the home page"
+  },
   "pdf": {
     "title": "EXECUTIVE RISK REPORT",
     "overall_score": "Overall Score",

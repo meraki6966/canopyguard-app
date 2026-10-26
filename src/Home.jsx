@@ -436,6 +436,21 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
               </ul>
               <button className="btn-scan" style={{ width: "100%", padding: 14, borderRadius: "var(--r-sm)" }} onClick={scanOrFocus}>Scan My Site Free</button>
             </div>
+            <div className="pricing-card" id="watch-plan">
+              <div className="pricing-badge">WEEKLY</div>
+              <div className="pricing-name">Canopy Guard Watch</div>
+              <div className="pricing-price">$29</div>
+              <div className="pricing-period">A month per site, billed by invoice.</div>
+              <ul className="pricing-features">
+                <li>The same outside-in scan, every week</li>
+                <li>An email each week with what changed</li>
+                <li>Alerts when a score drops or a check breaks</li>
+                <li>New exposed files, a flagged domain, or an expiring certificate</li>
+                <li>Never logs in to your site or systems</li>
+              </ul>
+              <button className="btn-scan" style={{ width: "100%", padding: 14, borderRadius: "var(--r-sm)" }} onClick={scanOrFocus}>Scan first, then add Watch</button>
+              <div className="next-step-note">Watch signup sits under every report.</div>
+            </div>
             <div className="pricing-card featured">
               <div className="pricing-badge">HIRE ADAM</div>
               <div className="pricing-name" style={{ color: "var(--forest)" }}>Implementation Services</div>
@@ -447,7 +462,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
                 <li>Security hardening and header setup</li>
                 <li>Schema markup and structured data</li>
                 <li>Content strategy from audit findings</li>
-                <li>Ongoing monitoring and rescans</li>
+                <li>Help fixing what Watch finds</li>
               </ul>
               <a href={CALENDLY} target="_blank" rel="noopener noreferrer" className="btn-green" style={{ display: "block", textAlign: "center", padding: 14, borderRadius: "var(--r-sm)" }}>Book a call</a>
               <div className="next-step-note">Bring your audit to the call so we can work from what it found.</div>
@@ -509,7 +524,7 @@ export default function Home({ domain, setDomain, startScan, scanError, inputRef
             </div>
             <div className="faq-item">
               <div className="faq-q">How often should I re-scan my site?</div>
-              <div className="faq-a">Re-scan after any meaningful change: a redesign, new pages, a platform migration, or after applying fixes from a previous report. For an active site, a monthly scan catches regressions before they cost you traffic. The scan is free and takes about 30 seconds, so you can run it before a problem shows up in your analytics.</div>
+              <div className="faq-a">Re-scan after any meaningful change: a redesign, new pages, a platform migration, or after applying fixes from a previous report. For an active site, a regular scan catches regressions before they cost you traffic. The scan is free and takes about 30 seconds. If you would rather not remember, Canopy Guard Watch reruns it every week for $29 a month and emails you what changed.</div>
             </div>
             <div className="faq-item">
               <div className="faq-q">Which search engines and AI assistants does Canopy Guard check for?</div>

@@ -32,6 +32,8 @@ export default function Privacy() {
             <p>When you submit a URL, Canopy Guard reads only publicly available information, the same data any search engine crawler would see. We do not access your server files, database, analytics account, or any content behind a login.</p>
             <h3>Report links</h3>
             <p>When you run a scan, we store the results for 90 days so the link to your report keeps working. The stored results describe the public website you scanned. Each link contains a long random code that cannot be guessed. Anyone who has the link can view that report, so share it only with people you want to see it. After 90 days the link stops working and the stored results are deleted.</p>
+            <h3>Canopy Guard Watch</h3>
+            <p>If you sign up for Watch, we store your name if you give it, your email address, the site you want watched, and whether your subscription is pending, active, or cancelled. While it is active we scan that public site once a week and keep each week's scores and findings for 26 weeks so we can tell you what changed. Weekly emails are sent through SendGrid. To stop Watch, reply to any Watch email. After you cancel we keep the signup record so we know not to scan or bill again; email hello@merakislove.com and we will delete it.</p>
             <h3>What we collect when you download a report</h3>
             <ul>
               <li>Your name and email address</li>

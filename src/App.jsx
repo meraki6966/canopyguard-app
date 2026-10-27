@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { SecurityEnhanced } from "./components/SecurityEnhanced";
 import { DribbbleBadge } from "./components/DribbbleBadge";
+import { WatchSignup } from "./components/WatchSignup";
 import { MITRE_TECHNIQUES, MitreBadge } from "./mitre";
 import { computeScores } from "./lib/scores";
 import { getRows, getChecks, summarizeGaps, getComplianceChecks } from "./lib/checks";
@@ -797,5 +798,7 @@ export default function CanopyGuard({initialReport=null,initialNotice=""}={}){
     {!leadCaptured?<><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.get_full_title")} <span style={{color:C.gold}}>{t("dashboard.cta.get_full_report")}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:440,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.download_desc")}</p><button onClick={()=>setShowGate(true)} style={{background:C.gold,color:C.black,border:"none",fontWeight:700,fontSize:14,padding:"18px 44px",letterSpacing:1,cursor:"pointer",fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_get_report")}</button></>:<><div style={{fontSize:36,marginBottom:12,color:C.green}}>✓</div><h2 style={{fontSize:28,fontWeight:700,margin:"0 0 8px",fontFamily:heading}}>{t("dashboard.cta.delivered_to")} <span style={{color:C.gold}}>{capturedEmail}</span></h2><p style={{color:C.gray,fontSize:14,margin:"0 0 28px",maxWidth:460,marginLeft:"auto",marginRight:"auto",lineHeight:1.7}}>{t("dashboard.cta.resolve_desc")}</p><a href="https://calendly.com/hello-merakislove/new-meeting" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",background:C.gold,color:C.black,fontWeight:700,fontSize:14,padding:"18px 44px",textDecoration:"none",letterSpacing:1,fontFamily:heading,borderRadius:4}}>{t("dashboard.cta.btn_walkthrough")}</a><div style={{marginTop:16}}><button onClick={()=>downloadPDF(report,capturedEmail,t)} style={{background:"transparent",border:"none",color:C.gray,fontSize:12,cursor:"pointer",fontFamily:mono,textDecoration:"underline"}}>{t("dashboard.cta.download_again")}</button></div></>}
     <p style={{color:C.grayDark,fontSize:11,marginTop:24,fontFamily:mono}}>{t("dashboard.cta.author")}</p>
   </div>
+  {/* Canopy Guard Watch: paid weekly rescans, billed by invoice */}
+  <WatchSignup domain={report.target_domain||""} email={capturedEmail||""}/>
   <div style={{textAlign:"center",padding:"20px 0",borderTop:`1px solid ${C.blackBorder}`}}><p style={{fontSize:11,color:C.grayDark,margin:"0 0 4px"}}>{t("dashboard.footer.built_by")}</p><a href="/privacy" style={{fontSize:11,color:C.grayDark,textDecoration:"underline"}}>{t("dashboard.footer.privacy_policy")}</a></div>
   </div></div></GeneratedFixesContext.Provider>}

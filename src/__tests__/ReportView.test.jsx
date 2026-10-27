@@ -149,6 +149,11 @@ describe("report view with a fully measured report", () => {
     const { container } = mount(measured);
     const text = container.textContent;
     for (const gone of ["SECTOR BENCHMARK", "software & services", "68%", "REVENUE LEAKAGE", "Revenue Leakage", "REVENUE AT RISK"]) expect(text).not.toContain(gone);
-    expect(text).not.toMatch(/\$\d/);
+    // The report itself carries no dollar figure. The one price on the page is
+    // the Watch offer, in its own labeled card, and nothing else may add one.
+    const watch = container.querySelector('[data-testid="watch-signup"]');
+    const reportOnly = text.replace(watch?.textContent ?? "", "");
+    expect(reportOnly).not.toMatch(/\$\d/);
+    expect(text.match(/\$\d[\d,.]*/g)).toEqual(["$29"]);
   });
 });

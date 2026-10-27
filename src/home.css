@@ -139,7 +139,7 @@ html{scroll-behavior:smooth}
 .adam-bio{font-size:0.88rem;color:#3D6B52;line-height:1.7;margin-bottom:20px}
 .adam-quote{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--forest);line-height:1.5;padding:14px 18px;border-left:3px solid var(--gold);background:var(--white);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-bottom:22px}
 .pricing-section{background:var(--canopy)}
-.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:780px}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;max-width:1120px}
 .pricing-card{background:rgba(237,244,239,0.05);border:1px solid rgba(237,244,239,0.12);border-radius:var(--r-lg);padding:34px}
 .pricing-card.featured{background:var(--white);border-color:var(--gold)}
 .pricing-badge{display:inline-block;background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);border-radius:20px;padding:4px 12px;font-size:0.68rem;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:14px}
